@@ -1,0 +1,162 @@
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.navmenu-container {
+    /* Não definimos uma largura fixa aqui, permitindo que o NavMenu controle sua própria largura */
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+
+.trust-logo {
+    width: 150px; /* Ajuste o tamanho da imagem */
+    height: auto;
+    float: left; /* Coloca a imagem no lado esquerdo */
+    margin-right: 10px; /* Adiciona margem à direita */
+}
+
+.top-row {
+    background-color: #6aa4d5;
+    border-bottom: 1px solid #6aa4d5;
+    justify-content: space-between;
+    height: 4.5rem;
+    display: flex;
+    align-items: center;
+}
+
+    .top-row ::deep a, .top-row ::deep .btn-link {
+        white-space: nowrap;
+/*        margin-left: 1.5rem;*/
+        text-decoration: none;
+    }
+
+        .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        .top-row ::deep a:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+@media (max-width: 640.98px) {
+    .top-row {
+        justify-content: space-between;
+    }
+
+        .top-row ::deep a, .top-row ::deep .btn-link {
+            margin-left: 0;
+        }
+}
+
+@media (min-width: 641px) {
+    .page {
+        flex-direction: row;
+    }
+
+    .navmenu-container {
+        /* Não definimos uma largura fixa, permitindo que o NavMenu use a largura definida em NavMenu.css */
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        border-right: 1px solid #d8d5d5 !important;
+    }
+
+    .top-row {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+        .top-row.auth ::deep a:first-child {
+            flex: 1;
+            text-align: right;
+            width: 0;
+        }
+
+    .top-row, article {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+        padding: 20px 20px;
+    }
+}
+
+.top-row .user-dropdown .user-button {
+    color: white !important;
+    background-color: transparent; /* Remove o fundo do botão */
+    border: none; /* Remove a borda do botão */
+    
+}
+
+    .top-row .user-dropdown .user-button .material-symbols-outlined {
+        color: white !important;
+        font-size: 2rem;
+    }
+
+.user-button-white {
+    color: white !important;
+}
+
+.top-row .language-dropdown .language-button {
+    color: white !important;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+
+    .top-row .language-dropdown .language-button .material-symbols-outlined {
+        color: white !important;
+        font-size: 2rem;
+    }
+
+.language-button-white {
+    color: white !important;
+}
+
+.language-dropdown {
+    position: relative;
+    margin-right: 10px;
+}
+
+
+/* Estiliza a estrutura geral do dropdown */
+.dropdown-content {
+    display: block;
+    position: absolute;
+    background-color: #ffffff; /* Fundo branco para destaque */
+    min-width: 150px; /* Aumenta um pouco a largura */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para efeito suspenso */
+    border-radius: 8px; /* Borda arredondada */
+    z-index: 10;
+    right: 0;
+    padding: 5px 0; /* Espaço interno */
+}
+
+/* Estiliza os itens do dropdown */
+.dropdown-item {
+    background-color: transparent;
+    border: none;
+    padding: 10px 15px;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333; /* Cor do texto */
+    transition: background-color 0.3s ease-in-out;
+}
+
+    /* Efeito hover ao passar o mouse */
+    .dropdown-item:hover {
+        background-color: #f0f0f0; /* Fundo mais claro ao passar o mouse */
+        color: #6aa4d5; /* Azul para indicar seleção */
+    }
+

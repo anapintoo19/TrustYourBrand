@@ -1,0 +1,186 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Routing
+@using System.Text.Json
+@inject NavigationManager NavigationManager
+@inject TrustYourBrand.Services.ILocalStorageService LocalStorage
+
+<div class="@NavMenuCssClass nav-scrollable navmenu-container @(CollapseNavMenu ? "" : "navmenu-open") b-7cqduw13td">
+    <nav class="flex-column">
+        <div class="header-logo">
+            <img src="@("images/logo_destinycloud.png")" alt="DestinyCloud Logo" class="tenant-logo" />
+        </div>
+        <div class="sidebar-header">
+            <div class="user-name">@userFullName</div>
+        </div>
+
+        @foreach (var item in MenuItems)
+        {
+            <div class="nav-item px-3">
+                @if (item.HasSubMenu)
+                {
+                    <NavLink class="@GetCssClass(item)" @onclick="() => ToggleSubMenu(item)">
+                        <span class="material-symbols-outlined icon-large icon-thick icon-spacing">@item.Icon</span> @item.Name
+                    </NavLink>
+                    @if (item.IsSubMenuExpanded)
+                    {
+                        <ul class="nav flex-column">
+                            @foreach (var subItem in item.SubItems)
+                            {
+                                <li class="nav-item px-3">
+                                    <NavLink class="@GetCssClass(subItem)" href="@subItem.Url">
+                                        <span class="material-symbols-outlined icon-large icon-thick icon-spacing">@subItem.Icon</span> @subItem.Name
+                                    </NavLink>
+                                </li>
+                            }
+                        </ul>
+                    }
+                }
+                else
+                {
+                    <NavLink class="@GetCssClass(item)" href="@item.Url">
+                        <span class="material-symbols-outlined icon-large icon-thick icon-spacing">@item.Icon</span> @item.Name
+                    </NavLink>
+                }
+            </div>
+        }
+    </nav>
+</div>
+
+@code {
+    [Parameter]
+    public bool CollapseNavMenu { get; set; }
+
+    private string userRole = string.Empty;
+    private string? userFullName = "Utilizador";
+    private List<MenuItem> MenuItems { get; set; } = new();
+
+    private string? NavMenuCssClass => CollapseNavMenu ? "collapse" : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+
+        var token = await LocalStorage.GetItemAsync<string>("authToken");
+
+        if (!string.IsNullOrEmpty(token))
+        {
+            try
+            {
+                var payload = token.Split('.')[1];
+                var json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(PadBase64(payload)));
+                var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+
+                if (payloadData != null)
+                {
+                    // Extrair role
+                    if (payloadData.TryGetValue("role", out var roleObj))
+                        userRole = roleObj?.ToString() ?? "";
+                    else if (payloadData.TryGetValue("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", out var roleClaim))
+                        userRole = roleClaim?.ToString() ?? "";
+
+                    // Extrair nome
+                    var firstName = payloadData.ContainsKey("FirstName") ? payloadData["FirstName"]?.ToString() : "";
+                    var lastName = payloadData.ContainsKey("LastName") ? payloadData["LastName"]?.ToString() : "";
+
+                    if (!string.IsNullOrWhiteSpace(firstName) || !string.IsNullOrWhiteSpace(lastName))
+                    {
+                        userFullName = $"{firstName} {lastName}".Trim();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao extrair dados do token: {ex.Message}");
+            }
+        }
+
+        Console.WriteLine($"🔐 Role extraída do token: '{userRole}'");
+
+        MenuItems = new List<MenuItem>
+        {
+            new MenuItem("Inspection", "/inspection", "target", "btn-inspection"),
+            new MenuItem("Action Plan", "/action-plan", "list", "btn-action-plan"),
+            new MenuItem("Tenant", "", "factory", "btn-tenant", true)
+            {
+                SubItems = new List<MenuItem>
+                {
+                    new MenuItem("Area", "/area", "map", "btn-sub"),
+                    new MenuItem("Department", "/department", "group", "btn-sub"),
+                    new MenuItem("Function", "/function", "person_pin", "btn-sub"),
+                    new MenuItem("Store", "/store", "store", "btn-sub"),
+                    new MenuItem("Brand", "/marca", "label", "btn-sub")
+                }
+            },
+            new MenuItem("Support", "/support", "help", "btn-support"),
+        };
+
+        if (userRole.Equals("Assistente", StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine("✅ Permissão concedida para Security!");
+            MenuItems.Add(new MenuItem("Security", "/security", "key_vertical", "btn-security", true)
+                {
+                    SubItems = new List<MenuItem>
+                {
+                    new MenuItem("Users", "/users", "person", "btn-sub")
+                }
+                });
+
+            // Adiciona o botão "Template" ao submenu de "Tenant"
+            var tenantMenu = MenuItems.Find(item => item.Name == "Tenant");
+            if (tenantMenu != null)
+            {
+                tenantMenu.SubItems.Add(new MenuItem("Template", "/template", "description", "btn-sub"));
+            }
+        }
+        else
+        {
+            Console.WriteLine("🚫 Permissão negada para Security!");
+        }
+    }
+
+    private string PadBase64(string base64)
+    {
+        // Corrige padding do base64
+        switch (base64.Length % 4)
+        {
+            case 2: return base64 + "==";
+            case 3: return base64 + "=";
+            default: return base64;
+        }
+    }
+
+    private void ToggleSubMenu(MenuItem item)
+    {
+        item.IsSubMenuExpanded = !item.IsSubMenuExpanded;
+    }
+
+    private string GetCssClass(MenuItem item)
+    {
+        var cssClass = $"nav-link menu-btn {item.CssClass}";
+        if (item.Url == NavigationManager.Uri)
+        {
+            cssClass += " active";
+        }
+        return cssClass;
+    }
+
+    private class MenuItem
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
+        public string Icon { get; set; }
+        public string CssClass { get; set; }
+        public bool HasSubMenu { get; set; }
+        public bool IsSubMenuExpanded { get; set; }
+        public List<MenuItem> SubItems { get; set; } = new();
+
+        public MenuItem(string name, string url, string icon, string cssClass, bool hasSubMenu = false)
+        {
+            Name = name;
+            Url = url;
+            Icon = icon;
+            CssClass = cssClass;
+            HasSubMenu = hasSubMenu;
+        }
+    }
+}

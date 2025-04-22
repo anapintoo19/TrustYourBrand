@@ -1,0 +1,44 @@
+﻿/* wwwroot/css/ForgotPin.css */
+
+/* Estilizar a frase "Forgot Your PIN?" */
+.change-pin {
+    color: #868685; /* Cor do texto */
+    font-size: 1.2em; /* Tamanho da fonte */
+    text-align: center; /* Centralizar o texto */
+    margin-top: 30px; /* Espaço acima */
+}
+
+/* Estilizar o container do formulário */
+.change-pin-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centralizar o conteúdo dentro do container */
+}
+
+    /* Estilizar os campos de entrada */
+    .change-pin-container input {
+        width: 300px;
+        padding: 10px;
+        margin: 5px 0; /* Reduza o espaço conforme necessário */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    /* Estilizar o botão de submit */
+    .change-pin-container button {
+        width: 320px;
+        padding: 10px;
+        background-color: #868685;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .change-pin-container button:hover {
+            background-color: #868685;
+        }

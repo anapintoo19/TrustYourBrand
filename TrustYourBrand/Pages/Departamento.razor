@@ -1,0 +1,448 @@
+﻿@page "/department"
+@layout MainLayout
+@using TrustYourBrand.Models
+@using TrustYourBrand.Services
+@inject IHttpClientFactory HttpClientFactory
+@inject TrustYourBrand.Services.ILocalStorageService LocalStorageService
+@inject TrustYourBrand.Services.IDepartmentService DepartmentService
+@inject NavigationManager NavigationManager
+
+<div class="table-container">
+    <div class="table-header">
+        <div class="action-buttons">
+            <button class="btn btn-action" @onclick="ShowCreateForm">Create New Department</button>
+            <button class="btn btn-action">Export</button>
+            <button class="btn btn-action">Import</button>
+            <button class="btn btn-action">Select columns</button>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search" class="search-input" />
+        </div>
+    </div>
+
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th class="action-column"></th>
+                <th class="action-column"></th>
+                <th>Department Type</th>
+                @* <th>Tenant</th> *@
+                
+            </tr>
+        </thead>
+        <tbody>
+            @if (DepartmentList == null)
+            {
+                <tr><td colspan="8">Loading...</td></tr>
+            }
+            else if (!DepartmentList.Any())
+            {
+                <tr><td colspan="8">No departments found.</td></tr>
+            }
+            else
+            {
+                @foreach (var department in PaginatedDepartments)
+                {
+                    <tr>
+                        <td class="action-column">
+                            <span class="material-symbols-outlined action-icon edit-icon" @onclick="() => ShowEditForm(department)">edit</span>
+                        </td>
+                        <td class="action-column">
+                            <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => ShowDeleteConfirmation(department)">delete</span>
+                        </td>
+                        <td>@department.Nome</td>
+                        @* <td>@department.TenantId</td> *@
+                        
+
+                    </tr>
+                }
+            }
+            
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <span>Page @CurrentPage of @TotalPages</span>
+        <div class="pagination-buttons">
+            <button class="btn btn-pagination" @onclick="PreviousPage">Prev</button>
+            <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+            <button class="btn btn-pagination" @onclick="NextPage">Next</button>
+        </div>
+    </div>
+
+    @if (showCreateForm)
+    {
+        <div class="modal-overlay create-modal-overlay">
+            <div class="modal-content">
+                <h3>Create Department</h3>
+                <form>
+                    <div>
+                        <label for="departmentType">Department Type</label>
+                        <input id="departmentType" placeholder="Insert Department Type" @bind=newDepartment.Nome />
+                    </div>
+                    @* <div> *@
+                    @*     <label for="tenantName">Tenant</label> *@
+                    @*     <input id="tenantName"  disabled/> *@
+                    @* </div> *@
+                   
+                    <div class="modal-buttons">
+                        <button type="button" class="btn btn-confirm" @onclick="CreateDepartment">CREATE DEPARTMENT</button>
+                        <button type="button" class="btn btn-cancel" @onclick="CancelCreate">CANCEL</button>
+                    </div>
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <p style="color: red;">@errorMessage</p>
+                    }
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <p style="color: green;">@successMessage</p>
+                    }
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (showDeleteConfirmation)
+    {
+        <div class="modal-overlay delete-modal-overlay">
+            <div class="modal-content">
+                <h3>Delete Department</h3>
+                <p>Are you sure you want to delete the department "@departmentToDelete?.Nome"?</p>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-confirm" @onclick="ConfirmDelete">CONFIRM</button>
+                    <button type="button" class="btn btn-cancel" @onclick="CancelDelete">CANCEL</button>
+                </div>
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <p style="color: red;">@errorMessage</p>
+                }
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <p style="color: green;">@successMessage</p>
+                }
+            </div>
+        </div>
+    }
+
+    @if (showEditForm) 
+    {
+        <div class="modal-overlay edit-modal-overlay">
+            <div class="modal-content"> 
+                 <h3>Edit Department</h3> 
+                 <form>
+                    <div> 
+                         <label for="editNome">Department Type</label>
+                         <input id="editNome" @bind="editingDepartment.Nome"/>
+                    </div> 
+                    
+                     <div class="modal-buttons"> 
+                         <button type="button" class="btn btn-confirm" @onclick="UpdateDepartment">EDIT DEPARTMENT</button>
+                         <button type="button" class="btn btn-cancel" @onclick="CancelEdit">CANCEL</button> 
+                     </div> 
+                     @if (!string.IsNullOrEmpty(editErrorMessage)) 
+                     { 
+                         <p style="color: red;">@editErrorMessage</p> 
+                     } 
+                     @if (!string.IsNullOrEmpty(editSuccessMessage)) 
+                     { 
+                         <p style="color: green;">@editSuccessMessage</p> 
+                     }
+                 </form> 
+             </div> 
+         </div> 
+     }
+</div>
+
+<link href="css/Departamento.css" rel="stylesheet" />
+<link href="css/PopUpStyle.css" rel="stylesheet" />
+
+@code{
+    private List<DepartmentResponseDto> DepartmentList { get; set; } = new();
+    private int CurrentPage { get; set; } = 1;
+    private int TotalPages { get; set; } = 1;
+    private const int PageSize = 8;
+
+    private bool showCreateForm = false;
+    private CreateDepartmentDto newDepartment = new CreateDepartmentDto();
+    private string successMessage;
+    private string errorMessage;
+    // private int tenantId; Simulado, deve vir do token ou localStorage
+    // private int tenantId = 1001; 
+
+    private bool showDeleteConfirmation = false;
+    private DepartmentResponseDto departmentToDelete;
+    private string deleteSuccessMessage;
+    private string deleteErrorMessage;
+
+    private bool showEditForm = false;
+    private DepartmentResponseDto editingDepartment;
+    private string editSuccessMessage;
+    private string editErrorMessage;
+
+    private List<DepartmentResponseDto> PaginatedDepartments =>
+        DepartmentList
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // var token = await LocalStorageService.GetItemAsync<string>("authToken");
+        // if (string.IsNullOrEmpty(token) || JwtHelper.IsTokenExpired(token))
+        // {
+        //     Console.WriteLine("Token ausente ou expirado. Redirecionando para o login...");
+        //     await LocalStorageService.RemoveItemAsync("authToken");
+        //     NavigationManager.NavigateTo("/login");
+        //     return;
+        // }
+
+        await LoadDepartments();
+        // tenantId = await GetTenantIdFromToken(); Simulado, ajuste conforme sua lógica de autenticação
+    }
+
+    private async Task LoadDepartments()
+    {
+        // try
+        // {
+        //     DepartmentList = await DepartmentService.GetDepartmentsAsync();
+        //     TotalPages = (int)Math.Ceiling((double)DepartmentList.Count / PageSize);
+        //     StateHasChanged();
+        // }
+        // catch (Exception ex)
+        // {
+        //     Console.WriteLine($"Erro ao carregar departamentos: {ex.Message}");
+        //     DepartmentList = new List<DepartmentResponseDto>();
+        //     TotalPages = 1;
+        // }
+
+        try
+        {
+            // Comentei a chamada à API para usar apenas dados fictícios
+            // DepartmentList = await DepartmentService.GetDepartmentsAsync();
+            // if (!DepartmentList.Any())
+            // {
+            DepartmentList = new List<DepartmentResponseDto>
+                {
+                    new DepartmentResponseDto
+                    {
+                        DepartmentId = 1,
+                        Nome = "Recursos Humanos",
+                        IsActive = true,
+                        UserIds = new List<int> { 101, 102 }
+                    },
+                    new DepartmentResponseDto
+                    {
+                        DepartmentId = 2,
+                        Nome = "Tecnologia da Informação",
+                        IsActive = true,
+                        UserIds = new List<int> { 103, 104 }
+                    },
+                    new DepartmentResponseDto
+                    {
+                        DepartmentId = 3,
+                        Nome = "Marketing",
+                        IsActive = true,
+                        UserIds = new List<int> { 105 }
+                    },
+                    new DepartmentResponseDto
+                    {
+                        DepartmentId = 4,
+                        Nome = "Vendas",
+                        IsActive = true,
+                        UserIds = new List<int> { 106, 107 }
+                    }
+                };
+            Console.WriteLine("Carregando dados fictícios para departamentos.");
+            // }
+            TotalPages = (int)Math.Ceiling((double)DepartmentList.Count / PageSize);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao carregar departamentos: {ex.Message}");
+            DepartmentList = new List<DepartmentResponseDto>
+            {
+                new DepartmentResponseDto
+                {
+                    DepartmentId = 1,
+                    Nome = "Recursos Humanos",
+                    IsActive = true,
+                    UserIds = new List<int> { 101, 102 }
+                },
+                new DepartmentResponseDto
+                {
+                    DepartmentId = 2,
+                    Nome = "Tecnologia da Informação",
+                    IsActive = true,
+                    UserIds = new List<int> { 103, 104 }
+                }
+            };
+            TotalPages = (int)Math.Ceiling((double)DepartmentList.Count / PageSize);
+            StateHasChanged();
+        }
+    }
+
+    // private async Task<int> GetTenantIdFromToken()
+    // {
+    //     var token = await LocalStorageService.GetItemAsync<string>("authToken");
+    //     Aqui você deve decodificar o token JWT para obter o TenantId
+    //     Por enquanto, retornamos um valor fixo como exemplo
+    //     return 1; Substitua por lógica real
+    // }
+
+    private void PreviousPage() => CurrentPage = Math.Max(1, CurrentPage - 1);
+    private void NextPage() => CurrentPage = Math.Min(TotalPages, CurrentPage + 1);
+
+    private void ShowCreateForm()
+    {
+        showCreateForm = true;
+        newDepartment = new CreateDepartmentDto();
+        successMessage = null;
+        errorMessage = null;
+    }
+
+    private void CancelCreate()
+    {
+        showCreateForm = false;
+        newDepartment = new CreateDepartmentDto();
+        successMessage = null;
+        errorMessage = null;
+    }
+
+    private async Task CreateDepartment()
+    {
+        successMessage = null;
+        errorMessage = null;
+
+        if (string.IsNullOrWhiteSpace(newDepartment.Nome))
+        {
+            errorMessage = "Department name is mandatory.";
+            return;
+        }
+
+        var result = await DepartmentService.CreateDepartmentAsync(newDepartment);
+        if (result.Success && result.CreatedDepartment != null)
+        {
+            successMessage = result.Message;
+            DepartmentList.Add(result.CreatedDepartment);
+            TotalPages = (int)Math.Ceiling((double)DepartmentList.Count / PageSize);
+            showCreateForm = false;
+        }
+        else
+        {
+            errorMessage = result.ErrorMessage;
+        }
+    }
+
+    private void ShowDeleteConfirmation(DepartmentResponseDto department)
+    {
+        showDeleteConfirmation = true;
+        departmentToDelete = department;
+        deleteSuccessMessage = null;
+        deleteErrorMessage = null;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        deleteSuccessMessage = null;
+        deleteErrorMessage = null;
+
+        var result = await DepartmentService.DeleteDepartmentAsync(departmentToDelete.DepartmentId);
+        if (result.Success)
+        {
+            deleteSuccessMessage = result.Message;
+            DepartmentList.Remove(departmentToDelete);
+            showDeleteConfirmation = false;
+            departmentToDelete = null;
+        }
+        else
+        {
+            deleteErrorMessage = result.ErrorMessage;
+        }
+        
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteConfirmation = false;
+        departmentToDelete = null;
+        successMessage = null;
+        errorMessage = null;
+    }
+
+    private void ShowEditForm(DepartmentResponseDto department)
+    {
+        showEditForm = true;
+        editingDepartment = new DepartmentResponseDto
+            {
+                DepartmentId = department.DepartmentId,
+                Nome = department.Nome,
+                IsActive = department.IsActive,
+                UserIds = department.UserIds
+            };
+        editSuccessMessage = null;
+        editErrorMessage = null;
+    }
+
+    private async Task UpdateDepartment()
+    {
+        editSuccessMessage = null;
+        editErrorMessage = null;
+
+        
+
+        // Quando a API estiver pronta, use o código abaixo:
+        /*
+        var updateDto = new UpdateDepartmentDto
+        {
+            Nome = editingDepartment.Nome,
+            IsActive = editingDepartment.IsActive
+            };
+        var result = await DepartmentService.UpdateDepartmentAsync(editingDepartment.DepartmentId, updateDto);
+        if (result.Success && result.UpdatedDepartment != null)
+        {
+            var index = DepartmentList.FindIndex(d => d.DepartmentId == editingDepartment.DepartmentId);
+            if (index != -1)
+            {
+                DepartmentList[index] = result.UpdatedDepartment;
+                editSuccessMessage = result.Message;
+                showEditForm = false;
+                editingDepartment = null;
+                StateHasChanged();
+                }
+            else
+            {
+                editErrorMessage = "Department not found.";
+                }
+            }
+        else
+        {
+            editErrorMessage = result.ErrorMessage;
+            }
+        */
+
+        // Por enquanto, usando dados fictícios:
+        var index = DepartmentList.FindIndex(d => d.DepartmentId == editingDepartment.DepartmentId);
+        if (index != -1)
+        {
+            DepartmentList[index] = editingDepartment;
+            editSuccessMessage = "Department updated successfully!";
+            showEditForm = false;
+            editingDepartment = null;
+            StateHasChanged();
+        }
+        else
+        {
+            editErrorMessage = "Department not found.";
+        }
+    }
+
+    private void CancelEdit()
+    {
+        showEditForm = false;
+        editingDepartment = null;
+        editSuccessMessage = null;
+        editErrorMessage = null;
+    }
+
+}

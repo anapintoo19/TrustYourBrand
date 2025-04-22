@@ -1,0 +1,598 @@
+﻿@page "/users"
+@layout MainLayout
+@using TrustYourBrand.Models
+@using TrustYourBrand.Services
+@inject IHttpClientFactory HttpClientFactory
+@inject TrustYourBrand.Services.IUserService UserService
+@inject TrustYourBrand.Services.ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
+
+<div class="table-container">
+    <div class="table-header">
+        <div class="action-buttons">
+            <button class="btn btn-action" @onclick="OpenCreateUser">Create New User</button>
+            <button class="btn btn-action">Export</button>
+            <button class="btn btn-action">Import</button>
+            <button class="btn btn-action">Select columns</button>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search" class="search-input" />
+        </div>
+    </div>
+
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th class="action-column"></th>
+                <th class="action-column"></th>
+                <th class="action-column"></th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Permission Role</th>
+                <th>Function</th>
+                <th>Departament</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Userslist == null)
+            {
+                <tr><td colspan="8">Loading...</td></tr>
+            }
+            else if (!Userslist.Any())
+            {
+                <tr><td colspan="8">No users found.</td></tr>
+            }
+            else
+            {
+                @foreach (var user in PaginatedUsers)
+                {
+                    <tr>
+                        <td class="action-column">
+                            <span class="material-symbols-outlined action-icon edit-icon" @onclick="() => EditUser(user)">edit</span>
+                        </td>
+                        <td class="action-column">
+                            <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => ShowDeleteConfirmation(user)">delete</span>
+                        </td>
+                        <td class="action-column">
+                            <span class="material-symbols-outlined action-icon delete-icon">history</span>
+                        </td>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Email</td>
+                        <td>@user.Role</td>
+                        <td>@user.Function</td>
+                        <td>@user.Department</td>
+                        
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <span>Page @CurrentPage of @TotalPages</span>
+        <div class="pagination-buttons">
+            <button class="btn btn-pagination" @onclick="PreviousPage">Prev</button>
+            <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+            <button class="btn btn-pagination" @onclick="NextPage">Next</button>
+        </div>
+    </div>
+
+    @if (ShowDeleteModal)
+    {
+        <div class="modal-overlay delete-modal-overlay">
+            <div class="modal-content">
+                <h3>Deactivate User</h3>
+                <p>Are you sure you want to deactivate the user @UserToDelete?.FirstName @UserToDelete?.LastName?</p>
+                <div class="modal-buttons">
+                    <button class="btn btn-confirm" @onclick="ConfirmDelete">CONFIRM</button>
+                    <button class="btn btn-cancel" @onclick="CancelDelete">CANCEL</button>
+                </div>
+
+            </div>
+        </div>
+    }
+
+
+    @if (!string.IsNullOrEmpty(deleteMessage))
+    {
+        <div class="alert" style="@(deleteMessage.Contains("sucess") ? "color: green;" : "color: red;")">
+            @deleteMessage
+        </div>
+    }
+
+    @if (ShowCreateUser)
+    {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <h3>Create User</h3>
+                <form>
+
+                    <table class="edit-user-table">
+                        <tr>
+                            <td>
+                                <div><label for="firstName">First Name*</label><input id="firstName" type="text" placeholder="Insert First Name" @bind="NewUser.FirstName" /></div>
+                            </td>
+                            <td>
+                                <div><label for="lastName">Last Name*</label><input id="lastName" type="text" placeholder="Insert Last Name" @bind="NewUser.LastName" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div><label for="email">E-mail*</label><input id="email" type="email" placeholder="Insert Email" @bind="NewUser.Email" /></div>
+                            </td>
+                            <td>
+                                <div><label for="pin">PIN</label><input id="pin" type="password" placeholder="Insert Pin" @bind="NewUser.Pin" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label for="function">Function</label>
+                                    <select id="function" @bind="NewUser.FunctionId">
+                                        <option value="">Select the function</option>
+                                        @foreach (var func in FuncoesDisponiveis)
+                                        {
+                                            <option value="@func.FunctionId">@func.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div><label for="phoneNumber">Phone Number*</label><input id="phoneNumber" type="tel" placeholder="Insert Phone Number" @bind="NewUser.PhoneNumber" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div><label for="birthday">Birthday</label><input id="birthday" type="date" @bind="NewUser.Birthday" /></div>
+                            </td>
+                            <td>
+                                <div>
+                                    <label for="department">Department</label>
+                                    <select id="department" @bind="NewUser.DepartmentId">
+                                        <option value="">Select the department</option>
+                                        @foreach (var dept in DepartamentosDisponiveis)
+                                        {
+                                            <option value="@dept.DepartmentId">@dept.Nome</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label for="role">Role</label>
+                                    <select id="role" @bind="NewUser.Role">
+                                        <option value="">Select the role</option>
+                                        @foreach (var role in RolesDisponiveis.Where(r => r.Name != "Tenant"))
+                                        {
+                                            <option value="@role.Name">@role.Name</option>
+                                        }
+
+                                    </select>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div>
+                                    <label for="gender">Gender</label>
+                                    <select id="gender" @bind="NewUser.Gender">
+                                        <option value="">Select the gender</option>
+                                        <option value="Masculino">Male</option>
+                                        <option value="Feminino">Female</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                       
+                    </table>
+
+                    <div class="modal-buttons">
+                        <button type="button" class="btn btn-confirm" @onclick="CreateUser">CREATE USER</button>
+                        <button type="button" class="btn btn-cancel" @onclick="CancelCreate">CANCEL</button>
+                    </div>
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <p style="color: red;">@errorMessage</p>
+                    }
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <p style="color: green;">@successMessage</p>
+                    }
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (ShowEditUser)
+    {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <h3>Edit User</h3>
+                <form>
+                    <table class="edit-user-table">
+                        <tr>
+                            <td>
+                                <div><label>First Name</label><input @bind="EditingUser.FirstName" /></div>
+                            </td>
+                            <td>
+                                <div><label>Last Name</label><input @bind="EditingUser.LastName" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div><label>Email</label><input type="email" @bind="EditingUser.Email" /></div>
+                            </td>
+                            <td>
+                                <div><label>Phone Number</label><input type="tel" @bind="EditingUser.PhoneNumber" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label for="function">Function</label>
+                                    <select id="function" @bind="EditingUser.FunctionId">
+                                        <option value="">Select a function</option>
+                                        @foreach (var func in FuncoesDisponiveis)
+                                        {
+                                            <option value="@func.FunctionId">@func.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div><label>Birthday</label><input type="date" @bind="EditingUser.Birthday" disabled /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label for="department">Department</label>
+                                    <select id="department" @bind="EditingUser.DepartmentId">
+                                        <option value="">Select the department</option>
+                                        @foreach (var dept in DepartamentosDisponiveis)
+                                        {
+                                            <option value="@dept.DepartmentId">@dept.Nome</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <label>Gender</label>
+                                    <select @bind="EditingUser.Gender" disabled>
+                                        <option value="">Select the gender</option>
+                                        <option value="Masculino">Male</option>
+                                        <option value="Feminino">Female</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <label>Role</label>
+                                    <select @bind="EditingUser.Role">
+                                        <option value="">Select the role</option>
+                                        @foreach (var role in RolesDisponiveis.Where(r => r.Name != "Tenant"))
+                                        {
+                                            <option value="@role.Name">@role.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div><label>PIN</label><input type="password" @bind="EditingUser.Pin" disabled /></div>
+                            </td> 
+                        </tr>
+                        <tr>
+                            <td>
+                                <div><label>Country</label><input type="text"  /></div>
+                            </td>
+
+                            <td>
+                                <div><label>City</label><input type="text" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div><label>Tenant</label><input type="text" disabled/></div>
+                            </td>
+
+                            <td>
+                                <div><label>Store Tenant</label><input type="text" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div><label>Language</label><input type="text" disabled /></div>
+                            </td>
+
+                            <td>
+                                
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="modal-buttons">
+                        <button type="button" class="btn btn-confirm" @onclick="UpdateUser">EDIT USER</button>
+                        <button type="button" class="btn btn-cancel" @onclick="@(() => ShowEditUser = false)">CANCEL</button>
+                    </div>
+                    @if (!string.IsNullOrEmpty(editErrorMessage))
+                    {
+                        <p style="color: red;">@editErrorMessage</p>
+                    }
+                    @if (!string.IsNullOrEmpty(editSuccessMessage))
+                    {
+                        <p style="color: green;">@editSuccessMessage</p>
+                    }
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+
+@code {
+    private List<TrustYourBrand.Models.User> Userslist { get; set; } = new();
+    private int CurrentPage { get; set; } = 1;
+    private int TotalPages { get; set; } = 1;
+    private const int PageSize = 8;
+    private List<RoleDto> RolesDisponiveis { get; set; } = new();
+    private List<DepartmentDto> DepartamentosDisponiveis { get; set; } = new();
+    private List<FunctionDto> FuncoesDisponiveis { get; set; } = new();
+
+
+    private bool ShowDeleteModal { get; set; } = false;
+    private bool ShowCreateUser { get; set; } = false;
+    private bool ShowEditUser { get; set; } = false;
+
+    private TrustYourBrand.Models.User? UserToDelete { get; set; }
+    private TrustYourBrand.Models.User NewUser { get; set; } = new();
+    private TrustYourBrand.Models.User? EditingUser { get; set; }
+
+    private string? errorMessage;
+    private string? successMessage;
+    private string? deleteMessage;
+    private string? editErrorMessage;
+    private string? editSuccessMessage;
+
+    private List<TrustYourBrand.Models.User> PaginatedUsers =>
+        Userslist
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // var token = await LocalStorageService.GetItemAsync<string>("authToken");
+        // if (string.IsNullOrEmpty(token) || JwtHelper.IsTokenExpired(token))
+        // {
+        //     Console.WriteLine("Token ausente ou expirado. Redirecionando para o login...");
+        //     await LocalStorageService.RemoveItemAsync("authToken");
+        //     NavigationManager.NavigateTo("/login");
+        //     return;
+        // }
+
+        await LoadUsersFromService();
+        RolesDisponiveis = await UserService.GetRoles();
+        DepartamentosDisponiveis = await UserService.GetDepartments();
+        FuncoesDisponiveis = await UserService.GetFunctions();
+
+    }
+
+    // private async Task LoadUsersFromService()
+    // {
+    //     try
+    //     {
+    //         Userslist = await UserService.GetUsers(null);
+    //         TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
+    //     }
+    //     catch
+    //     {
+    //         Userslist = new();
+    //     }
+        
+    //     TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
+
+    // }
+
+    private async Task LoadUsersFromService()
+    {
+        try
+        {
+            // Hardcoding a fictitious user instead of fetching from service
+            Userslist = new List<TrustYourBrand.Models.User>
+            {
+                new TrustYourBrand.Models.User
+                {
+                    Id = 1,
+                    FirstName = "João",
+                    LastName = "Silva",
+                    Email = "joao.silva@example.com",
+                    PhoneNumber = "+351 912 345 678",
+                    Role = "User",
+                    FunctionId = 1,
+                    Function = "Analista",
+                    DepartmentId = 1,
+                    Department = "TI",
+                    Birthday = DateTime.Parse("1990-05-15"),
+                    Gender = "Masculino",
+                    Pin = "1234",
+                    IsActive = true,
+                    IsFirstLogin = true
+                }
+            };
+            TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
+        }
+        catch
+        {
+            Userslist = new();
+            TotalPages = 1;
+        }
+    }
+
+    private void PreviousPage() => CurrentPage = Math.Max(1, CurrentPage - 1);
+    private void NextPage() => CurrentPage = Math.Min(TotalPages, CurrentPage + 1);
+
+    private void EditUser(TrustYourBrand.Models.User user)
+    {
+        EditingUser = new TrustYourBrand.Models.User
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                DepartmentId = user.DepartmentId,
+                Department = user.Department,
+                FunctionId = user.FunctionId,
+                Function = user.Function,
+                Birthday = user.Birthday,
+                Gender = user.Gender,
+                Role = user.Role,
+                IsActive = user.IsActive
+            };
+
+        ShowEditUser = true;
+        editErrorMessage = null;
+        editSuccessMessage = null;
+    }
+
+    private async Task UpdateUser()
+    {
+        if (EditingUser == null) return;
+
+        editErrorMessage = null;
+        editSuccessMessage = null;
+
+        var roleSelecionada = RolesDisponiveis.FirstOrDefault(r => r.Name == EditingUser.Role);
+
+
+        if (roleSelecionada == null)
+        {
+            editErrorMessage = "Invalid selected role.";
+            return;
+        }
+
+        // Construir DTO correto
+        var dto = new UpdateUserDto
+            {
+                FirstName = EditingUser.FirstName,
+                LastName = EditingUser.LastName,
+                Email = EditingUser.Email,
+                PhoneNumber = EditingUser.PhoneNumber,
+                DepartmentId = EditingUser.DepartmentId,
+                Birthday = EditingUser.Birthday,
+                Gender = EditingUser.Gender,
+                FunctionId = EditingUser.FunctionId,
+                RoleId = roleSelecionada.RoleId,
+                IsActive = EditingUser.IsActive,
+                IsFirstLogin = EditingUser.IsFirstLogin,
+                Pin = EditingUser.Pin
+            };
+
+        var result = await UserService.UpdateUser(EditingUser.Id, dto);
+        if (result.Success)
+        {
+            editSuccessMessage = result.Message ?? "User edited successfully.";
+            await LoadUsersFromService();
+            await Task.Delay(1500);
+            ShowEditUser = false;
+        }
+        else
+        {
+            editErrorMessage = result.ErrorMessage ?? "Error editing user.";
+        }
+    }
+
+
+    private void ShowDeleteConfirmation(TrustYourBrand.Models.User user)
+    {
+        UserToDelete = user;
+        ShowDeleteModal = true;
+    }
+
+    private void CancelDelete()
+    {
+        ShowDeleteModal = false;
+        UserToDelete = null;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (UserToDelete != null)
+        {
+            var result = await UserService.DeactivateUser(UserToDelete.Id);
+            deleteMessage = result.Success ? "User successfully deactivated." : result.ErrorMessage;
+            ShowDeleteModal = false;
+            UserToDelete = null;
+            await LoadUsersFromService();
+            await Task.Delay(2000);
+            deleteMessage = null;
+        }
+    }
+
+    private void OpenCreateUser()
+    {
+        NewUser = new();
+        ShowCreateUser = true;
+    }
+
+    private void CancelCreate()
+    {
+        ShowCreateUser = false;
+        NewUser = new();
+        errorMessage = null;
+        successMessage = null;
+    }
+
+    private async Task CreateUser()
+    {
+        errorMessage = null;
+        successMessage = null;
+
+        if (string.IsNullOrWhiteSpace(NewUser.FirstName) || string.IsNullOrWhiteSpace(NewUser.LastName) || string.IsNullOrWhiteSpace(NewUser.PhoneNumber) || string.IsNullOrWhiteSpace(NewUser.Email))
+        {
+            errorMessage = "The First Name, Last Name, Phone Number and Email fields are mandatory.";
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(NewUser.Email) && Userslist.Any(u => u.Email?.Equals(NewUser.Email, StringComparison.OrdinalIgnoreCase) == true))
+        {
+            errorMessage = "This email is already in use by another user.";
+            return;
+        }
+
+        var roleSelecionada = RolesDisponiveis.FirstOrDefault(r => r.Name == NewUser.Role);
+        if (roleSelecionada == null)
+        {
+            errorMessage = "Invalid selected role.";
+            return;
+        }
+
+        NewUser.RoleId = roleSelecionada.RoleId;
+
+        var result = await UserService.CreateUser(NewUser);
+        if (result.Success && result.CreatedUser != null)
+        {
+            successMessage = result.Message ?? "User created successfully";
+            await LoadUsersFromService();
+            TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
+            await Task.Delay(2000);
+            ShowCreateUser = false;
+            NewUser = new();
+        }
+        else
+        {
+            errorMessage = result.ErrorMessage ?? "Error creating user.";
+        }
+    }
+}
+
+<link href="css/Users.css" rel="stylesheet" />
+<link href="css/PopUpStyle.css" rel="stylesheet" />
+<link href="css/PopUpDelete.css" rel="stylesheet" />

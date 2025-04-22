@@ -1,0 +1,170 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject TrustYourBrand.Services.ILocalStorageService LocalStorage
+@inject IJSRuntime JS
+
+<div class="page">
+    <div class="navmenu-container">
+        <NavMenu CollapseNavMenu="collapseNavMenu" />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a class="nav-link menu-btn btn-hamburguer @(collapseNavMenu ? "" : "active")" href="@currentPage" aria-label="Toggle navigation menu" @onclick="ToggleNavMenu">
+
+                <span class="material-symbols-outlined icon-thick icon-spacing menu-icon">menu</span>
+
+            </a>
+
+            <div class="language-dropdown">
+                <button class="language-button language-button-white" @onclick="ToggleLanguageDropdown">
+                    <span class="material-symbols-outlined">language</span>
+                    <span>@currentLanguage</span>
+                </button>
+                @if (showLanguageDropdown)
+                {
+                    <div class="dropdown-content">
+                        <button class="dropdown-item" @onclick='() => ChangeLanguage("pt")'>Portuguese</button>
+                        <button class="dropdown-item" @onclick='() => ChangeLanguage("en")'>English</button>
+                    </div>
+                }
+            </div>
+
+            <div class="user-dropdown">
+                <button class="user-button user-button-white" @onclick="ToggleDropdown">
+                    <span class="material-symbols-outlined">account_circle</span>
+                </button>
+                @if (showDropdown)
+                {
+                    <div class="dropdown-content">
+                        <button class="dropdown-item" @onclick="Logout">Logout</button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="page-header">
+            <h2>@PageName</h2>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private string currentPage = "/inspection"; // Página padrão
+    private bool showDropdown = false;
+    private bool showLanguageDropdown = false;
+    private string currentLanguage = "en"; // language padrão
+    private string PageName => GetPageNameFromUrl(currentPage);
+
+    protected override async Task OnInitializedAsync() // Mude para async Task
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+        currentPage = NavigationManager.Uri;
+        await LoadSavedLanguage(); // Chame o método aqui
+    }
+
+    private async Task LoadSavedLanguage() // Adicione este método
+    {
+        var savedLanguage = await LocalStorage.GetItemAsync<string>("language");
+        currentLanguage = savedLanguage ?? "en";
+    }
+
+    private async Task ChangeLanguage(string languageCode) // Substitua o método anterior por este
+    {
+        currentLanguage = languageCode;
+        showLanguageDropdown = false;
+        await LocalStorage.SetItemAsync("language", languageCode);
+        StateHasChanged();
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    }
+
+
+    private string GetPageNameFromUrl(string url)
+    {
+        // Obtém o último segmento da URL
+        var uri = new Uri(url);
+        var pageName = uri.Segments.LastOrDefault()?.Trim('/') ?? "Home"; // Se não houver segmento, usa "Home" como padrão
+
+        // Capitaliza a primeira letra e remove hífens, se necessário
+        if (string.IsNullOrEmpty(pageName))
+            return "Home";
+
+        // Substitui hífens por espaços e capitaliza cada palavra
+        pageName = pageName.Replace("-", " ");
+        return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(pageName.ToUpper());
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentPage = e.Location;
+        StateHasChanged();
+    }
+
+    private void ToggleNavMenu()
+    {
+        if (!collapseNavMenu)
+        {
+            NavigationManager.NavigateTo(currentPage);
+        }
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private void ToggleDropdown()
+    {
+        showDropdown = !showDropdown;
+        showLanguageDropdown = false; // Fecha o dropdown de idiomas se estiver aberto
+    }
+
+    private void ToggleLanguageDropdown()
+    {
+        showLanguageDropdown = !showLanguageDropdown;
+        showDropdown = false; // Fecha o outro dropdown se estiver aberto
+    }
+
+    private void Logout()
+    {
+        try
+        {
+            // await LocalStorage.RemoveItemAsync("authToken");
+            showDropdown = false;
+            NavigationManager.NavigateTo("/login?logout=true", forceLoad: true); // Adicionado parâmetro para indicar logout
+            Console.WriteLine("Logout realizado com sucesso!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao fazer logout: {ex.Message}");
+        }
+
+    }
+
+    
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
+
+<style >
+    .page-header {
+        padding: 30px 20px;
+        background-color: #f5f5f5; /* Cor de fundo clara para destacar o header */
+        border-bottom: 1px solid #d8d5d5; /* Linha sutil na parte inferior */
+        text-align: left; /* Centraliza o texto */
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 2rem; /* Tamanho do texto */
+        color: #6aa4d5; /* Cor do texto */
+    }
+
+    .content {
+        margin-top: 60px; /* Adiciona espaço acima do conteúdo, movendo a tabela mais para baixo */
+    }
+</style>

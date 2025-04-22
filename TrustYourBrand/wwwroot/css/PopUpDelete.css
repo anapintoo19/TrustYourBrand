@@ -1,0 +1,27 @@
+﻿/* Scope styles to the delete modal overlay */
+.delete-modal-overlay .modal-content {
+    width: 500px; /* Increased width to 500px for a more rectangular shape */
+    min-height: 150px; /* Reduced height to 150px for a flatter look */
+    padding: 15px; /* Keep padding compact */
+}
+
+    /* Adjust the title */
+    .delete-modal-overlay .modal-content h3 {
+        font-size: 1.3em; /* Slightly smaller title */
+        margin-bottom: 15px; /* Reduced margin to fit the flatter modal */
+    }
+
+    /* Style the message */
+    .delete-modal-overlay .modal-content p {
+        font-size: 1em;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px; 
+    }
+
+    /* Position buttons with Confirm on the left and Cancel on the right */
+    .delete-modal-overlay .modal-content .modal-buttons {
+        display: flex;
+        justify-content: space-between; /* Spread buttons: Confirm on left, Cancel on right */
+        gap: 10px; /* Space between buttons */
+    }

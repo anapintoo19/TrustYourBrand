@@ -1,0 +1,364 @@
+﻿@page "/login"
+@layout LoginLayout
+@inject ILoginService LoginService
+@inject NavigationManager NavigationManager
+@inject TrustYourBrand.Services.ILocalStorageService LocalStorage
+@inject ILocalStorageService LocalStorage
+@inject IUserService UserService
+@using TrustYourBrand.Models
+@using TrustYourBrand.Services
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+
+<div class="login-container">
+    <div class="login-form-container">
+        <img src="/images/logo_tyb.png" class="login-logo" alt="Logo" />
+
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="login-label">
+                <label>Phone Number:</label>
+                <InputText @bind-Value="loginModel.PhoneNumber"
+                           placeholder="Type Phone Number (910 000 000)"
+                           class="@((string.IsNullOrEmpty(loginModel.PhoneNumber) || errorMessage != null) && formSubmitted ? "input-error" : "")" />
+                <ValidationMessage For="@(() => loginModel.PhoneNumber)" />
+            </div>
+            <div class="login-label">
+                <label>PIN:</label>
+                <InputText @bind-Value="loginModel.Pin"
+                           placeholder="Type PIN _ _ _ _"
+                           type="password"
+                           class="@((string.IsNullOrEmpty(loginModel.Pin) || errorMessage != null) && formSubmitted ? "input-error" : "")" />
+                <ValidationMessage For="@(() => loginModel.Pin)" />
+            </div>
+            <button type="submit" @onclick="() => formSubmitted = true">SUBMIT</button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <p class="error-message">@errorMessage</p>
+        }
+
+        <p>
+            <a href="/forgot-pin" class="forgot-pin">Forgot Your PIN?</a>
+        </p>
+    </div>
+</div>
+
+@if (showPinPopup)
+{
+    <div class="pin-popup-overlay">
+        <div class="pin-popup">
+            <h3>Change Your PIN</h3>
+            <p>Please, set a new PIN to continue.</p>
+
+            <EditForm Model="@changePinModel" OnValidSubmit="@HandleChangePinSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="forgot-pin-label">
+                    <label>New PIN:</label>
+                    <InputText type="password"
+                               @bind-Value="changePinModel.NewPin"
+                               placeholder="Enter new 4-digit PIN"
+                               class="@((string.IsNullOrEmpty(changePinModel.NewPin) && changePinFormSubmitted) || (changePinErrorMessage != null && changePinFormSubmitted) ? "input-error" : "")" />
+                    <ValidationMessage For="@(() => changePinModel.NewPin)" />
+                </div>
+
+                <div class="forgot-pin-label">
+                    <label>Confirm New PIN:</label>
+                    <InputText type="password"
+                               @bind-Value="changePinModel.ConfirmPin"
+                               placeholder="Confirm new 4-digit PIN"
+                               class="@((string.IsNullOrEmpty(changePinModel.ConfirmPin) && changePinFormSubmitted) || (changePinErrorMessage != null && changePinFormSubmitted) ? "input-error" : "")" />
+                    <ValidationMessage For="@(() => changePinModel.ConfirmPin)" />
+                </div>
+
+                <div class="button-container">
+                    <button type="submit" class="btn-primary">CONFIRM</button>
+                </div>
+            </EditForm>
+
+            @if (!string.IsNullOrEmpty(changePinErrorMessage))
+            {
+                <p class="error-message">@changePinErrorMessage</p>
+            }
+
+            @if (!string.IsNullOrEmpty(changePinSuccessMessage))
+            {
+                <p class="success-message">@changePinSuccessMessage</p>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private LoginModel loginModel = new();
+    private ChangePinModel changePinModel = new();
+    private string? errorMessage;
+    private string? changePinErrorMessage;
+    private string? changePinSuccessMessage;
+    private bool formSubmitted = false;
+    private bool showPinPopup = false;
+    private bool changePinFormSubmitted = false;
+    private string? userId;
+
+    protected override void OnInitialized()
+    {
+        if (loginModel == null)
+        {
+            loginModel = new LoginModel();
+        }
+        if (changePinModel == null)
+        {
+            changePinModel = new ChangePinModel();
+        }
+    }
+
+    private async Task HandleLogin()
+    {
+        formSubmitted = true;
+        if (string.IsNullOrEmpty(loginModel.PhoneNumber) || string.IsNullOrEmpty(loginModel.Pin))
+        {
+            errorMessage = "Please, fill in all fields.";
+            _ = ShowMessageForDuration("error");
+            return;
+        }
+
+        try
+        {
+            Console.WriteLine($"Enviando login: {System.Text.Json.JsonSerializer.Serialize(loginModel)}");
+            var result = await LoginService.LoginAsync(loginModel);
+            if (result.Success)
+            {
+                // Decodificar o token JWT para verificar a role
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(result.Token);
+                var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "role" || c.Type == ClaimTypes.Role);
+                if (roleClaim != null && roleClaim.Value.Equals("Store Manager", StringComparison.OrdinalIgnoreCase))
+                {
+                    errorMessage = "Users with the 'Store Manager' role are not allowed to access the backoffice.";
+                    _ = ShowMessageForDuration("error");
+                    Console.WriteLine("❌ Login bloqueado: Role Store Manager detectada.");
+                    return;
+                }
+
+                // Armazenar o token e prosseguir
+                await LocalStorage.SetItemAsync("authToken", result.Token);
+
+                // Extrair o UserId do token
+                userId = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+                await LocalStorage.SetItemAsync("userId", userId); // Armazenar o UserId
+
+                // Verificar se o token está expirado
+                if (JwtHelper.IsTokenExpired(result.Token))
+                {
+                    errorMessage = "Expired token. Please log in again.";
+                    _ = ShowMessageForDuration("error");
+                    await LocalStorage.RemoveItemAsync("authToken");
+                    return;
+                }
+
+                // Verificar se é o primeiro login
+                if (result.IsFirstLogin == true)
+                {
+                    showPinPopup = true; // Mostrar o pop-up
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("/inspection");
+                }
+            }
+            else
+            {
+                if (result.ErrorMessage?.Contains("Unauthorized") == true || result.ErrorMessage?.Contains("Invalid credentials") == true)
+                {
+                    var exists = await LoginService.CheckUserExists(loginModel.PhoneNumber);
+                    if (!exists)
+                    {
+                        errorMessage = "User not found. Please register the user in the system.";
+                        _ = ShowMessageForDuration("error");
+                        return;
+                    }
+                }
+                errorMessage = result.ErrorMessage ?? "Login failed.";
+                _ = ShowMessageForDuration("error");
+                Console.WriteLine($"Erro no login: {errorMessage}");
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unexpected error: {ex.Message}";
+            _ = ShowMessageForDuration("error");
+            Console.WriteLine($"Exceção: {ex}");
+        }
+    }
+
+    private async Task HandleChangePinSubmit()
+    {
+        changePinFormSubmitted = true; // Indica que o formulário foi submetido
+        changePinErrorMessage = null;
+        changePinSuccessMessage = null;
+
+        // Validar o PIN
+        if (string.IsNullOrEmpty(changePinModel.NewPin) || changePinModel.NewPin.Length != 4 || !changePinModel.NewPin.All(char.IsDigit))
+        {
+            changePinErrorMessage = "The new PIN must have exactly 4 numeric digits.";
+            _ = ShowMessageForDuration("changePinError");
+            return;
+        }
+
+        if (changePinModel.NewPin != changePinModel.ConfirmPin)
+        {
+            changePinErrorMessage = "The new PIN and confirmation do not match.";
+            _ = ShowMessageForDuration("changePinError");
+            return;
+        }
+
+        try
+        {
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out var parsedUserId))
+            {
+                changePinErrorMessage = "Unable to identify the user. Please log in again.";
+                _ = ShowMessageForDuration("changePinError");
+                return;
+            }
+
+            var result = await LoginService.ChangePinAsync(parsedUserId, changePinModel.NewPin, changePinModel.ConfirmPin);
+            if (result.Success)
+            {
+                changePinSuccessMessage = "PIN set successfully!";
+                _ = ShowMessageForDuration("changePinSuccess");
+                NavigationManager.NavigateTo("/inspection");
+            }
+            else
+            {
+                changePinErrorMessage = result.ErrorMessage ?? "Error setting PIN.";
+            }
+        }
+        catch (Exception ex)
+        {
+            changePinErrorMessage = $"Unexpected error: {ex.Message}";
+            _ = ShowMessageForDuration("changePinError");
+            Console.WriteLine($"Exceção: {ex}");
+        }
+    }
+
+    private async Task ShowMessageForDuration(string messageType)
+    {
+        await Task.Delay(2000); // Tempo fixo de exibição (3 segundos)
+
+        if (messageType == "error")
+            errorMessage = null;
+        else if (messageType == "changePinError")
+            changePinErrorMessage = null;
+        else if (messageType == "changePinSuccess")
+            changePinSuccessMessage = null;
+    }
+
+
+    public class ChangePinModel
+    {
+        public string NewPin { get; set; } = string.Empty;
+        public string ConfirmPin { get; set; } = string.Empty;
+    }
+}
+
+<link href="/css/Login.css" rel="stylesheet" />
+
+<style>
+    .pin-popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .pin-popup {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Igual ao forgot-pin-form-container */
+        text-align: center;
+        width: 400px; /* Igual ao forgot-pin-form-container */
+    }
+
+        .pin-popup h3 {
+            margin-bottom: 30px; /* Igual ao forgot-pin-form-container */
+        }
+
+    .forgot-pin-label { /* Reutilizando a classe do forgotpin.razor */
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+        .forgot-pin-label label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .forgot-pin-label input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+            .forgot-pin-label input:focus {
+                outline: 1px solid #868685; /* Estilo padrão para foco */
+            }
+
+            /* Sobrescreve o estilo :focus quando o campo tem erro */
+            .forgot-pin-label input.input-error,
+            .forgot-pin-label input.input-error:focus {
+                border: 1px solid red !important; /* Garante que a borda seja vermelha */
+                outline: 1px solid red !important; /* Garante que o outline seja vermelho, sobrescrevendo qualquer estilo verde */
+            }
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+    .btn-primary {
+        width: 100%; /* Igual ao botão do forgotpin.razor */
+        padding: 10px;
+        background-color: #868685; /* Cor consistente com forgotpin.razor */
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+        .btn-primary:hover {
+            background-color: #868685; /* Cor de hover consistente */
+        }
+
+    .error-message {
+        color: red;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .success-message {
+        color: green;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .input-error {
+        border: 2px solid red !important;
+        outline: none !important;
+    }
+
+        
+</style>

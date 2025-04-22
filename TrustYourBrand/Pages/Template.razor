@@ -1,0 +1,243 @@
+﻿@page "/template"
+@layout MainLayout
+
+<div class="table-container">
+    <div class="table-header">
+        <div class="action-buttons">
+            <button class="btn btn-action" @onclick="OpenCreateTemplate">Create New Template</button>
+            <button class="btn btn-action">Export</button>
+            <button class="btn btn-action">Import</button>
+            <button class="btn btn-action">Select columns</button>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search" class="search-input" />
+        </div>
+    </div>
+
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th class="action-column"></th>
+                <th class="action-column"></th>
+                <th>Template Name</th>
+                <th>Brand</th>
+                <th>Frequency</th>
+                <th>Sections</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="action-column">
+                    <span class="material-symbols-outlined action-icon edit-icon">edit</span>
+                </td>
+                <td class="action-column">
+                    <span class="material-symbols-outlined action-icon delete-icon" >delete</span>
+                </td>
+                <td>Controlo de qualidade sapatos</td>
+                <td>Camel</td>
+                <td>Diariamente</td>
+                <td>2</td>
+                
+
+            </tr>
+            <tr>
+                <td class="action-column">
+                    <span class="material-symbols-outlined action-icon edit-icon">edit</span>
+                </td>
+                <td class="action-column">
+                    <span class="material-symbols-outlined action-icon delete-icon">delete</span>
+                </td>
+                <td>Bilhar</td>
+                <td>Hyundai</td>
+                <td>Anualmente</td>
+                <td>1</td>
+
+
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <span>Page 1 of 1</span>
+        <div class="pagination-buttons">
+            <button class="btn btn-pagination">Prev</button>
+            <button class="btn btn-pagination btn-active">1</button>
+            <button class="btn btn-pagination">Next</button>
+        </div>
+    </div>
+
+    @if (ShowCreateTemplate)
+    {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <h3>Create Template</h3>
+                <form>
+                    <div class="stepper-container">
+                        <div class="step @(CurrentStep >= 1 ? "active" : "")">
+                            <div class="circle">1</div>
+                            <span>Information</span>
+                        </div>
+                        <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 2 ? "active" : "")">arrow_forward</span>
+                        <div class="step @(CurrentStep >= 2 ? "active" : "")">
+                            <div class="circle">2</div>
+                            <span>Question</span>
+                        </div>
+                        
+                        
+                        
+                    </div>
+                    <div class="step-content">
+                        @switch (CurrentStep)
+                        {
+                            case 1:
+                                <h3 style="text-align: left; color: #6aa4d5;">Information</h3>
+                                <table style="width: 100%; table-layout: fixed; ">
+
+                                    <tr>
+                                        <td style="width: 50%; padding-right: 10px;">
+                                            <label for="template" style="text-align:left;">Language</label>
+                                            <select id="template" class="template-select" style="width: 100%;">
+                                                <option value="">Select the Language</option>
+                                                <option value="">Portuguese</option>
+                                                <option value="">English</option>
+                                            </select>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 50%; padding-right: 10px;">
+                                            <label for="name" style="text-align:left; margin-top: 20px;">Inspection Name</label>
+                                            <input type="text" id="name" class="input-name" placeholder="Enter the Name of the inspection" style="width: 100%;" />
+
+                                        </td>
+
+                                        <td style="width: 50%; padding-right: 10px;">
+                                            <label for="template" style="text-align:left;">Brand</label>
+                                            <select id="template" class="template-select" style="width: 100%;">
+                                                <option value="">Select the Brand</option>
+                                                <option value="">Camel</option>
+                                                <option value="">Hyundai</option>
+                                            </select>
+                                        </td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 50%; padding: 0 10px;">
+                                            <label for="description" style="text-align:left; margin-top: 20px;">Description</label>
+                                            <input type="text" id="description" placeholder="Enter the Description of the inspection" style="width: 100%;" />
+                                        </td>
+
+                                        <td style="width: 50%; padding-left: 10px;">
+                                            <label for="frequency" style="text-align:left; margin-top: 20px;">Frequency</label>
+                                            <select id="frequency" class="template-select" style="width: 100%;">
+                                                <option value="">Select the Frequency</option>
+                                                <option value="">Weekly</option>
+                                                <option value="">Monthly</option>
+                                                <option value="">Annually</option>
+                                            </select>
+
+                                        </td>
+                                    </tr>
+                                    
+                                </table>
+
+
+                                break;
+                            case 2:
+                                <h3 style="text-align: left; color: #6aa4d5;">Question</h3>
+                                <div class="dropdown-section">
+                                    <select>
+                                        <option value="">Add Section</option>
+                                        <option value="">Bilhar</option>
+                                        <option value="">Sala</option>
+                                    </select>
+                                </div>
+                                <div class="table-container-selection">
+                                    <table class="selection-table">
+                                        <thead>
+                                            <tr>
+                                                <th id="sectionHeader">Section</th>
+                                                <th>Response</th>
+                                                <th class="action-column"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><input type="text" placeholder="Type your question here" style="width: 100%;" /></td>
+                                                <td>
+                                                    <select class="response-select" disabled>
+                                                        <option value="">Select the Response</option>
+                                                        <option value="">Yes/No</option>
+                                                        <option value="">0-10 (Scale)</option>
+                                                        <option value="">Good/Enough/Bad</option>
+                                                    </select>
+                                                </td>
+                                                <td class="action-column">
+                                                    <span class="material-symbols-outlined action-icon delete-icon">delete</span>
+                                                </td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+
+                                    <div class="pagination-table-selection">
+                                        <span>Page 1 of 1</span>
+                                        <div class="pagination-buttons-selection">
+                                            <button class="btn btn-pagination-selection">Prev</button>
+                                            <button class="btn btn-pagination-selection btn-active">1</button>
+                                            <button class="btn btn-pagination-selection">Next</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                break;
+                            
+                        }
+                    </div>
+                    <div class="navigation-template">
+                        @if (CurrentStep == 2)
+                        {
+                            <button type="button" class="previous" @onclick="PreviousStep">PREVIOUS</button>
+                            <button type="button" class="btn-create-template">CREATE TEMPLATE</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn-next" @onclick="NextStep">NEXT</button>
+                        }
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+
+@code {
+    private bool ShowCreateTemplate { get; set; } = false;
+    private int CurrentStep { get; set; } = 1;
+
+    private void OpenCreateTemplate()
+    {
+        // NewTemplate = new();
+        ShowCreateTemplate = true;
+    }
+
+    private void NextStep()
+    {
+        if (CurrentStep < 4)
+        {
+            CurrentStep++;
+        }
+    }
+
+    private void PreviousStep()
+    {
+        if (CurrentStep > 1)
+        {
+            CurrentStep--;
+        }
+    }
+}
+
+<link href="css/Template.css" rel="stylesheet" />

@@ -1,0 +1,816 @@
+﻿/* UsersTable.css */
+.table-container {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+/* Cabeçalho com botões e busca */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Estilo para as colunas de ação (Editar e Eliminar) */
+.action-column {
+    width: 40px; /* Largura fixa para as colunas de ação */
+    text-align: center;
+}
+
+/* Estilo para os ícones de ação */
+.action-icon {
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.edit-icon {
+    color: #666; /* Cor padrão do ícone de editar */
+}
+
+    .edit-icon:hover {
+        color: #007bff; /* Cor ao passar o mouse (azul, por exemplo) */
+    }
+
+.delete-icon {
+    color: #666; /* Cor padrão do ícone de eliminar */
+}
+
+    .delete-icon:hover {
+        color: #dc3545; /* Cor ao passar o mouse (vermelho, por exemplo) */
+    }
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-action {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-action:hover {
+        background-color: #d0d0d0;
+    }
+
+.search-bar {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 200px;
+}
+
+/* Estilo da tabela */
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+    .users-table th,
+    .users-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .users-table th {
+        background-color: #e0e0e0;
+        color: #333;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .users-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .users-table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+/* Paginação */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-pagination {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-pagination:hover {
+        background-color: #d0d0d0;
+    }
+
+    .btn-pagination.btn-active {
+        background-color: #6aa4d5;
+        color: white;
+        border-color: #6aa4d5;
+    }
+
+/* Estilo do modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escurecido */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+    .modal-content p {
+        margin: 0 0 20px 0;
+        font-size: 16px;
+        color: #333;
+    }
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-cancel {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-cancel:hover {
+        background-color: #d0d0d0;
+    }
+
+.btn-confirm {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #dc3545; /* Vermelho para confirmar exclusão */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-confirm:hover {
+        background-color: #c82333;
+    }
+
+/* Pop-Up Style de criar */
+/* POP UP */
+/* Estilização do overlay do modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Estilização do conteúdo do modal */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 900px; /* Largura ajustada para acomodar dois campos por linha */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+    /* Estilização do título */
+    .modal-content h3 {
+        margin-top: 0;
+        font-size: 1.5em;
+        color: #6aa4d5; /* Cor azul do título na imagem */
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    /* Estilização dos campos e rótulos */
+    .modal-content div {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .modal-content label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+        color: #333;
+    }
+
+    .modal-content input,
+    .modal-content select {
+        width: 48%; /* Cada campo ocupa cerca de metade da largura para duas colunas */
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 1em;
+    }
+
+        .modal-content input[type="password"] {
+            /* Adicione ícone ou estilo específico se necessário */
+        }
+
+/* Estilização dos botões */
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+    .modal-buttons button {
+        padding: 10px 20px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1em;
+    }
+
+    .modal-buttons .btn-confirm {
+        background-color: #6aa4d5 !important; /* Cor azul do botão CREATE */
+        color: black !important;
+    }
+
+    .modal-buttons .btn-cancel {
+        background-color: #868685 !important; /* Cor branca do botão CANCEL */
+        color: black !important;
+        /* border: 1px solid #ccc; */
+    }
+
+    /* Hover effects para botões */
+    .modal-buttons .btn-confirm:hover {
+        background-color: #6aa4d5;
+        border: 1px solid black;
+    }
+
+    .modal-buttons .btn-cancel:hover {
+        background-color: #868685;
+        border: 1px solid black;
+    }
+
+/* Campos obrigatórios com asterisco */
+.modal-content label:after {
+    content: attr(data-required) " ";
+    color: red;
+}
+
+.modal-content label[data-required="*"]:after {
+    content: "* ";
+}
+
+/* Modal de Inspection */
+.stepper-container {
+    display: flex;
+    align-items: center !important;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center !important;
+    margin: 0 10px;
+}
+
+.circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ccc;
+    display: flex;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+}
+
+.step.active .circle {
+    background-color: #6aa4d5;
+}
+
+.arrow-icon {
+    font-size: 24px !important; /* Aumenta o tamanho da seta */
+    color: #868685;
+    transform: translateY(-20px) scaleX(2.0) !important; /* Escala a seta horizontalmente para "esticar" */
+    align-self: center !important; /* Mantém o alinhamento vertical */
+}
+
+    .arrow-icon.active {
+        color: #6aa4d5;
+    }
+
+.step-content {
+    margin: 20px 0;
+    display: block !important;
+    text-align: center;
+}
+
+.navigation {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #6aa4d5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+.info-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+    .info-step .form-group {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 10px;
+    }
+
+.left-title {
+    text-align: left;
+    width: 100%;
+    margin-bottom: 10px;
+    color: #6aa4d5;
+}
+
+.modal-content select.template-select {
+    width: 100% !important;
+    /* max-width: 400px; */
+}
+
+.modal-content input.input-name {
+    width: 100% !important;
+    /* max-width: 400px; */
+}
+
+.modal-content input.start-date {
+    width: 100% !important;
+    /* max-width: 400px; */
+}
+
+.modal-content div.form-group {
+    display: flex;
+    flex-direction: column; /* Garante que label e input fiquem em colunas por padrão */
+    margin-bottom: 15px;
+    width: 100%; /* Ocupa a largura total por padrão */
+}
+
+.modal-content table label {
+    width: 100%; /* Faz o label ocupar toda a largura da célula */
+    display: block; /* Garante que o label se comporte como um bloco */
+    box-sizing: border-box; /* Inclui padding e borda na largura */
+}
+
+/* Modal de Inspection */
+.stepper-container {
+    display: flex;
+    align-items: center !important;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center !important;
+    margin: 0 10px;
+}
+
+.circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ccc;
+    display: flex;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+}
+
+.step.active .circle {
+    background-color: #6aa4d5;
+}
+
+.arrow-icon {
+    font-size: 20px;
+    color: #868685;
+    transform: translateY(-20px);
+    align-self: center !important; /* Alinha a seta verticalmente com os círculos */
+}
+
+    .arrow-icon.active {
+        color: #6aa4d5;
+    }
+
+.step-content {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.navigation-template {
+    display: flex;
+    justify-content: flex-end !important; /* Alinha os botões à direita */
+    align-items: center; /* Alinha verticalmente os botões */
+    gap: 10px;
+    margin-top: 20px;
+}
+
+    /* Estilo padrão para todos os botões na navegação */
+    .navigation-template button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        text-transform: uppercase; /* Mantém o texto em maiúsculas, como na imagem */
+    }
+
+    /* Estilo padrão do botão PRE splicious */
+    .navigation-template .previous {
+        background-color: white; /* Cor padrão */
+        color: black;
+        border: 1px solid black; /* Borda padrão */
+    }
+
+    /* Estilo padrão do botão NEXT */
+    .navigation-template .btn-next {
+        background-color: #6aa4d5; /* Cor padrão */
+        color: black;
+    }
+
+        .navigation-template .btn-next:hover {
+            background-color: #6aa4d5;
+            border: 1px solid black; /* Borda preta ao passar o mouse */
+        }
+
+    /* Estilo padrão do botão CREATE TEMPLATE */
+    .navigation-template .btn-create-template {
+        background-color: #6aa4d5 !important;
+        color: black;
+    }
+
+        .navigation-template .btn-create-template:hover {
+            background-color: #6aa4d5 !important;
+            border: 1px solid black;
+        }
+
+button {
+    padding: 10px 20px;
+    background-color: #6aa4d5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+.info-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+    .info-step .form-group {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 10px;
+    }
+
+.left-title {
+    text-align: left;
+    width: 100%;
+    margin-bottom: 10px;
+    color: #6aa4d5;
+}
+
+/* Ajustar o container da tabela */
+.table-container-selection {
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ajustar a tabela */
+.selection-table {
+    width: 100%;
+    table-layout: fixed;
+    font-size: 12px;
+    border-collapse: collapse;
+    display: table;
+}
+
+.selection-table,
+.pagination-table-selection {
+    float: none;
+    clear: both;
+}
+
+    /* Ajustar os cabeçalhos e células */
+    .selection-table th,
+    .selection-table td {
+        padding: 8px 10px;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+/* Estilizar o checkbox */
+.store-checkbox {
+    margin: 0;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+/* Estilo dos cabeçalhos */
+.selection-table th {
+    background-color: #e0e0e0;
+    color: #333;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* Estilo das linhas */
+.selection-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.selection-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Ajustar a largura da coluna de checkboxes (aplicável a ambas as tabelas) */
+.selection-table th:nth-child(1),
+.selection-table td:nth-child(1) { /* Coluna de Checkboxes */
+    width: 5%;
+    text-align: center;
+}
+
+/* Ajustar as larguras das colunas para a tabela do Step 2 (9 colunas no total) */
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) th:nth-child(2),
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) td:nth-child(2) { /* Store Name */
+    width: 15%;
+}
+
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) th:nth-child(3),
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) td:nth-child(3) { /* Country */
+    width: 11%;
+}
+
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) th:nth-child(4),
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) td:nth-child(4) { /* City */
+    width: 11%;
+}
+
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) th:nth-child(5),
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) td:nth-child(5) { /* Store Type */
+    width: 11%;
+}
+
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) th:nth-child(6),
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) td:nth-child(6) { /* Zone */
+    width: 11%;
+}
+
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) th:nth-child(7),
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) td:nth-child(7) { /* Store Manager */
+    width: 14%;
+}
+
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) th:nth-child(8),
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) td:nth-child(8) { /* Condition */
+    width: 10%;
+}
+
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) th:nth-child(9),
+.selection-table:has(thead tr th:nth-child(9)):not(:has(thead tr th:nth-child(10))) td:nth-child(9) { /* Inspector */
+    width: 12%;
+}
+
+/* Ajustar as larguras das colunas para a tabela do Step 3 (8 colunas no total) */
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) th:nth-child(2),
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) td:nth-child(2) { /* First Name */
+    width: 12%;
+}
+
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) th:nth-child(3),
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) td:nth-child(3) { /* Last Name */
+    width: 12%;
+}
+
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) th:nth-child(4),
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) td:nth-child(4) { /* Email */
+    width: 18%;
+}
+
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) th:nth-child(5),
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) td:nth-child(5) { /* Store Name */
+    width: 15%;
+}
+
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) th:nth-child(6),
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) td:nth-child(6) { /* Department */
+    width: 15%;
+}
+
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) th:nth-child(7),
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) td:nth-child(7) { /* Function */
+    width: 12%;
+}
+
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) th:nth-child(8),
+.selection-table:has(thead tr th:nth-child(8)):not(:has(thead tr th:nth-child(9))) td:nth-child(8) { /* Role */
+    width: 11%;
+}
+
+/* Ajustar as larguras das colunas para a tabela do Step 4 (3 colunas no total) */
+.selection-table:has(thead tr th:nth-child(3)):not(:has(thead tr th:nth-child(4))) th:nth-child(1),
+.selection-table:has(thead tr th:nth-child(3)):not(:has(thead tr th:nth-child(4))) td:nth-child(1) { /* Section */
+    width: 60%;
+}
+
+.selection-table:has(thead tr th:nth-child(3)):not(:has(thead tr th:nth-child(4))) th:nth-child(2),
+.selection-table:has(thead tr th:nth-child(3)):not(:has(thead tr th:nth-child(4))) td:nth-child(2) { /* Response */
+    width: 30%;
+}
+
+.selection-table:has(thead tr th:nth-child(3)):not(:has(thead tr th:nth-child(4))) th:nth-child(3),
+.selection-table:has(thead tr th:nth-child(3)):not(:has(thead tr th:nth-child(4))) td:nth-child(3) { /* Action Column */
+    width: 10%;
+    text-align: center;
+}
+
+/* Ajustar as células da tabela para alinhar verticalmente */
+.selection-table td {
+    vertical-align: middle; /* Alinha o conteúdo das células ao centro verticalmente */
+    padding: 8px; /* Garante que todas as células tenham o mesmo padding */
+}
+
+    /* Estilizar o input da coluna Section */
+    .selection-table td input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 12px; /* Ajuste no padding para melhor centramento */
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        height: 38px; /* Define uma altura fixa para o input */
+        line-height: 1; /* Força um line-height consistente */
+        margin: 0; /* Remove qualquer margem que possa interferir */
+        display: block; /* Garante que o input ocupe o espaço corretamente */
+        vertical-align: middle; /* Reforça o alinhamento vertical */
+    }
+
+    /* Estilizar o dropdown de resposta dentro da coluna Response */
+    .selection-table td .response-select {
+        width: 100%;
+        padding: 8px 12px; /* Ajuste no padding para melhor centramento */
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+        height: 38px; /* Define a mesma altura do input para o select */
+        line-height: 1; /* Força um line-height consistente */
+        margin: 0; /* Remove qualquer margem que possa interferir */
+        display: block; /* Garante que o select ocupe o espaço corretamente */
+        vertical-align: middle; /* Reforça o alinhamento vertical */
+        appearance: none; /* Remove a aparência padrão do navegador */
+        -webkit-appearance: none; /* Para navegadores Webkit como Chrome/Safari */
+        -moz-appearance: none; /* Para navegadores Firefox */
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="black" d="M7 10l5 5 5-5z"/></svg>') no-repeat right 8px center; /* Adiciona uma seta personalizada */
+        background-size: 12px; /* Tamanho da seta */
+    }
+
+/* Ajustar a regra de especificidade para o Step 4 */
+.step-content .selection-table td input[type="text"],
+.step-content .selection-table td .response-select {
+    vertical-align: middle;
+    line-height: 1;
+    height: 38px;
+}
+
+/* Garantir que a célula da coluna de ação também esteja alinhada */
+.selection-table .action-column {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.dropdown-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+    .dropdown-section select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        width: 150px; /* Adjust width as needed */
+    }
+
+.step-content .dropdown-section {
+    float: right;
+    margin-bottom: 20px;
+}
+
+/* Garantir que o texto do th com id="sectionHeader" fique alinhado à esquerda */
+#sectionHeader {
+    text-align: left;
+    padding-left: 10px; /* Ajusta o padding para alinhar visualmente com o conteúdo da célula abaixo */
+}
+
+/* Estilizar o checkbox */
+.store-checkbox {
+    margin: 0; /* Remove margens padrão do checkbox */
+    cursor: pointer;
+    vertical-align: middle; /* Alinha o checkbox vertical*/
+}

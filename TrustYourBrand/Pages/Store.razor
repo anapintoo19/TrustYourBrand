@@ -1,0 +1,629 @@
+﻿@page "/store"
+@layout MainLayout
+@using TrustYourBrand.Models
+@using TrustYourBrand.Services
+@inject IHttpClientFactory HttpClientFactory
+@inject TrustYourBrand.Services.ILocalStorageService LocalStorageService
+@inject TrustYourBrand.Services.IStoreService StoreService
+@inject NavigationManager NavigationManager
+
+<div class="table-container">
+    <div class="table-header">
+        <div class="action-buttons">
+            <button class="btn btn-action" @onclick="ShowCreateForm">Create New Store</button>
+            <button class="btn btn-action">Export</button>
+            <button class="btn btn-action">Import</button>
+            <button class="btn btn-action">Select columns</button>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search" class="search-input" />
+        </div>
+    </div>
+
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th class="action-column"></th>
+                <th class="action-column"></th>
+                <th>Id</th>
+                <th>Store Name</th>
+                <th>Zone</th>
+                <th>Store Manager</th>
+                <th>Inspector</th>
+                <th>Country</th>
+                <th>Store Type</th>
+                <th>Condition</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (StoreList == null)
+            {
+                <tr><td colspan="8">Loading...</td></tr>
+            }
+            else if (!StoreList.Any())
+            {
+                <tr><td colspan="8">No stores found.</td></tr>
+            }
+            else
+            {
+                @foreach (var store in PaginatedStores)
+                {
+                    <tr>
+                        <td class="action-column">
+                            <span class="material-symbols-outlined action-icon edit-icon" @onclick="() => ShowEditForm(store)">edit</span>
+                        </td>
+                        <td class="action-column">
+                            <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => ShowDeleteConfirmation(store)">delete</span>
+                        </td>
+                        <td>@store.LojaId</td>
+                        <td>@store.Nome</td>
+                        <td>@store.Zona</td>
+                        <td>@store.StoreManager</td>
+                        <td>@store.Inspector</td>
+                        <td>@store.Country</td>
+                        <td>@store.StoreType</td>
+                        <td>@store.Condition</td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <span>Page @CurrentPage of @TotalPages</span>
+        <div class="pagination-buttons">
+            <button class="btn btn-pagination" @onclick="PreviousPage">Prev</button>
+            <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+            <button class="btn btn-pagination" @onclick="NextPage">Next</button>
+        </div>
+    </div>
+
+    @if (showCreateForm)
+    {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <h3>Create Store</h3>
+                <form>
+
+                    <table class="edit-user-table">
+
+                        <tr>
+                            <td>
+                                <label for="nome">Id*</label>
+                                <input id="nome" type="number" @bind="newStore.LojaId" />
+                            </td>
+
+                            <td>
+                                <label for="nome">Store Name*</label>
+                                <input id="nome" type="text" @bind="newStore.Nome" />
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="email">Email*</label>
+                                <input id="email" type="email" @bind="newStore.Email" />
+
+                            </td>
+
+                            <td>
+                                <label for="phonenumber">Phone Number*</label>
+                                <input id="phonenumber" type="tel" @bind="newStore.PhoneNumber" />
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="address">Address*</label>
+                                <input id="address" type="text" @bind="newStore.Address" />
+                            </td>
+
+                            <td>
+                                <label for="country">Country*</label>
+                                <select id="country" @bind="newStore.Country">
+                                    <option value="">Select the Country</option>
+                                    <option value="Aberta">Portugal</option>
+                                    <option value="Fechada">França</option>
+                                    @* @foreach (var country in CountryDisponiveis.Where(r => r.Name != "Tenant")) *@
+                                    @* {  *@
+                                    @*     <option value="@country.Name">@country.Name</option> *@
+                                    @* }  *@
+
+                                </select>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label for="city">City*</label>
+                                <select id="city" @bind="newStore.City">
+                                    <option value="">Select the City</option>
+                                    <option value="Aberta">Lisboa</option>
+                                    <option value="Fechada">Porto</option>
+                                    @* @foreach (var city in CityDisponiveis.Where(r => r.Name != "Tenant"))  *@
+                                    @* {  *@
+                                    @*     <option value="@city.Name">@city.Name</option>  *@
+                                    @* }  *@
+
+                                </select>
+                            </td>
+
+                            <td>
+                                <label for="condition">Condition*</label>
+                                <select id="condition" @bind="newStore.Condition">
+                                    <option value="">Select the Condition</option>
+                                    <option value="Aberta">Open</option>
+                                    <option value="Fechada">Closed</option>
+                                    <option value="Remodelacao">Remodeling</option>
+                                    <option value="TemporariamenteFechada">Temporarily Closed</option>
+                                </select>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label for="storetype">Store Type*</label>
+                                <select id="storetype" @bind="newStore.StoreType">
+                                    <option value="">Select the Store Type</option>
+                                    <option value="Rua">Street</option>
+                                    <option value="Shopping">Shopping</option>
+                                    <option value="Quiosques">Kiosks</option>
+                                    <option value="Aeroporto">Airport</option>
+                                </select>
+                            </td>
+
+                            <td>
+                                <label for="zona">Zone*</label>
+                                <select id="zona" @bind="newStore.Zona">
+                                    <option value="">Select the Zone</option>
+                                    <option value="Norte">North</option>
+                                    <option value="Centro">Center</option>
+                                    <option value="Sul">South</option>
+                                </select>
+
+                            </td>
+                        </tr>
+
+                    </table>
+ 
+                    @* <div> *@
+                    @*     <label for="storetenant"> Store Tenant*</label> *@
+                    @*     <select id="storetenant" @bind="newStore.TenantId"> *@
+                    @*         <option value="">Select the Store Tenant</option> *@
+                    @*         @foreach (var storetenant in StoretenantDisponiveis.Where(r => r.Name != "Tenant")) *@
+                    @*         { *@
+                    @*             <option value="@storetenant.Name">@storetenant.Name</option> *@
+                    @*         } *@
+
+                    @*     </select> *@
+                    @* </div> *@
+                    @* <div> *@
+                    @*     <label for="inspector"> Inspector* </label> *@
+                    @*     <select id="inspector" @bind="newStore.Inspector"> *@
+                    @*         <option value="">Select the Inspector</option> *@
+                    @*         @foreach (var inspector in InspectorDisponiveis.Where(r => r.Name != "Tenant")) *@
+                    @*         { *@
+                    @*             <option value="@inspector.Name">@inspector.Name</option> *@
+                    @*         } *@
+
+                    @*     </select> *@
+                    @* </div> *@
+                    @* <div> *@
+                    @*     <label for="storemanager"> Store Manager* </label> *@
+                    @*     <select id="storemanager" @bind="newStore.StoreManager"> *@
+                    @*         <option value="">Select the Store Manager</option> *@
+                    @*         @foreach (var storemanager in StoremanagerDisponiveis.Where(r => r.Name != "Tenant")) *@
+                    @*         { *@
+                    @*             <option value="@storemanager.Name">@storemanager.Name</option> *@
+                    @*         } *@
+
+                    @*     </select> *@
+                    @* </div> *@
+                    
+                    
+      
+                    <div class="modal-buttons">
+                        <button type="button" class="btn btn-confirm" @onclick="CreateStore">CREATE STORE</button>
+                        <button type="button" class="btn btn-cancel" @onclick="CancelCreate">CANCEL</button>
+                    </div>
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <p style="color: red;">@errorMessage</p>
+                    }
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <p style="color: green;">@successMessage</p>
+                    }
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (showDeleteConfirmation)
+    {
+        <div class="modal-overlay delete-modal-overlay">
+            <div class="modal-content">
+                <h3>Delete Store</h3>
+                <p>Are you sure you want to delete the store "@storeToDelete?.Nome" (ID: @storeToDelete?.LojaId)?</p>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-confirm" @onclick="ConfirmDelete">CONFIRM</button>
+                    <button type="button" class="btn btn-cancel" @onclick="CancelDelete">CANCEL</button>
+                </div>
+                @if (!string.IsNullOrEmpty(deleteErrorMessage))
+                {
+                    <p style="color: red;">@deleteErrorMessage</p>
+                }
+                @if (!string.IsNullOrEmpty(deleteSuccessMessage))
+                {
+                    <p style="color: green;">@deleteSuccessMessage</p>
+                }
+            </div>
+        </div>
+    }
+
+    @if (showEditForm)
+    {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <h3>Edit Store</h3>
+                <form>
+
+                    <table class="edit-user-table">
+
+                        <tr>
+                            <td>
+                                <label for="editLojaId">Id</label>
+                                <input id="editLojaId" type="number" @bind="editingStore.LojaId" disabled />
+                            </td>
+
+                            <td>
+                                <label for="editNome">Store Name</label>
+                                <input id="editNome" @bind="editingStore.Nome" />
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="editEmail">Email</label>
+                                <input id="editEmail" type="email" @bind="editingStore.Email" />
+
+                            </td>
+
+                            <td>
+                                <label for="editPhoneNumber">Phone Number</label>
+                                <input id="editPhoneNumber" type="tel" @bind="editingStore.PhoneNumber" />
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="editAddress">Address</label>
+                                <input id="editAddress" @bind="editingStore.Address" />
+                            </td>
+
+                            <td>
+                                <label for="editCountry">Country</label>
+                                <select id="editCountry" @bind="editingStore.Country">
+                                    <option value="">Select the Country</option>
+                                </select>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label for="editCity">City</label>
+                                <select id="editCity" @bind="editingStore.City">
+                                    <option value="">Select the City</option>
+                                </select>
+                            </td>
+
+                            <td>
+                                <label>Condition</label><input @bind="editingStore.Condition" />
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <label>Store Type</label><input @bind="editingStore.StoreType" />
+                            </td>
+
+                            <td>
+                                <label>Zone</label><input @bind="editingStore.Zona" />
+
+                            </td>
+                        </tr>
+
+                    </table>
+
+                    <div class="modal-buttons">
+                        <button type="button" class="btn btn-confirm" @onclick="UpdateStore">EDIT STORE</button>
+                        <button type="button" class="btn btn-cancel" @onclick="CancelEdit">CANCEL</button>
+                    </div>
+                    @if (!string.IsNullOrEmpty(editErrorMessage))
+                    {
+                        <p style="color: red;">@editErrorMessage</p>
+                    }
+                    @if (!string.IsNullOrEmpty(editSuccessMessage))
+                    {
+                        <p style="color: green;">@editSuccessMessage</p>
+                    }
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+<link href="css/Store.css" rel="stylesheet" />
+<link href="css/PopUpStyle.css" rel="stylesheet" />
+<link href="css/PopUpDelete.css" rel="stylesheet" />
+
+@code{
+    private List<StoreDto> StoreList { get; set; } = new List<StoreDto>();
+    private int CurrentPage { get; set; } = 1;
+    private int TotalPages { get; set; } = 1;
+    private const int PageSize = 8;
+
+    private bool showCreateForm = false;
+    private CreateStoreDto newStore = new CreateStoreDto();
+    private string successMessage;
+    private string errorMessage;
+
+    private bool showDeleteConfirmation = false;
+    private StoreDto storeToDelete;
+    private string deleteSuccessMessage;
+    private string deleteErrorMessage;
+
+    private bool showEditForm = false;
+    private StoreDto editingStore;
+    private string editSuccessMessage;
+    private string editErrorMessage;
+
+    private List<StoreDto> PaginatedStores =>
+        StoreList
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // var token = await LocalStorageService.GetItemAsync<string>("authToken");
+        // if (string.IsNullOrEmpty(token) || JwtHelper.IsTokenExpired(token))
+        // {
+        //     Console.WriteLine("Token ausente ou expirado. Redirecionando para o login...");
+        //     await LocalStorageService.RemoveItemAsync("authToken");
+        //     NavigationManager.NavigateTo("/login");
+        //     return;
+        // }
+
+        await LoadStoresFromService();
+    }
+
+    private async Task LoadStoresFromService()
+    {
+        // try
+        // {
+        //     StoreList = await StoreService.GetStoresAsync();
+        //     TotalPages = (int)Math.Ceiling(StoreList.Count / (double)PageSize);
+        // }
+        // catch (Exception ex)
+        // {
+        //     Console.WriteLine($"Erro ao carregar lojas: {ex.Message}");
+        //     StoreList = new List<StoreDto>();
+        //     TotalPages = 1;
+        // }
+        try
+        {
+            // Simulação de dados fictícios
+            StoreList = new List<StoreDto>
+        {
+            new StoreDto
+            {
+                LojaId = 1,
+                TenantId = 1001,
+                MarcaId = 10,
+                Nome = "Loja Central",
+                Zona = "North",
+                IsActive = true,
+                Email = "central@trustyourbrand.com",
+                PhoneNumber = "+351 912 345 678",
+                Address = "Rua Principal, 123",
+                Country = "Portugal",
+                City = "Lisboa",
+                Condition = "Open",
+                Inspector = "João Silva",
+                StoreManager = "Maria Oliveira",
+                StoreType = "Street"
+
+
+            },
+            new StoreDto
+            {
+                LojaId = 11,
+                TenantId = 1004,
+                MarcaId = 17,
+                Nome = "Loja Eco",
+                Zona = "Center",
+                IsActive = true,
+                Email = "eco@trustyourbrand.com",
+                PhoneNumber = "+351 913 567 890",
+                Address = "Rua da Sustentabilidade, 25",
+                Country = "Portugal",
+                City = "Viseu",
+                Condition = "Open",
+                Inspector = "Sara Fernandes",
+                StoreManager = "Diogo Carvalho",
+                StoreType = "Shopping"
+            }
+
+            
+        };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao carregar lojas: {ex.Message}");
+            StoreList = new List<StoreDto>();
+        }
+    }
+    
+    private void PreviousPage() => CurrentPage = Math.Max(1, CurrentPage - 1);
+    private void NextPage() => CurrentPage = Math.Min(TotalPages, CurrentPage + 1);
+
+    private void ShowCreateForm()
+    {
+        showCreateForm = true;
+        newStore = new CreateStoreDto();
+        successMessage = null;
+        errorMessage = null;
+    }
+
+    private void CancelCreate()
+    {
+        showCreateForm = false;
+        newStore = new CreateStoreDto();
+        successMessage = null;
+        errorMessage = null;
+    }
+
+    private async Task CreateStore()
+    {
+        successMessage = null;
+        errorMessage = null;
+
+        if (string.IsNullOrWhiteSpace(newStore.Nome) || string.IsNullOrWhiteSpace(newStore.Zona) || string.IsNullOrWhiteSpace(newStore.Country) || 
+        string.IsNullOrWhiteSpace(newStore.City) || string.IsNullOrWhiteSpace(newStore.Email) || string.IsNullOrWhiteSpace(newStore.PhoneNumber) ||
+        string.IsNullOrWhiteSpace(newStore.Address) || string.IsNullOrWhiteSpace(newStore.Condition) || string.IsNullOrWhiteSpace(newStore.StoreType) ||
+        newStore.LojaId == 0)
+        {
+            errorMessage = "All fields are mandatory.";
+            return;
+        }
+
+        var result = await StoreService.CreateStoreAsync(newStore);
+        if (result.Success && result.CreatedStore != null)
+        {
+            successMessage = result.Message;
+            StoreList.Add(result.CreatedStore);
+            TotalPages = (int)Math.Ceiling(StoreList.Count / (double)PageSize);
+            showCreateForm = false;
+        }
+        else
+        {
+            errorMessage = result.ErrorMessage;
+        }
+    }
+
+    private void ShowEditForm(StoreDto store)
+    {
+        showEditForm = true;
+        editingStore = new StoreDto
+            {
+                LojaId = store.LojaId,
+                TenantId = store.TenantId,
+                MarcaId = store.MarcaId,
+                Nome = store.Nome,
+                Zona = store.Zona,
+                IsActive = store.IsActive,
+                Email = store.Email,
+                PhoneNumber = store.PhoneNumber,
+                Address = store.Address,
+                Country = store.Country,
+                City = store.City,
+                Condition = store.Condition,
+                Inspector = store.Inspector,
+                StoreManager = store.StoreManager,
+                StoreType = store.StoreType
+            };
+        editSuccessMessage = null;
+        editErrorMessage = null;
+    }
+
+    private async Task UpdateStore()
+    {
+        editSuccessMessage = null;
+        editErrorMessage = null;
+
+        // Converte StoreDto para UpdateStoreDto
+        var updateDto = new UpdateStoreDto
+            {
+                Nome = editingStore.Nome,
+                Zona = editingStore.Zona,
+                MarcaId = editingStore.MarcaId,
+                Email = editingStore.Email,
+                PhoneNumber = editingStore.PhoneNumber,
+                Address = editingStore.Address,
+                Country = editingStore.Country,
+                City = editingStore.City,
+                Condition = editingStore.Condition,
+                Inspector = editingStore.Inspector,
+                StoreManager = editingStore.StoreManager,
+                StoreType = editingStore.StoreType
+            // Adicione outros campos conforme necessário, dependendo da definição de UpdateStoreDto
+            };
+
+        var result = await StoreService.UpdateStoreAsync(editingStore.LojaId, updateDto);
+        if (result.Success && result.UpdatedStore != null)
+        {
+            editSuccessMessage = result.Message;
+            var index = StoreList.FindIndex(s => s.LojaId == editingStore.LojaId);
+            if (index != -1)
+            {
+                StoreList[index] = result.UpdatedStore;
+            }
+            showEditForm = false;
+            editingStore = null;
+        }
+        else
+        {
+            editErrorMessage = result.ErrorMessage;
+        }
+    }
+
+    private void CancelEdit()
+    {
+        showEditForm = false;
+        editingStore = null;
+        editSuccessMessage = null;
+        editErrorMessage = null;
+    }
+
+    private void ShowDeleteConfirmation(StoreDto store)
+    {
+        showDeleteConfirmation = true;
+        storeToDelete = store;
+        deleteSuccessMessage = null;
+        deleteErrorMessage = null;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        deleteSuccessMessage = null;
+        deleteErrorMessage = null;
+
+        var result = await StoreService.DeleteStoreAsync(storeToDelete.LojaId);
+        if (result.Success)
+        {
+            deleteSuccessMessage = result.Message;
+            StoreList.Remove(storeToDelete);
+            showDeleteConfirmation = false;
+            storeToDelete = null;
+        }
+        else
+        {
+            deleteErrorMessage = result.ErrorMessage;
+        }
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteConfirmation = false;
+        storeToDelete = null;
+        deleteSuccessMessage = null;
+        deleteErrorMessage = null;
+    }
+
+}

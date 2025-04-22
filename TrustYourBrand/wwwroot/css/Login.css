@@ -1,0 +1,126 @@
+﻿/* wwwroot/css/Login.css */
+
+/* Centralizar o formulário de login */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    background: linear-gradient(rgba(68, 112, 180, 0.5), rgba(115, 172, 64, 0.5)), url('../images/background_login_tyb.png');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Estilizar o container branco */
+.login-form-container {
+    background-color: white;
+    padding: 5px 20px 20px 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 500px;
+}
+
+/* Estilizar a imagem do logo */
+.login-logo {
+    width: 250px;
+    max-height: 250px;
+    margin-bottom: 5px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Estilizar os campos de entrada */
+.login-form-container input {
+    width: 400px;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+    /* Estilizar os campos de entrada quando em foco */
+    .login-form-container input:focus {
+        outline: 1px solid #868685;
+    }
+
+    /* Sobrescreve o estilo :focus quando o campo tem erro */
+    .login-form-container input.input-error,
+    .login-form-container input.input-error:focus {
+        border: 2px solid red !important; /* Garante que a borda seja vermelha */
+        outline: 1px solid red !important; /* Garante que o outline seja vermelho, sobrescrevendo qualquer estilo verde */
+    }
+
+/* Estilizar os campos com erro */
+.input-error {
+    border: 2px solid red !important;
+}
+
+.input-field:invalid {
+    border: 2px solid red !important;
+}
+
+.validation-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.validation-summary-errors {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0;
+}
+
+/* Estilizar o botão de login */
+.login-form-container button {
+    width: 200px;
+    padding: 10px;
+    background-color: #868685;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 25px;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+    .login-form-container button:hover {
+        background-color: #868685;
+    }
+
+.login-label {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+/* Garante que o formulário não tenha margem */
+.login-form-container form {
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilizar a frase "Forgot Your PIN?" */
+.forgot-pin {
+    color: #868685;
+    font-size: 1.2em;
+    margin-top: 15px;
+    display: block;
+    text-decoration: none;
+}
+
+    .forgot-pin:hover {
+        text-decoration: underline;
+    }
+
+

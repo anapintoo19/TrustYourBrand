@@ -1,0 +1,268 @@
+﻿@page "/forgot-pin"
+@layout LoginLayout
+@inject TrustYourBrand.Services.IForgotPinService ForgotPinService
+@inject NavigationManager NavigationManager
+@inject TrustYourBrand.Services.ILocalStorageService LocalStorageService
+
+<div class="forgot-pin-container">
+    <div class="forgot-pin-form-container">
+        @* <img src="/images/logo_tyb.png" class="forgot-pin-logo" alt="Logo" /> *@
+
+        @if (!codeSent)
+        {
+            <h3>Forgot Your PIN?</h3>
+            <p>Enter your phone number to receive a verification code.</p>
+
+            <EditForm Model="forgotPinModel" OnValidSubmit="HandleRequestCode">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="forgot-pin-label">
+                    <label>Phone Number:</label>
+                    <InputText @bind-Value="forgotPinModel.PhoneNumber"
+                               placeholder="Type Phone Number (910 000 000)"
+                               class="@(string.IsNullOrEmpty(forgotPinModel.PhoneNumber) && formSubmitted ? "input-error" : "")" />
+                    <ValidationMessage For="@(() => forgotPinModel.PhoneNumber)" />
+                </div>
+
+                <button type="submit" @onclick="() => formSubmitted = true">Send Code</button>
+            </EditForm>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <p class="error-message">@errorMessage</p>
+            }
+
+            <p>
+                <a href="/login" class="back-to-login">Back to Login</a>
+            </p>
+        }
+        else
+        {
+            <h3>Reset PIN</h3>
+            <p>Enter the verification code we sent to your phone number and set a new PIN.</p>
+
+            <EditForm Model="resetPinModel" OnValidSubmit="HandleResetPin">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="forgot-pin-label">
+                    <label>Verification Code:</label>
+                    <InputText @bind-Value="resetPinModel.VerificationCode"
+                               placeholder="Type Code"
+                               class="@(string.IsNullOrEmpty(resetPinModel.VerificationCode) && formSubmitted ? "input-error" : "")" />
+                    <ValidationMessage For="@(() => resetPinModel.VerificationCode)" />
+                </div>
+
+                <div class="forgot-pin-label">
+                    <label>New PIN:</label>
+                    <InputText @bind-Value="resetPinModel.NewPin"
+                               type="password"
+                               placeholder="Enter the new PIN (4 digits)"
+                               class="@(string.IsNullOrEmpty(resetPinModel.NewPin) && formSubmitted ? "input-error" : "")" />
+                    <ValidationMessage For="@(() => resetPinModel.NewPin)" />
+                </div>
+
+                <div class="forgot-pin-label">
+                    <label>Confirm New PIN:</label>
+                    <InputText @bind-Value="resetPinModel.ConfirmNewPin"
+                               type="password"
+                               placeholder="Confirm the new PIN"
+                               class="@(string.IsNullOrEmpty(resetPinModel.ConfirmNewPin) && formSubmitted ? "input-error" : "")" />
+                    <ValidationMessage For="@(() => resetPinModel.ConfirmNewPin)" />
+                </div>
+
+                <button type="submit" @onclick="() => formSubmitted = true">Reset PIN</button>
+            </EditForm>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <p class="error-message">@errorMessage</p>
+            }
+
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                <p class="success-message">@successMessage</p>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private ForgotPinModel forgotPinModel = new();
+    private ResetPinModel resetPinModel = new();
+    private string? errorMessage;
+    private string? successMessage;
+    private bool formSubmitted = false;
+    private bool codeSent = false;
+
+    private async Task HandleRequestCode()
+    {
+        formSubmitted = true;
+        if (string.IsNullOrEmpty(forgotPinModel.PhoneNumber))
+        {
+            errorMessage = "Please, provide your phone number.";
+            return;
+        }
+
+        try
+        {
+            var result = await ForgotPinService.RequestVerificationCodeAsync(forgotPinModel.PhoneNumber);
+            if (result.Success)
+            {
+                codeSent = true;
+                errorMessage = null;
+            }
+            else
+            {
+                errorMessage = result.ErrorMessage ?? "Error sending verification code.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unexpected error: {ex.Message}";
+            Console.WriteLine($"Exceção: {ex}");
+        }
+    }
+
+    private async Task HandleResetPin()
+    {
+        formSubmitted = true;
+        if (string.IsNullOrEmpty(resetPinModel.VerificationCode) ||
+            string.IsNullOrEmpty(resetPinModel.NewPin) ||
+            string.IsNullOrEmpty(resetPinModel.ConfirmNewPin))
+        {
+            errorMessage = "Please, fill in all fields.";
+            return;
+        }
+
+        if (resetPinModel.NewPin.Length != 4 || !resetPinModel.NewPin.All(char.IsDigit))
+        {
+            errorMessage = "The new PIN must have exactly 4 numeric digits.";
+            return;
+        }
+
+        if (resetPinModel.NewPin != resetPinModel.ConfirmNewPin)
+        {
+            errorMessage = "The new PIN and confirmation do not match.";
+            return;
+        }
+
+        try
+        {
+            var result = await ForgotPinService.ResetPinAsync(forgotPinModel.PhoneNumber, resetPinModel.VerificationCode, resetPinModel.NewPin);
+            if (result.Success)
+            {
+                successMessage = "PIN reset successfully! Redirecting to login...";
+                await Task.Delay(2000); // Mostrar a mensagem por 2 segundos
+                NavigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                errorMessage = result.ErrorMessage ?? "Error resetting PIN.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unexpected error: {ex.Message}";
+            Console.WriteLine($"Exceção: {ex}");
+        }
+    }
+
+    public class ForgotPinModel
+    {
+        public string PhoneNumber { get; set; } = string.Empty;
+    }
+
+    public class ResetPinModel
+    {
+        public string VerificationCode { get; set; } = string.Empty;
+        public string NewPin { get; set; } = string.Empty;
+        public string ConfirmNewPin { get; set; } = string.Empty;
+    }
+}
+
+<style>
+    .forgot-pin-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f5f5f5;
+    }
+
+    .forgot-pin-form-container {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        text-align: center;
+        width: 400px;
+    }
+
+        .forgot-pin-form-container h3 {
+            margin-bottom: 30px;
+        }
+
+    .forgot-pin-label {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+        .forgot-pin-label label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .forgot-pin-label input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc; /* Borda padrão igual à do .form-control */
+            border-radius: 5px;
+        }
+
+            .forgot-pin-label input:focus {
+                outline: 1px solid #868685; /* Contorno igual ao .form-control:focus */
+            }
+
+    .input-error {
+        border-color: red;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #868685;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+        button:hover {
+            background-color: #868685;
+        }
+
+    .error-message {
+        color: red;
+        margin-top: 10px;
+    }
+
+    .success-message {
+        color: green;
+        margin-top: 10px;
+    }
+
+    .back-to-login {
+        display: block;
+        margin-top: 15px;
+        color: #868685;
+        text-decoration: none;
+        font-size: 1.2em;
+    }
+
+        .back-to-login:hover {
+            text-decoration: underline;
+        }
+</style>

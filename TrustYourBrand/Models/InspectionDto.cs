@@ -1,0 +1,37 @@
+﻿namespace TrustYourBrand.Models
+{
+    public class InspectionDto
+    {
+        public int Id { get; set; }
+        public int? TemplateId { get; set; }
+        public string? Type { get; set; }
+        public string Mode { get; set; } = "Launched";
+        public string? Language { get; set; }
+        public string? InspectionName { get; set; }
+        public string? Frequency { get; set; }
+        public string? Status { get; set; }
+        public string? Estado { get; set; }
+        public bool IsCanceled { get; set; } = false; 
+        public bool IsActive { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? DueDate { get; set; }
+        public string? Description { get; set; }
+        public string? Brand { get; set; }
+        public int TotalTasks { get; set; }
+        public int CompletedTasks { get; set; }
+        public int? LojaId { get; set; } 
+        public int? UserId { get; set; } 
+        public double ProgressPercentage => TotalTasks > 0 ? (CompletedTasks * 100.0) / TotalTasks : 0;
+        public List<int> SelectedStoreIds { get; set; } = new List<int>();
+        public List<int> SelectedGuestIds { get; set; } = new List<int>();
+        public List<CustomQuestion> Questions { get; set; } = new List<CustomQuestion>();
+    }
+
+    // Classe para perguntas personalizadas
+    public class CustomQuestion
+    {
+        public string Text { get; set; }
+        public string ResponseType { get; set; }
+        public List<string>? Options { get; set; }
+    }
+}
