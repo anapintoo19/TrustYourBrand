@@ -9,6 +9,9 @@ namespace TrustYourBrand.Services
         Task<List<DepartmentDto>> GetDepartments();
 
         Task<List<FunctionDto>> GetFunctions();
+        Task<List<BrandDto>> GetBrands(); 
+        Task<List<StoreDto>> GetStores(); 
+        Task<List<TenantDto>> GetTenants();
 
         Task<LoginResult> CreateUser(User user); // Ajustado para Task<UserCreationResult>
         Task<LoginResult> UpdateUser(int id, UpdateUserDto userDto);

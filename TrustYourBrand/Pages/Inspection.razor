@@ -56,27 +56,17 @@
                             }
                             else
                             {
-                                <span class="action-placeholder"> </span>
+                                <span class="action-placeholder"> </span>
                             }
                         </td>
                         <td class="action-column">
                             <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => ShowDeleteConfirmation(inspection)">delete</span>
                         </td>
                         <td class="action-column">
-                            <span class="material-symbols-outlined action-icon detail-icon" @onclick="() => ShowInspectionDetails(inspection)">arrow_forward_ios</span>
+                            <span class="material-symbols-outlined action-icon detail-icon" @onclick="() => ShowInspectionDetails(inspection)">
+                                @(ExpandedInspectionId == inspection.Id ? "keyboard_arrow_down" : "keyboard_arrow_right")
+                            </span>
                         </td>
-
-                        @* <td class="action-column"> *@
-                        @*     @if (inspection.Estado == "Ongoing") *@
-                        @*     { *@
-                        @*         <span class="material-symbols-outlined action-icon arrow-icon">keyboard_arrow_right</span>  *@
-                        @*     } *@
-                        @*     else *@
-                        @*     { *@
-                        @*         <span class="action-placeholder"> </span> *@
-                        @*     } *@
-                        @* </td> *@
-
                         <td>@inspection.Type</td>
                         <td>@inspection.InspectionName</td>
                         <td>@inspection.Frequency</td>
@@ -111,6 +101,102 @@
                             }
                         </td>
                     </tr>
+
+                    @if (ExpandedInspectionId == inspection.Id)
+                    {
+                        <tr class="expanded-row">
+                            <td colspan="8">
+                                <div class="inspection-details-container">
+                                    <div class="details-row">
+                                        <div class="details-column">
+                                            <span class="details-label">Inspection Progress:</span>
+                                            <div class="progress-container">
+                                                <div class="progress-bar">
+                                                    <div class="progress" style="width: @((int)inspection.ProgressPercentage)%;"></div>
+                                                </div>
+                                                <span class="progress-text">@((int)inspection.ProgressPercentage)%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-row">
+                                        <div class="details-column">
+                                            <span class="details-label">Start Date:</span>
+                                            <span class="details-value">@(inspection.StartDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                                        </div>
+                                        <div class="details-column">
+                                            <span class="details-label">Due Date:</span>
+                                            <span class="details-value">@(inspection.DueDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                                        </div>
+                                        <div class="details-column">
+                                            <span class="details-label">Finish Date:</span>
+                                            <span class="details-value">@(inspection.FinishDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-row">
+                                        <div class="details-column">
+                                            <span class="details-label">Language:</span>
+                                            <span class="details-value">@(inspection.Language ?? "N/A")</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-row">
+                                        <div class="details-column">
+                                            <span class="details-label">Number of Questions:</span>
+                                            <span class="details-value">@(inspection.Questions?.Count ?? 0)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-row">
+                                        <div class="details-column">
+                                            <span class="details-label">Purpose:</span>
+                                            <span class="details-value">@(inspection.Purpose ?? "N/A")</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-row">
+                                        <div class="details-column">
+                                            <span class="details-label">Status:</span>
+                                            <div class="status-breakdown">
+                                                <div class="status-item">
+                                                    <span class="status-dot status-dot-ongoing"></span>
+                                                    <span>Ongoing</span>
+                                                    <span class="status-count">@(inspection.StatusBreakdown?.Ongoing ?? 0)</span>
+                                                </div>
+                                                <div class="status-item">
+                                                    <span class="status-dot status-dot-closed"></span>
+                                                    <span>Closed</span>
+                                                    <span class="status-count">@(inspection.StatusBreakdown?.Closed ?? 0)</span>
+                                                </div>
+                                                <div class="status-item">
+                                                    <span class="status-dot status-dot-standby"></span>
+                                                    <span>Standby</span>
+                                                    <span class="status-count">@(inspection.StatusBreakdown?.Standby ?? 0)</span>
+                                                </div>
+                                                <div class="status-item">
+                                                    <span class="status-dot status-dot-canceled"></span>
+                                                    <span>Canceled</span>
+                                                    <span class="status-count">@(inspection.StatusBreakdown?.Canceled ?? 0)</span>
+                                                </div>
+                                                <div class="status-item">
+                                                    <span class="details-label">Total:</span>
+                                                    <span class="status-count">@((inspection.StatusBreakdown?.Ongoing ?? 0) + (inspection.StatusBreakdown?.Closed ?? 0) + (inspection.StatusBreakdown?.Standby ?? 0) + (inspection.StatusBreakdown?.Canceled ?? 0))</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="details-column">
+                                            <span class="details-label">Stores:</span>
+                                            <div class="stores-breakdown">
+                                                <span class="stores-count">@(inspection.StoresCount ?? 0)</span>
+                                                <span class="material-symbols-outlined stores-icon">visibility</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 }
             }
         </tbody>
@@ -124,107 +210,6 @@
             <button class="btn btn-pagination">Next</button>
         </div>
     </div>
-
-    <!-- Modal for Inspection Details -->
-    @if (ShowDetailsModal && SelectedInspection != null)
-    {
-        <div class="modal-overlay">
-            <div class="modal-content inspection-details-modal">
-                <div class="modal-header">
-                    <h3>Inspection Details</h3>
-                    <span class="material-symbols-outlined close-icon" @onclick="CloseInspectionDetails">close</span>
-                </div>
-                <div class="inspection-details-content">
-                    
-                    
-                    <div class="details-row">
-                        <div class="details-column">
-                            <span class="details-label">Inspection Progress:</span>
-                            <div class="progress-container">
-                                <div class="progress-bar">
-                                    <div class="progress" style="width: @((int)SelectedInspection.ProgressPercentage)%;"></div>
-                                </div>
-                                <span class="progress-text">@((int)SelectedInspection.ProgressPercentage)%</span>
-                            </div>
-                        </div>
-                       
-                    </div>
-                    
-                    <div class="details-row">
-                        <div class="details-column">
-                            <span class="details-label">Start Date:</span>
-                            <span class="details-value">@(SelectedInspection.StartDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
-                        </div>
-                        <div class="details-column">
-                            <span class="details-label">Due Date:</span>
-                            <span class="details-value">@(SelectedInspection.DueDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
-                        </div>
-                        <div class="details-column">
-                            <span class="details-label">Finish Date:</span>
-                            <span class="details-value">@(SelectedInspection.FinishDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
-                        </div>
-                    </div>
-                    <div class="details-row">
-                        <div class="details-column">
-                            <span class="details-label">Language:</span>
-                            <span class="details-value">@(SelectedInspection.Language ?? "N/A")</span>
-                        </div>
-                    </div>
-                    <div class="details-row">
-                        <div class="details-column">
-                            <span class="details-label">Number of Questions:</span>
-                            <span class="details-value">@(SelectedInspection.Questions?.Count ?? 0)</span>
-                        </div>
-                    </div>
-                    <div class="details-row">
-                        <div class="details-column">
-                            <span class="details-label">Purpose:</span>
-                            <span class="details-value">@(SelectedInspection.Purpose ?? "N/A")</span>
-                        </div>
-                    </div>
-                    <div class="details-row">
-                        <div class="details-column">
-                            <span class="details-label">Status:</span>
-                            <div class="status-breakdown">
-                                <div class="status-item">
-                                    <span class="status-dot status-dot-ongoing"></span>
-                                    <span>Ongoing</span>
-                                    <span class="status-count">@(SelectedInspection.StatusBreakdown?.Ongoing ?? 0)</span>
-                                </div>
-                                <div class="status-item">
-                                    <span class="status-dot status-dot-closed"></span>
-                                    <span>Closed</span>
-                                    <span class="status-count">@(SelectedInspection.StatusBreakdown?.Closed ?? 0)</span>
-                                </div>
-                                <div class="status-item">
-                                    <span class="status-dot status-dot-standby"></span>
-                                    <span>Standby</span>
-                                    <span class="status-count">@(SelectedInspection.StatusBreakdown?.Standby ?? 0)</span>
-                                </div>
-                                <div class="status-item">
-                                    <span class="status-dot status-dot-canceled"></span>
-                                    <span>Canceled</span>
-                                    <span class="status-count">@(SelectedInspection.StatusBreakdown?.Canceled ?? 0)</span>
-                                </div>
-                                <div class="status-item">
-                                    <span class="details-label">Total:</span>
-                                    <span class="status-count">@(SelectedInspection.StatusBreakdown?.Total ?? 0)</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="details-column">
-                            <span class="details-label">Stores:</span>
-                            <div class="stores-breakdown">
-                                <span class="stores-count">@(SelectedInspection.StoresCount ?? 0)</span>
-                                <span class="material-symbols-outlined stores-icon">visibility</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-
 
     @if (ShowEditModal)
     {
@@ -258,16 +243,15 @@
                         {
                             case 1:
                                 <h3 style="text-align: left; color: #6aa4d5;">Information</h3>
-                                <table style="width: 100%; table-layout: fixed; ">
-
+                                <table style="width: 100%; table-layout: fixed;">
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
                                             <label for="template" style="text-align:left;">Template</label>
-                                            <select id="template" class="template-select" style="width: 100%;" >
+                                            <select id="template" class="template-select" style="width: 100%;">
                                                 <option value="">Select the Template</option>
-                                                <option value="">Controle de qualidade sapatos</option>
-                                                <option value="">Avaliação de limpeza</option>
-                                                <option value="">Controle de Elevadores</option>
+                                                <option value="">Shoe Quality Control</option>
+                                                <option value="">Cleaning Assessment</option>
+                                                <option value="">Elevator Control</option>
                                             </select>
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
@@ -283,7 +267,6 @@
                                         <td style="width: 50%; padding-right: 10px;">
                                             <label for="name" style="text-align:left; margin-top: 20px;">Inspection Name</label>
                                             <input type="text" id="name" class="input-name" placeholder="Enter the Name of the inspection" style="width: 100%;" />
-
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
                                             <label for="frequency" style="text-align:left; margin-top: 20px;">Frequency</label>
@@ -293,7 +276,6 @@
                                                 <option value="">Monthly</option>
                                                 <option value="">Annually</option>
                                             </select>
-
                                         </td>
                                     </tr>
                                     <tr>
@@ -317,15 +299,10 @@
                                         </td>
                                     </tr>
                                 </table>
-
-
                                 break;
                             case 2:
                                 <h3 style="text-align: left; color: #6aa4d5;">Store Selection</h3>
                                 <div class="table-container-selection">
-
-
-                                    <!-- Usando a classe users-table para herdar os estilos da tabela principal -->
                                     <table class="selection-table">
                                         <thead>
                                             <tr>
@@ -335,7 +312,7 @@
                                                 <th>Store Name</th>
                                                 <th>Country</th>
                                                 <th>City</th>
-                                                <th>Story Type</th>
+                                                <th>Store Type</th>
                                                 <th>Zone</th>
                                                 <th>Store Manager</th>
                                                 <th>Condition</th>
@@ -369,7 +346,6 @@
                                                 <td>Open</td>
                                                 <td>João Costa</td>
                                             </tr>
-
                                         </tbody>
                                     </table>
 
@@ -386,9 +362,6 @@
                             case 3:
                                 <h3 style="text-align: left; color: #6aa4d5;">Guest</h3>
                                 <div class="table-container-selection">
-
-
-                                    <!-- Usando a classe users-table para herdar os estilos da tabela principal -->
                                     <table class="selection-table">
                                         <thead>
                                             <tr>
@@ -427,9 +400,8 @@
                                                 <td>Arrábida Shopping</td>
                                                 <td>Marketing</td>
                                                 <td>Director</td>
-                                                <td>Assistent</td>
+                                                <td>Assistant</td>
                                             </tr>
-
                                         </tbody>
                                     </table>
 
@@ -509,9 +481,7 @@
                         @if (CurrentStep == 4)
                         {
                             <button type="button" @onclick="PreviousStep">PREVIOUS</button>
-                            @* <button type="button" class="btn-save-draft" @onclick="SaveDraft">SAVE DRAFT</button> *@
                             <button type="button" class="btn-create-inspection">EDIT INSPECTION</button>
-
                         }
                         else
                         {
@@ -519,7 +489,6 @@
                             <button type="button" @onclick="NextStep" disabled="@(CurrentStep == 4)">NEXT</button>
                         }
                     </div>
-
                 </form>
             </div>
         </div>
@@ -530,12 +499,11 @@
         <div class="modal-overlay delete-modal-overlay">
             <div class="modal-content">
                 <h3>Delete Inspection</h3>
-                <p>Are you sure you want to delete the inspection? </p>
+                <p>Are you sure you want to delete the inspection?</p>
                 <div class="modal-buttons">
                     <button class="btn btn-confirm" @onclick="ConfirmDelete">CONFIRM</button>
                     <button class="btn btn-cancel" @onclick="CancelDelete">CANCEL</button>
                 </div>
-
             </div>
         </div>
     }
@@ -572,69 +540,61 @@
                         {
                             case 1:
                                 <h3 style="text-align: left; color: #6aa4d5;">Information</h3>
-                                <table style="width: 100%; table-layout: fixed; ">
-
+                                <table style="width: 100%; table-layout: fixed;">
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
-                                            <label for="template" style="text-align:left;" >Template</label>
+                                            <label for="template" style="text-align:left;">Template</label>
                                             <input id="nome" type="number" style="width: 100%;" @bind="NewInspection.TemplateId" />
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
                                             <label for="language" style="text-align:left;">Language</label>
                                             <select id="language" class="template-select" style="width: 100%;" @bind="NewInspection.Language">
                                                 <option value="">Select the Language</option>
-                                                <option value="Português">Portuguese</option>
-                                                <option value="Inglês">English</option>
+                                                <option value="Portuguese">Portuguese</option>
+                                                <option value="English">English</option>
                                             </select>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
                                             <label for="name" style="text-align:left; margin-top: 20px;">Inspection Name</label>
-                                            <input type="text" id="name" class="input-name" placeholder="Enter the Name of the inspection" style="width: 100%;" @bind="NewInspection.InspectionName"/>
-
+                                            <input type="text" id="name" class="input-name" placeholder="Enter the Name of the inspection" style="width: 100%;" @bind="NewInspection.InspectionName" />
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
                                             <label for="frequency" style="text-align:left; margin-top: 20px;">Frequency</label>
                                             <select id="frequency" class="template-select" style="width: 100%;" @bind="NewInspection.Frequency">
                                                 <option value="">Select the Frequency</option>
-                                                <option value="Semanalmente">Weekly</option>
-                                                <option value="Mensalmente">Monthly</option>
-                                                <option value="Anualmente">Annually</option>
+                                                <option value="Weekly">Weekly</option>
+                                                <option value="Monthly">Monthly</option>
+                                                <option value="Annually">Annually</option>
                                             </select>
-
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="start" style="text-align:left; margin-top: 20px;">Start Date</label>
-                                            <input type="date" id="start" style="width: 100%;" @bind="NewInspection.StartDate"/>
+                                            <input type="date" id="start" style="width: 100%;" @bind="NewInspection.StartDate" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="due" style="text-align:left; margin-top: 20px;">Due Date</label>
-                                            <input type="date" id="due" style="width: 100%;" @bind="NewInspection.DueDate"/>
+                                            <input type="date" id="due" style="width: 100%;" @bind="NewInspection.DueDate" />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="description" style="text-align:left; margin-top: 20px;">Description</label>
-                                            <input type="text" id="description" placeholder="Enter the Description of the inspection" style="width: 100%;" @bind="NewInspection.Description"/>
+                                            <input type="text" id="description" placeholder="Enter the Description of the inspection" style="width: 100%;" @bind="NewInspection.Description" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="brand" style="text-align:left; margin-top: 20px;">Brand</label>
-                                            <input type="text" id="brand" placeholder="Enter the Brand" style="width: 100%;" @bind="NewInspection.Brand"/>
+                                            <input type="text" id="brand" placeholder="Enter the Brand" style="width: 100%;" @bind="NewInspection.Brand" />
                                         </td>
                                     </tr>
                                 </table>
-
-
                                 break;
                             case 2:
                                 <h3 style="text-align: left; color: #6aa4d5;">Store Selection</h3>
                                 <div class="table-container-selection">
-
-
-                                    <!-- Usando a classe users-table para herdar os estilos da tabela principal -->
                                     <table class="selection-table">
                                         <thead>
                                             <tr>
@@ -644,7 +604,7 @@
                                                 <th>Store Name</th>
                                                 <th>Country</th>
                                                 <th>City</th>
-                                                <th>Story Type</th>
+                                                <th>Store Type</th>
                                                 <th>Zone</th>
                                                 <th>Store Manager</th>
                                                 <th>Condition</th>
@@ -678,7 +638,6 @@
                                                 <td>Open</td>
                                                 <td>João Costa</td>
                                             </tr>
-
                                         </tbody>
                                     </table>
 
@@ -695,9 +654,6 @@
                             case 3:
                                 <h3 style="text-align: left; color: #6aa4d5;">Guest</h3>
                                 <div class="table-container-selection">
-
-
-                                    <!-- Usando a classe users-table para herdar os estilos da tabela principal -->
                                     <table class="selection-table">
                                         <thead>
                                             <tr>
@@ -722,7 +678,7 @@
                                                 <td>Teixeira</td>
                                                 <td>admin@gmail.com</td>
                                                 <td>Norte Shopping</td>
-                                                <td>Recursos Humanos</td>
+                                                <td>Human Resources</td>
                                                 <td>Director</td>
                                                 <td>Inspector</td>
                                             </tr>
@@ -732,13 +688,12 @@
                                                 </td>
                                                 <td>Rúben</td>
                                                 <td>Maia</td>
-                                                <td>assistent@gmail.com</td>
+                                                <td>assistant@gmail.com</td>
                                                 <td>Arrábida Shopping</td>
                                                 <td>Marketing</td>
                                                 <td>Director</td>
-                                                <td>Assistent</td>
+                                                <td>Assistant</td>
                                             </tr>
-
                                         </tbody>
                                     </table>
 
@@ -772,9 +727,9 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td><input type="text" placeholder="Type your question here" style="width: 100%;" @bind="NewInspection.Questions"/></td>
+                                                <td><input type="text" placeholder="Type your question here" style="width: 100%;" @bind="NewInspection.Questions" /></td>
                                                 <td>
-                                                    <select class="response-select" disabled >
+                                                    <select class="response-select" disabled>
                                                         <option value="">Select the Response</option>
                                                         <option value="">Yes/No</option>
                                                         <option value="">0-10 (Scale)</option>
@@ -785,7 +740,6 @@
                                                     <span class="material-symbols-outlined action-icon delete-icon">delete</span>
                                                 </td>
                                             </tr>
-
                                         </tbody>
                                     </table>
 
@@ -807,7 +761,6 @@
                             <button type="button" @onclick="PreviousStep">PREVIOUS</button>
                             <button type="button" class="btn-save-draft" @onclick="SaveDraft">SAVE DRAFT</button>
                             <button type="button" class="btn-create-inspection" @onclick="CreateInspection">CREATE INSPECTION</button>
-
                         }
                         else
                         {
@@ -815,7 +768,6 @@
                             <button type="button" @onclick="NextStep" disabled="@(CurrentStep == 4)">NEXT</button>
                         }
                     </div>
-
                 </form>
             </div>
         </div>
@@ -826,14 +778,12 @@
 <link href="css/PopUpStyleInspection.css" rel="stylesheet" />
 <link href="css/PopUpDelete.css" rel="stylesheet" />
 
-@code{
-
+@code {
     private bool ShowCreateInspection { get; set; } = false;
     private int CurrentStep { get; set; } = 1;
     private bool ShowDeleteModal { get; set; } = false;
     private bool ShowEditModal { get; set; } = false;
-    private bool ShowDetailsModal { get; set; } = false;
-    private InspectionDto? SelectedInspection { get; set; }
+    private int? ExpandedInspectionId { get; set; } = null;
 
     private int CurrentPage { get; set; } = 1;
     private int TotalPages { get; set; } = 1;
@@ -847,7 +797,6 @@
     private List<InspectionDto> Inspections { get; set; } = new List<InspectionDto>();
     private InspectionFormModel NewInspection { get; set; } = new InspectionFormModel();
 
-    // Modelo para armazenar dados do formulário
     private class InspectionFormModel
     {
         public int? TemplateId { get; set; }
@@ -863,6 +812,18 @@
         public List<CustomQuestion> Questions { get; set; } = new List<CustomQuestion>();
     }
 
+    private void ShowInspectionDetails(InspectionDto inspection)
+    {
+        if (ExpandedInspectionId == inspection.Id)
+        {
+            ExpandedInspectionId = null;
+        }
+        else
+        {
+            ExpandedInspectionId = inspection.Id;
+        }
+    }
+
     private List<TrustYourBrand.Models.InspectionDto> PaginatedInspections =>
         Inspections
             .Skip((CurrentPage - 1) * PageSize)
@@ -876,30 +837,16 @@
 
     private async Task LoadInspections()
     {
-        // try
-        // {
-
-        //     Inspections = await InspectionService.GetInspectionsAsync();
-        //     Console.WriteLine($"✅ Carregadas {Inspections.Count} inspeções.");
-        // }
-        // catch (Exception ex)
-        // {
-        //     errorMessage = $"Erro ao carregar inspeções: {ex.Message}";
-        //     Console.WriteLine($"❌ Erro ao carregar inspeções: {ex.Message}");
-        // }
-
         try
         {
-            // Simulação de dados fictícios
             Inspections = new List<InspectionDto>
-        {
-            
-            new InspectionDto
             {
-                Id = 1,
-                    Type = "Inspeção de Limpeza",
-                    InspectionName = "Inspeção de Limpeza - Loja C",
-                    Frequency = "Anualmente",
+                new InspectionDto
+                {
+                    Id = 1,
+                    Type = "Cleaning Inspection",
+                    InspectionName = "Cleaning Inspection - Store C",
+                    Frequency = "Annually",
                     Mode = "Draft",
                     Estado = "Standby",
                     TotalTasks = 0,
@@ -907,18 +854,18 @@
                     StartDate = DateTime.Now.AddDays(-10),
                     DueDate = DateTime.Now.AddDays(20),
                     FinishDate = null,
-                    Language = "Português",
+                    Language = "Portuguese",
                     Questions = new List<CustomQuestion> { new CustomQuestion(), new CustomQuestion(), new CustomQuestion() },
-                    Purpose = "Verificar todas as lâmpadas das montras!",
+                    Purpose = "Check all the lamps in the showcases!",
                     StoresCount = 1,
                     StatusBreakdown = new StatusBreakdown { Ongoing = 1, Closed = 0, Standby = 0, Canceled = 0 }
-            },
-            new InspectionDto
-            {
-                Id = 2,
-                    Type = "Inspeção de Limpeza",
-                    InspectionName = "Inspeção de Limpeza - Loja B",
-                    Frequency = "Anualmente",
+                },
+                new InspectionDto
+                {
+                    Id = 2,
+                    Type = "Cleaning Inspection",
+                    InspectionName = "Cleaning Inspection - Store B",
+                    Frequency = "Annually",
                     Mode = "Launched",
                     Estado = "Ongoing",
                     TotalTasks = 6,
@@ -926,18 +873,18 @@
                     StartDate = DateTime.Now.AddDays(-5),
                     DueDate = DateTime.Now.AddDays(15),
                     FinishDate = null,
-                    Language = "Português",
+                    Language = "Portuguese",
                     Questions = new List<CustomQuestion> { new CustomQuestion(), new CustomQuestion() },
-                    Purpose = "Garantir limpeza geral da loja",
+                    Purpose = "Ensure general store cleanliness",
                     StoresCount = 1,
                     StatusBreakdown = new StatusBreakdown { Ongoing = 1, Closed = 0, Standby = 0, Canceled = 0 }
-            },
-            new InspectionDto
-            {
-                Id = 3,
-                    Type = "Inspeção de Qualidade",
-                    InspectionName = "Inspeção de Qualidade - Loja A",
-                    Frequency = "Semanalmente",
+                },
+                new InspectionDto
+                {
+                    Id = 3,
+                    Type = "Quality Inspection",
+                    InspectionName = "Quality Inspection - Store A",
+                    Frequency = "Weekly",
                     Mode = "Draft",
                     Estado = "Standby",
                     TotalTasks = 0,
@@ -945,32 +892,19 @@
                     StartDate = DateTime.Now.AddDays(-2),
                     DueDate = DateTime.Now.AddDays(5),
                     FinishDate = null,
-                    Language = "Português",
+                    Language = "Portuguese",
                     Questions = new List<CustomQuestion> { new CustomQuestion() },
-                    Purpose = "Avaliar qualidade dos produtos",
+                    Purpose = "Evaluate product quality",
                     StoresCount = 1,
                     StatusBreakdown = new StatusBreakdown { Ongoing = 0, Closed = 0, Standby = 1, Canceled = 0 }
-            }
-
-        };
+                }
+            };
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro ao carregar lojas: {ex.Message}");
+            Console.WriteLine($"Error loading stores: {ex.Message}");
             Inspections = new List<InspectionDto>();
         }
-    }
-
-    private void ShowInspectionDetails(InspectionDto inspection)
-    {
-        SelectedInspection = inspection;
-        ShowDetailsModal = true;
-    }
-
-    private void CloseInspectionDetails()
-    {
-        ShowDetailsModal = false;
-        SelectedInspection = null;
     }
 
     private void OpenCreateInspection()
@@ -993,7 +927,7 @@
 
     private void NextStep()
     {
-        Console.WriteLine("Botão Next clicado!");
+        Console.WriteLine("Next button clicked!");
         if (CurrentStep < 4)
         {
             if (CurrentStep == 1)
@@ -1005,44 +939,44 @@
 
                 if (string.IsNullOrEmpty(NewInspection.InspectionName))
                 {
-                    errorMessage = "O campo Inspection Name é obrigatório.";
-                    Console.WriteLine("❌ InspectionName está vazio.");
+                    errorMessage = "The Inspection Name field is required.";
+                    Console.WriteLine("❌ InspectionName is empty.");
                     return;
                 }
                 if (!NewInspection.TemplateId.HasValue)
                 {
-                    errorMessage = "O campo Template é obrigatório.";
-                    Console.WriteLine("❌ TemplateId está nulo.");
+                    errorMessage = "The Template field is required.";
+                    Console.WriteLine("❌ TemplateId is null.");
                     return;
                 }
                 if (!NewInspection.StartDate.HasValue)
                 {
-                    errorMessage = "O campo Start Date é obrigatório.";
-                    Console.WriteLine("❌ StartDate está nulo.");
+                    errorMessage = "The Start Date field is required.";
+                    Console.WriteLine("❌ StartDate is null.");
                     return;
                 }
                 if (!NewInspection.DueDate.HasValue)
                 {
-                    errorMessage = "O campo Due Date é obrigatório.";
-                    Console.WriteLine("❌ DueDate está nulo.");
+                    errorMessage = "The Due Date field is required.";
+                    Console.WriteLine("❌ DueDate is null.");
                     return;
                 }
             }
             if (CurrentStep == 2 && NewInspection.SelectedStoreIds.Count == 0)
             {
-                errorMessage = "Por favor, selecione pelo menos uma loja no passo Store Selection.";
-                Console.WriteLine("❌ Nenhuma loja selecionada.");
+                errorMessage = "Please select at least one store in the Store Selection step.";
+                Console.WriteLine("❌ No store selected.");
                 return;
             }
             if (CurrentStep == 3 && NewInspection.SelectedGuestIds.Count == 0)
             {
-                errorMessage = "Por favor, selecione pelo menos um usuário no passo Guest.";
-                Console.WriteLine("❌ Nenhum usuário selecionado.");
+                errorMessage = "Please select at least one user in the Guest step.";
+                Console.WriteLine("❌ No user selected.");
                 return;
             }
             CurrentStep++;
             errorMessage = null;
-            Console.WriteLine($"✅ Avançando para o passo {CurrentStep}");
+            Console.WriteLine($"✅ Advancing to step {CurrentStep}");
             StateHasChanged();
         }
     }
@@ -1060,7 +994,6 @@
     {
         try
         {
-            // Validar dados
             if (string.IsNullOrEmpty(NewInspection.InspectionName) ||
                 !NewInspection.TemplateId.HasValue ||
                 !NewInspection.StartDate.HasValue ||
@@ -1068,16 +1001,15 @@
                 NewInspection.SelectedStoreIds.Count == 0 ||
                 NewInspection.SelectedGuestIds.Count == 0)
             {
-                errorMessage = "Por favor, preencha todos os campos obrigatórios.";
-                Console.WriteLine("❌ Validação falhou: Campos obrigatórios não preenchidos.");
+                errorMessage = "Please fill in all required fields.";
+                Console.WriteLine("❌ Validation failed: Required fields not filled.");
                 return;
             }
 
-            // Mapear para CreateInspectionDto
             var dto = new CreateInspectionDto
                 {
-                    LojaId = NewInspection.SelectedStoreIds.First(), // Supondo uma loja por inspeção
-                    UserId = NewInspection.SelectedGuestIds.First(), // Supondo um usuário por inspeção
+                    LojaId = NewInspection.SelectedStoreIds.First(),
+                    UserId = NewInspection.SelectedGuestIds.First(),
                     DataInicio = NewInspection.StartDate.Value,
                     DataFim = NewInspection.DueDate.Value,
                     Descricao = NewInspection.Description,
@@ -1086,8 +1018,8 @@
                     Estado = "Ongoing",
                     IsActive = true,
                     FormularioId = NewInspection.TemplateId,
-                    MarcaId = null, // Mapear se houver um campo para MarcaId
-                    SeccaoIds = null, // Mapear se houver seções selecionadas
+                    MarcaId = null,
+                    SeccaoIds = null,
                     Mode = "Launched",
                     PerguntasPersonalizadas = NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
                     {
@@ -1098,7 +1030,6 @@
                     }).ToList()
                 };
 
-            // Chamar o serviço para criar a inspeção
             var result = await InspectionService.CreateInspectionAsync(dto);
 
             if (result.Success)
@@ -1107,19 +1038,19 @@
                 ShowCreateInspection = false;
                 NewInspection = new InspectionFormModel();
                 CurrentStep = 1;
-                await LoadInspections(); // Atualizar a tabela
-                Console.WriteLine($"✅ Inspeção criada com ID: {result.CreatedInspectionId}");
+                await LoadInspections();
+                Console.WriteLine($"✅ Inspection created with ID: {result.CreatedInspectionId}");
             }
             else
             {
                 errorMessage = result.ErrorMessage;
-                Console.WriteLine($"❌ Erro ao criar inspeção: {result.ErrorMessage}");
+                Console.WriteLine($"❌ Error creating inspection: {result.ErrorMessage}");
             }
         }
         catch (Exception ex)
         {
-            errorMessage = $"Erro inesperado: {ex.Message}";
-            Console.WriteLine($"❌ Exceção ao criar inspeção: {ex.Message}");
+            errorMessage = $"Unexpected error: {ex.Message}";
+            Console.WriteLine($"❌ Exception creating inspection: {ex.Message}");
         }
     }
 
@@ -1127,7 +1058,6 @@
     {
         try
         {
-            // Mapear para CreateInspectionDto com estado "Rascunho"
             var dto = new CreateInspectionDto
                 {
                     LojaId = NewInspection.SelectedStoreIds.FirstOrDefault(),
@@ -1136,7 +1066,7 @@
                     DataFim = NewInspection.DueDate ?? DateTime.Now.AddDays(7),
                     Descricao = NewInspection.Description,
                     Frequencia = NewInspection.Frequency,
-                    InspecaoName = NewInspection.InspectionName ?? "Rascunho",
+                    InspecaoName = NewInspection.InspectionName ?? "Draft",
                     Estado = "Standby",
                     IsActive = true,
                     FormularioId = NewInspection.TemplateId,
@@ -1156,28 +1086,26 @@
 
             if (result.Success)
             {
-                successMessage = "Rascunho salvo com sucesso!";
+                successMessage = "Draft saved successfully!";
                 ShowCreateInspection = false;
                 NewInspection = new InspectionFormModel();
                 CurrentStep = 1;
                 await LoadInspections();
-                Console.WriteLine($"✅ Rascunho salvo com ID: {result.CreatedInspectionId}");
+                Console.WriteLine($"✅ Draft saved with ID: {result.CreatedInspectionId}");
             }
             else
             {
                 errorMessage = result.ErrorMessage;
-                Console.WriteLine($"❌ Erro ao salvar rascunho: {result.ErrorMessage}");
+                Console.WriteLine($"❌ Error saving draft: {result.ErrorMessage}");
             }
         }
         catch (Exception ex)
         {
-            errorMessage = $"Erro inesperado: {ex.Message}";
-            Console.WriteLine($"❌ Exceção ao salvar rascunho: {ex.Message}");
+            errorMessage = $"Unexpected error: {ex.Message}";
+            Console.WriteLine($"❌ Exception saving draft: {ex.Message}");
         }
     }
 
-
-    
     private void ShowDeleteConfirmation(TrustYourBrand.Models.InspectionDto inspection)
     {
         InspectionToDelete = inspection;
@@ -1206,32 +1134,28 @@
         }
         catch (Exception ex)
         {
-            errorMessage = $"Erro inesperado: {ex.Message}";
-            Console.WriteLine($"❌ Exceção ao desativar inspeção: {ex.Message}");
+            errorMessage = $"Unexpected error: {ex.Message}";
+            Console.WriteLine($"❌ Exception deactivating inspection: {ex.Message}");
         }
     }
 
-    
-
-    
     private async Task EditInspection(int inspectionId)
     {
         try
         {
-            // Carregar os dados da inspeção
             var inspection = await InspectionService.GetInspectionByIdAsync(inspectionId);
             if (inspection != null)
             {
                 NewInspection = new InspectionFormModel
                     {
                         TemplateId = inspection.TemplateId,
-                        Language = inspection.Language, 
+                        Language = inspection.Language,
                         InspectionName = inspection.InspectionName,
                         Frequency = inspection.Frequency,
                         StartDate = inspection.StartDate,
                         DueDate = inspection.DueDate,
                         Description = inspection.Description,
-                        Brand = inspection.Brand?.ToString(), 
+                        Brand = inspection.Brand?.ToString(),
                         SelectedStoreIds = inspection.LojaId.HasValue ? new List<int> { inspection.LojaId.Value } : new List<int>(),
                         SelectedGuestIds = inspection.UserId.HasValue ? new List<int> { inspection.UserId.Value } : new List<int>(),
                         Questions = inspection.Questions?.Select(q => new CustomQuestion
@@ -1247,18 +1171,16 @@
             }
             else
             {
-                errorMessage = "Inspeção não encontrada.";
+                errorMessage = "Inspection not found.";
             }
         }
         catch (Exception ex)
         {
-            errorMessage = $"Erro ao carregar inspeção: {ex.Message}";
-            Console.WriteLine($"❌ Erro ao carregar inspeção: {ex.Message}");
+            errorMessage = $"Error loading inspection: {ex.Message}";
+            Console.WriteLine($"❌ Error loading inspection: {ex.Message}");
         }
     }
-    
-    
-    // Métodos auxiliares para gerenciar seleções
+
     private void UpdateStoreSelection(int storeId, bool isChecked)
     {
         if (isChecked)
@@ -1302,40 +1224,34 @@
     {
         try
         {
-            // Atualizar IsCanceled com base no status
             inspection.IsCanceled = newStatus == "Canceled";
 
-            // Garantir consistência com Mode
             if (newStatus == "Standby")
             {
-                inspection.Mode = "Draft"; // Standby implica Draft
+                inspection.Mode = "Draft";
             }
             else if (newStatus == "Ongoing" || newStatus == "Closed")
             {
-                inspection.Mode = "Launched"; // Ongoing e Closed implicam Launched
+                inspection.Mode = "Launched";
             }
 
-            // Validar Closed: só permitir se todas as tarefas estiverem concluídas
             if (newStatus == "Closed" && (inspection.TotalTasks == 0 || inspection.CompletedTasks < inspection.TotalTasks))
             {
-                inspection.Estado = "Ongoing"; // Reverter para Ongoing se não estiver concluído
-                errorMessage = "O estado 'Closed' só pode ser aplicado quando todas as tarefas estiverem concluídas.";
+                inspection.Estado = "Ongoing";
+                errorMessage = "The 'Closed' status can only be applied when all tasks are completed.";
                 return;
             }
 
-            // Atualizar o estado
             inspection.Estado = newStatus;
 
-            // Simulação de atualização (substituir por chamada ao serviço quando integrado)
-            Console.WriteLine($"✅ Estado da inspeção '{inspection.InspectionName}' atualizado para: {inspection.Estado}");
+            Console.WriteLine($"✅ Inspection '{inspection.InspectionName}' status updated to: {inspection.Estado}");
 
-            // Recarregar a tabela para refletir mudanças
             await LoadInspections();
         }
         catch (Exception ex)
         {
-            errorMessage = $"Erro ao atualizar estado: {ex.Message}";
-            Console.WriteLine($"❌ Erro ao atualizar estado: {ex.Message}");
+            errorMessage = $"Error updating status: {ex.Message}";
+            Console.WriteLine($"❌ Error updating status: {ex.Message}");
         }
     }
 
@@ -1350,6 +1266,4 @@
             _ => ""
         };
     }
-
 }
-

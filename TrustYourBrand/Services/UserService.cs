@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using TrustYourBrand.Models;
@@ -160,6 +161,36 @@ namespace TrustYourBrand.Services
                 Console.WriteLine($"❌ Erro ao obter roles: {ex.Message}");
                 return new List<RoleDto>();
             }
+        }
+
+        public async Task<List<BrandDto>> GetBrands()
+        {
+            var token = await _localStorageService.GetItemAsync<string>("authToken");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.GetAsync("api/marca");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<BrandDto>>();
+        }
+
+        public async Task<List<StoreDto>> GetStores()
+        {
+            var token = await _localStorageService.GetItemAsync<string>("authToken");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.GetAsync("api/store");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<StoreDto>>();
+        }
+
+        public async Task<List<TenantDto>> GetTenants()
+        {
+            var token = await _localStorageService.GetItemAsync<string>("authToken");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.GetAsync("api/tenant");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<TenantDto>>();
         }
 
         public async Task<LoginResult> UpdateUser(int id, UpdateUserDto userDto)

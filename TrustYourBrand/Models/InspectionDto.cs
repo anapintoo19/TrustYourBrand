@@ -45,6 +45,7 @@
         public int Closed { get; set; }
         public int Standby { get; set; }
         public int Canceled { get; set; }
-        public int Total => Ongoing + Closed + Standby + Canceled;
+        public int Total { get; set; }
+        //public int Total => Ongoing + Closed + Standby + Canceled;
     }
 }

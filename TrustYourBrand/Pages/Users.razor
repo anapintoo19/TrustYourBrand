@@ -209,7 +209,16 @@
 
                         <tr>
                             <td>
-                                <div><label for="tenant">Tenant</label><input value="" disabled /></div>
+                                <div>
+                                    <label for="tenant">Tenant</label>
+                                    <select id="tenant" @bind="NewUser.TenantId" disabled>
+                                        <option value="">Select the tenant</option>
+                                        @foreach (var tenant in TenantsDisponiveis)
+                                        {
+                                            <option value="@tenant.TenantId">@tenant.Name</option>
+                                        }
+                                    </select>
+                                </div>
                             </td>
 
                             <td>
@@ -401,6 +410,7 @@
     private List<FunctionDto> FuncoesDisponiveis { get; set; } = new();
     private List<BrandDto> BrandDisponiveis { get; set; } = new();
     private List<StoreDto> StoreDisponiveis { get; set; } = new();
+    private List<TenantDto> TenantsDisponiveis { get; set; } = new();
 
 
     private bool ShowDeleteModal { get; set; } = false;
@@ -445,6 +455,9 @@
         RolesDisponiveis = await UserService.GetRoles();
         DepartamentosDisponiveis = await UserService.GetDepartments();
         FuncoesDisponiveis = await UserService.GetFunctions();
+        BrandDisponiveis = await UserService.GetBrands();
+        StoreDisponiveis = await UserService.GetStores(); 
+        TenantsDisponiveis = await UserService.GetTenants();
 
     }
 
