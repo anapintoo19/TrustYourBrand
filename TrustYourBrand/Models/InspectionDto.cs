@@ -7,6 +7,10 @@
         public string? Type { get; set; }
         public string Mode { get; set; } = "Launched";
         public string? Language { get; set; }
+        public StatusBreakdown? StatusBreakdown { get; set; }
+        public DateTime? FinishDate { get; set; }
+        public string? Purpose { get; set; }
+        public int? StoresCount { get; set; }
         public string? InspectionName { get; set; }
         public string? Frequency { get; set; }
         public string? Status { get; set; }
@@ -33,5 +37,14 @@
         public string Text { get; set; }
         public string ResponseType { get; set; }
         public List<string>? Options { get; set; }
+    }
+
+    public class StatusBreakdown
+    {
+        public int Ongoing { get; set; }
+        public int Closed { get; set; }
+        public int Standby { get; set; }
+        public int Canceled { get; set; }
+        public int Total => Ongoing + Closed + Standby + Canceled;
     }
 }

@@ -16,7 +16,7 @@
             <button class="btn btn-action">Select columns</button>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Search" class="search-input" />
+            <input type="text" placeholder="Search" class="search-input" @bind="SearchTerm" @bind:event="oninput" />
         </div>
     </div>
 
@@ -126,6 +126,7 @@
                                 <div><label for="pin">PIN</label><input id="pin" type="password" placeholder="Insert Pin" @bind="NewUser.Pin" /></div>
                             </td>
                         </tr>
+
                         <tr>
                             <td>
                                 <div>
@@ -143,6 +144,7 @@
                                 <div><label for="phoneNumber">Phone Number*</label><input id="phoneNumber" type="tel" placeholder="Insert Phone Number" @bind="NewUser.PhoneNumber" /></div>
                             </td>
                         </tr>
+
                         <tr>
                             <td>
                                 <div><label for="birthday">Birthday</label><input id="birthday" type="date" @bind="NewUser.Birthday" /></div>
@@ -160,6 +162,7 @@
                                 </div>
                             </td>
                         </tr>
+
                         <tr>
                             <td>
                                 <div>
@@ -182,6 +185,57 @@
                                         <option value="">Select the gender</option>
                                         <option value="Masculino">Male</option>
                                         <option value="Feminino">Female</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div>
+                                    <label for="country">Country</label>
+                                    <select id="country" @bind="NewUser.Country">
+                                        <option value="">Select the country</option>
+                                        <option value="Portugal">Portugal</option>
+                                        <option value="Espanha">Spain</option>
+                                    </select>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div><label for="city">City</label><input id="city" type="text" placeholder="Insert City" @bind="NewUser.City" /></div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div><label for="tenant">Tenant</label><input value="" disabled /></div>
+                            </td>
+
+                            <td>
+                                <div>
+                                    <label for="store">Store Tenant</label>
+                                    <select id="store" @bind="NewUser.LojaId">
+                                        <option value="">Select the store tenant</option>
+                                        @foreach (var store in StoreDisponiveis)
+                                        {
+                                            <option value="@store.LojaId">@store.Nome</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div>
+                                    <label for="brand">Brand</label>
+                                    <select id="brand" @bind="NewUser.Brand">
+                                        <option value="">Select the brand</option>
+                                        @foreach (var brand in BrandDisponiveis)
+                                        {
+                                            <option value="@brand.Name">@brand.Name</option>
+                                        }
                                     </select>
                                 </div>
                             </td>
@@ -341,9 +395,12 @@
     private int CurrentPage { get; set; } = 1;
     private int TotalPages { get; set; } = 1;
     private const int PageSize = 8;
+    private string SearchTerm { get; set; } = string.Empty;
     private List<RoleDto> RolesDisponiveis { get; set; } = new();
     private List<DepartmentDto> DepartamentosDisponiveis { get; set; } = new();
     private List<FunctionDto> FuncoesDisponiveis { get; set; } = new();
+    private List<BrandDto> BrandDisponiveis { get; set; } = new();
+    private List<StoreDto> StoreDisponiveis { get; set; } = new();
 
 
     private bool ShowDeleteModal { get; set; } = false;
@@ -360,6 +417,13 @@
     private string? editErrorMessage;
     private string? editSuccessMessage;
 
+    private IEnumerable<TrustYourBrand.Models.User> FilteredUsers =>
+     string.IsNullOrWhiteSpace(SearchTerm)
+     ? Userslist
+     : Userslist.Where(user =>
+         ($"{user.FirstName} {user.LastName}".Contains(SearchTerm.Trim(), StringComparison.OrdinalIgnoreCase))
+     );
+
     private List<TrustYourBrand.Models.User> PaginatedUsers =>
         Userslist
             .Skip((CurrentPage - 1) * PageSize)
@@ -368,14 +432,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // var token = await LocalStorageService.GetItemAsync<string>("authToken");
-        // if (string.IsNullOrEmpty(token) || JwtHelper.IsTokenExpired(token))
-        // {
-        //     Console.WriteLine("Token ausente ou expirado. Redirecionando para o login...");
-        //     await LocalStorageService.RemoveItemAsync("authToken");
-        //     NavigationManager.NavigateTo("/login");
-        //     return;
-        // }
+        var token = await LocalStorageService.GetItemAsync<string>("authToken");
+        if (string.IsNullOrEmpty(token) || JwtHelper.IsTokenExpired(token))
+        {
+            Console.WriteLine("Token ausente ou expirado. Redirecionando para o login...");
+            await LocalStorageService.RemoveItemAsync("authToken");
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
 
         await LoadUsersFromService();
         RolesDisponiveis = await UserService.GetRoles();
@@ -384,56 +448,23 @@
 
     }
 
-    // private async Task LoadUsersFromService()
-    // {
-    //     try
-    //     {
-    //         Userslist = await UserService.GetUsers(null);
-    //         TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
-    //     }
-    //     catch
-    //     {
-    //         Userslist = new();
-    //     }
-        
-    //     TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
-
-    // }
-
     private async Task LoadUsersFromService()
     {
         try
         {
-            // Hardcoding a fictitious user instead of fetching from service
-            Userslist = new List<TrustYourBrand.Models.User>
-            {
-                new TrustYourBrand.Models.User
-                {
-                    Id = 1,
-                    FirstName = "João",
-                    LastName = "Silva",
-                    Email = "joao.silva@example.com",
-                    PhoneNumber = "+351 912 345 678",
-                    Role = "User",
-                    FunctionId = 1,
-                    Function = "Analista",
-                    DepartmentId = 1,
-                    Department = "TI",
-                    Birthday = DateTime.Parse("1990-05-15"),
-                    Gender = "Masculino",
-                    Pin = "1234",
-                    IsActive = true,
-                    IsFirstLogin = true
-                }
-            };
+            Userslist = await UserService.GetUsers(null);
             TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
         }
         catch
         {
             Userslist = new();
-            TotalPages = 1;
         }
+        
+        TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
+
     }
+
+    
 
     private void PreviousPage() => CurrentPage = Math.Max(1, CurrentPage - 1);
     private void NextPage() => CurrentPage = Math.Min(TotalPages, CurrentPage + 1);
@@ -454,6 +485,9 @@
                 Birthday = user.Birthday,
                 Gender = user.Gender,
                 Role = user.Role,
+                // Country = user.Country,
+                // City = user.City,
+                // Brand = user.Brand,
                 IsActive = user.IsActive
             };
 

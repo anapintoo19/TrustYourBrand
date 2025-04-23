@@ -14,10 +14,16 @@ namespace TrustYourBrand.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Gender { get; set; }
+        public string? Country { get; set; }
+        public string? Tenant { get; set; }
+        public string? Brand { get; set; }
+        public string? Store { get; set; }
+        public string? City { get; set; }
         public DateTime? Birthday { get; set; }
         public string? Function { get; set; }
         public int? FunctionId { get; set; }
         public int? DepartmentId { get; set; }
+        public int? LojaId { get; set; }
         public string? Department { get; set; } // Novo campo para o nome do departamento
         public string? Email { get; set; }
         public bool IsActive { get; set; }

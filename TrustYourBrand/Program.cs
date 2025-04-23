@@ -17,7 +17,7 @@ builder.Services.AddScoped<AuthTokenHandler>();
 // Configura o HttpClient para "ApiClient" com o AuthTokenHandler API LOGIN
 builder.Services.AddHttpClient("ApiClient", client =>
 {
-    client.BaseAddress = new Uri("https://2a91-2001-8a0-e7d5-8400-f994-f320-89dd-767c.ngrok-free.app/");
+    client.BaseAddress = new Uri("http://localhost:5097/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
@@ -25,7 +25,7 @@ builder.Services.AddHttpClient("ApiClient", client =>
 // Configura o HttpClient para "UserApiClient" com o AuthTokenHandler API USER
 builder.Services.AddHttpClient("UserApiClient", client =>
 {
-    client.BaseAddress = new Uri("https://2a91-2001-8a0-e7d5-8400-f994-f320-89dd-767c.ngrok-free.app/");
+    client.BaseAddress = new Uri("http://localhost:5097/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
@@ -33,7 +33,7 @@ builder.Services.AddHttpClient("UserApiClient", client =>
 // Configura o HttpClient para "UserApiClient" com o AuthTokenHandler API INSPECTION
 builder.Services.AddHttpClient("InspectionApiClient", client =>
 {
-    client.BaseAddress = new Uri("https://2a91-2001-8a0-e7d5-8400-f994-f320-89dd-767c.ngrok-free.app/");
+    client.BaseAddress = new Uri("http://localhost:5097/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
@@ -41,7 +41,7 @@ builder.Services.AddHttpClient("InspectionApiClient", client =>
 // Store api
 builder.Services.AddHttpClient("StoreApiClient", client =>
 {
-    client.BaseAddress = new Uri("https://2a91-2001-8a0-e7d5-8400-f994-f320-89dd-767c.ngrok-free.app/");
+    client.BaseAddress = new Uri("http://localhost:5097/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
@@ -49,7 +49,7 @@ builder.Services.AddHttpClient("StoreApiClient", client =>
 // Department api
 builder.Services.AddHttpClient("DepartmentApiClient", client =>
 {
-    client.BaseAddress = new Uri("https://2a91-2001-8a0-e7d5-8400-f994-f320-89dd-767c.ngrok-free.app/");
+    client.BaseAddress = new Uri("http://localhost:5097/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();

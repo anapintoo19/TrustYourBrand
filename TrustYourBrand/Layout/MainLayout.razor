@@ -61,20 +61,20 @@
     private string currentLanguage = "en"; // language padrão
     private string PageName => GetPageNameFromUrl(currentPage);
 
-    protected override async Task OnInitializedAsync() // Mude para async Task
+    protected override async Task OnInitializedAsync() 
     {
         NavigationManager.LocationChanged += OnLocationChanged;
         currentPage = NavigationManager.Uri;
-        await LoadSavedLanguage(); // Chame o método aqui
+        await LoadSavedLanguage(); 
     }
 
-    private async Task LoadSavedLanguage() // Adicione este método
+    private async Task LoadSavedLanguage() 
     {
         var savedLanguage = await LocalStorage.GetItemAsync<string>("language");
         currentLanguage = savedLanguage ?? "en";
     }
 
-    private async Task ChangeLanguage(string languageCode) // Substitua o método anterior por este
+    private async Task ChangeLanguage(string languageCode) 
     {
         currentLanguage = languageCode;
         showLanguageDropdown = false;

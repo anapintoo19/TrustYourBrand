@@ -26,6 +26,7 @@
             <tr>
                 <th class="action-column"></th>
                 <th class="action-column"></th>
+                <th class="action-column"></th>
                 <th>Type</th>
                 <th>Name</th>
                 <th>Frequency</th>
@@ -61,6 +62,21 @@
                         <td class="action-column">
                             <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => ShowDeleteConfirmation(inspection)">delete</span>
                         </td>
+                        <td class="action-column">
+                            <span class="material-symbols-outlined action-icon detail-icon" @onclick="() => ShowInspectionDetails(inspection)">arrow_forward_ios</span>
+                        </td>
+
+                        @* <td class="action-column"> *@
+                        @*     @if (inspection.Estado == "Ongoing") *@
+                        @*     { *@
+                        @*         <span class="material-symbols-outlined action-icon arrow-icon">keyboard_arrow_right</span>  *@
+                        @*     } *@
+                        @*     else *@
+                        @*     { *@
+                        @*         <span class="action-placeholder"> </span> *@
+                        @*     } *@
+                        @* </td> *@
+
                         <td>@inspection.Type</td>
                         <td>@inspection.InspectionName</td>
                         <td>@inspection.Frequency</td>
@@ -108,6 +124,107 @@
             <button class="btn btn-pagination">Next</button>
         </div>
     </div>
+
+    <!-- Modal for Inspection Details -->
+    @if (ShowDetailsModal && SelectedInspection != null)
+    {
+        <div class="modal-overlay">
+            <div class="modal-content inspection-details-modal">
+                <div class="modal-header">
+                    <h3>Inspection Details</h3>
+                    <span class="material-symbols-outlined close-icon" @onclick="CloseInspectionDetails">close</span>
+                </div>
+                <div class="inspection-details-content">
+                    
+                    
+                    <div class="details-row">
+                        <div class="details-column">
+                            <span class="details-label">Inspection Progress:</span>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: @((int)SelectedInspection.ProgressPercentage)%;"></div>
+                                </div>
+                                <span class="progress-text">@((int)SelectedInspection.ProgressPercentage)%</span>
+                            </div>
+                        </div>
+                       
+                    </div>
+                    
+                    <div class="details-row">
+                        <div class="details-column">
+                            <span class="details-label">Start Date:</span>
+                            <span class="details-value">@(SelectedInspection.StartDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                        </div>
+                        <div class="details-column">
+                            <span class="details-label">Due Date:</span>
+                            <span class="details-value">@(SelectedInspection.DueDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                        </div>
+                        <div class="details-column">
+                            <span class="details-label">Finish Date:</span>
+                            <span class="details-value">@(SelectedInspection.FinishDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                        </div>
+                    </div>
+                    <div class="details-row">
+                        <div class="details-column">
+                            <span class="details-label">Language:</span>
+                            <span class="details-value">@(SelectedInspection.Language ?? "N/A")</span>
+                        </div>
+                    </div>
+                    <div class="details-row">
+                        <div class="details-column">
+                            <span class="details-label">Number of Questions:</span>
+                            <span class="details-value">@(SelectedInspection.Questions?.Count ?? 0)</span>
+                        </div>
+                    </div>
+                    <div class="details-row">
+                        <div class="details-column">
+                            <span class="details-label">Purpose:</span>
+                            <span class="details-value">@(SelectedInspection.Purpose ?? "N/A")</span>
+                        </div>
+                    </div>
+                    <div class="details-row">
+                        <div class="details-column">
+                            <span class="details-label">Status:</span>
+                            <div class="status-breakdown">
+                                <div class="status-item">
+                                    <span class="status-dot status-dot-ongoing"></span>
+                                    <span>Ongoing</span>
+                                    <span class="status-count">@(SelectedInspection.StatusBreakdown?.Ongoing ?? 0)</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-dot status-dot-closed"></span>
+                                    <span>Closed</span>
+                                    <span class="status-count">@(SelectedInspection.StatusBreakdown?.Closed ?? 0)</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-dot status-dot-standby"></span>
+                                    <span>Standby</span>
+                                    <span class="status-count">@(SelectedInspection.StatusBreakdown?.Standby ?? 0)</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-dot status-dot-canceled"></span>
+                                    <span>Canceled</span>
+                                    <span class="status-count">@(SelectedInspection.StatusBreakdown?.Canceled ?? 0)</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="details-label">Total:</span>
+                                    <span class="status-count">@(SelectedInspection.StatusBreakdown?.Total ?? 0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="details-column">
+                            <span class="details-label">Stores:</span>
+                            <div class="stores-breakdown">
+                                <span class="stores-count">@(SelectedInspection.StoresCount ?? 0)</span>
+                                <span class="material-symbols-outlined stores-icon">visibility</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
 
     @if (ShowEditModal)
     {
@@ -715,6 +832,8 @@
     private int CurrentStep { get; set; } = 1;
     private bool ShowDeleteModal { get; set; } = false;
     private bool ShowEditModal { get; set; } = false;
+    private bool ShowDetailsModal { get; set; } = false;
+    private InspectionDto? SelectedInspection { get; set; }
 
     private int CurrentPage { get; set; } = 1;
     private int TotalPages { get; set; } = 1;
@@ -778,35 +897,59 @@
             new InspectionDto
             {
                 Id = 1,
-                Type= "Inspeção de Limpeza",
-                InspectionName = "Inspeção de Limpeza - Loja C",
-                Frequency = "Anualmente",
-                Mode = "Draft",
-                Estado = "Standby",
-                TotalTasks = 0, // Fictício: 6 tarefas no total
-                CompletedTasks = 0 // Fictício: 4 tarefas concluídas 
+                    Type = "Inspeção de Limpeza",
+                    InspectionName = "Inspeção de Limpeza - Loja C",
+                    Frequency = "Anualmente",
+                    Mode = "Draft",
+                    Estado = "Standby",
+                    TotalTasks = 0,
+                    CompletedTasks = 0,
+                    StartDate = DateTime.Now.AddDays(-10),
+                    DueDate = DateTime.Now.AddDays(20),
+                    FinishDate = null,
+                    Language = "Português",
+                    Questions = new List<CustomQuestion> { new CustomQuestion(), new CustomQuestion(), new CustomQuestion() },
+                    Purpose = "Verificar todas as lâmpadas das montras!",
+                    StoresCount = 1,
+                    StatusBreakdown = new StatusBreakdown { Ongoing = 1, Closed = 0, Standby = 0, Canceled = 0 }
             },
             new InspectionDto
             {
                 Id = 2,
-                Type= "Inspeção de Limpeza",
-                InspectionName = "Inspeção de Limpeza - Loja B",
-                Frequency = "Anualmente",
-                Mode = "Launched",
-                Estado = "Ongoing",
-                TotalTasks = 6, // Fictício: 6 tarefas no total
-                CompletedTasks = 3 // Fictício: 4 tarefas concluídas (50%)
+                    Type = "Inspeção de Limpeza",
+                    InspectionName = "Inspeção de Limpeza - Loja B",
+                    Frequency = "Anualmente",
+                    Mode = "Launched",
+                    Estado = "Ongoing",
+                    TotalTasks = 6,
+                    CompletedTasks = 3,
+                    StartDate = DateTime.Now.AddDays(-5),
+                    DueDate = DateTime.Now.AddDays(15),
+                    FinishDate = null,
+                    Language = "Português",
+                    Questions = new List<CustomQuestion> { new CustomQuestion(), new CustomQuestion() },
+                    Purpose = "Garantir limpeza geral da loja",
+                    StoresCount = 1,
+                    StatusBreakdown = new StatusBreakdown { Ongoing = 1, Closed = 0, Standby = 0, Canceled = 0 }
             },
             new InspectionDto
             {
                 Id = 3,
-                Type= "Inspeção de Qualidade",
-                InspectionName = "Inspeção de Qualidade - Loja A",
-                Frequency = "Semanalmente",
-                Mode = "Draft",
-                Estado = "Standby",
-                TotalTasks = 0, // Fictício: 6 tarefas no total
-                CompletedTasks = 0 // Fictício: 4 tarefas concluídas 
+                    Type = "Inspeção de Qualidade",
+                    InspectionName = "Inspeção de Qualidade - Loja A",
+                    Frequency = "Semanalmente",
+                    Mode = "Draft",
+                    Estado = "Standby",
+                    TotalTasks = 0,
+                    CompletedTasks = 0,
+                    StartDate = DateTime.Now.AddDays(-2),
+                    DueDate = DateTime.Now.AddDays(5),
+                    FinishDate = null,
+                    Language = "Português",
+                    Questions = new List<CustomQuestion> { new CustomQuestion() },
+                    Purpose = "Avaliar qualidade dos produtos",
+                    StoresCount = 1,
+                    StatusBreakdown = new StatusBreakdown { Ongoing = 0, Closed = 0, Standby = 1, Canceled = 0 }
             }
 
         };
@@ -816,6 +959,18 @@
             Console.WriteLine($"Erro ao carregar lojas: {ex.Message}");
             Inspections = new List<InspectionDto>();
         }
+    }
+
+    private void ShowInspectionDetails(InspectionDto inspection)
+    {
+        SelectedInspection = inspection;
+        ShowDetailsModal = true;
+    }
+
+    private void CloseInspectionDetails()
+    {
+        ShowDetailsModal = false;
+        SelectedInspection = null;
     }
 
     private void OpenCreateInspection()

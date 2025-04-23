@@ -43,7 +43,12 @@
         color: #dc3545; /* Cor ao passar o mouse (vermelho, por exemplo) */
     }
 
-
+.detail-icon {
+    color: #666;
+}
+    .detail-icon:hover {
+        color: #40a113; /* Cor ao passar o mouse (verde, por exemplo) */
+    }
 
 .action-buttons {
     display: flex;
@@ -320,3 +325,95 @@
 .status-dot-canceled {
     background-color: #f44336; /* Vermelho */
 }
+
+/*DETAIL MODAL */
+/* Inspection Details Modal */
+.inspection-details-modal {
+    width: 600px;
+    max-width: 90%;
+    text-align: left;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.close-icon {
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+    .close-icon:hover {
+        color: #333;
+    }
+
+.inspection-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.details-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.details-column {
+    flex: 1;
+    min-width: 200px;
+}
+
+.details-label {
+    font-weight: bold;
+    color: #666;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.details-value {
+    color: #333;
+    font-size: 14px;
+}
+
+.status-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-count {
+    margin-left: auto;
+    font-weight: bold;
+}
+
+.stores-breakdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stores-count {
+    font-weight: bold;
+}
+
+.stores-icon {
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+}
+
+    .stores-icon:hover {
+        color: #333;
+    }
