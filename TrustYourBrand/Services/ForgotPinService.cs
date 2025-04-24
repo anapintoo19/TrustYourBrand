@@ -15,7 +15,7 @@ namespace TrustYourBrand.Services
         public async Task<ForgotPinResult> RequestVerificationCodeAsync(string phoneNumber)
         {
             var httpClient = _httpClientFactory.CreateClient("ApiClient");
-            var response = await httpClient.PostAsJsonAsync("api/auth/request-pin-reset", new { PhoneNumber = phoneNumber });
+            var response = await httpClient.PostAsJsonAsync("www/api/auth/request-pin-reset", new { PhoneNumber = phoneNumber });
             if (response.IsSuccessStatusCode)
             {
                 return new ForgotPinResult
@@ -38,7 +38,7 @@ namespace TrustYourBrand.Services
         public async Task<ForgotPinResult> ResetPinAsync(string phoneNumber, string verificationCode, string newPin)
         {
             var httpClient = _httpClientFactory.CreateClient("ApiClient");
-            var response = await httpClient.PostAsJsonAsync("api/auth/reset-pin", new
+            var response = await httpClient.PostAsJsonAsync("www/api/auth/reset-pin", new
             {
                 PhoneNumber = phoneNumber,
                 VerificationCode = verificationCode,

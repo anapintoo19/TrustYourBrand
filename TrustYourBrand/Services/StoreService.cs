@@ -29,7 +29,7 @@ namespace TrustYourBrand.Services
                 }
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                var response = await _httpClient.GetAsync("api/Store");
+                var response = await _httpClient.GetAsync("www/api/Store");
                 var json = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -66,7 +66,7 @@ namespace TrustYourBrand.Services
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.PostAsJsonAsync("api/Store", storeDto);
+                var response = await _httpClient.PostAsJsonAsync("www/api/Store", storeDto);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -137,7 +137,7 @@ namespace TrustYourBrand.Services
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.PutAsJsonAsync($"api/Store/{id}", storeDto);
+                var response = await _httpClient.PutAsJsonAsync($"www/api/Store/{id}", storeDto);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -189,7 +189,7 @@ namespace TrustYourBrand.Services
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.DeleteAsync($"api/Store/{id}");
+                var response = await _httpClient.DeleteAsync($"www/api/Store/{id}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)

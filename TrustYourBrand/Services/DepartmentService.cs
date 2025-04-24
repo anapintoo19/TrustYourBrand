@@ -29,7 +29,7 @@ namespace TrustYourBrand.Services
                 }
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                var response = await _httpClient.GetAsync("api/department");
+                var response = await _httpClient.GetAsync("www/api/department");
                 var json = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -66,7 +66,7 @@ namespace TrustYourBrand.Services
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.PostAsJsonAsync("api/department", departmentDto);
+                var response = await _httpClient.PostAsJsonAsync("www/api/department", departmentDto);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -118,7 +118,7 @@ namespace TrustYourBrand.Services
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.DeleteAsync($"api/department/{id}");
+                var response = await _httpClient.DeleteAsync($"www/api/department/{id}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -164,7 +164,7 @@ namespace TrustYourBrand.Services
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.PutAsJsonAsync($"api/department/{id}", departmentDto);
+                var response = await _httpClient.PutAsJsonAsync($"www/api/department/{id}", departmentDto);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)

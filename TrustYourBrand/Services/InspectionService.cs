@@ -30,7 +30,7 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.GetAsync("api/Inspecao");
+                var response = await _httpClient.GetAsync("www/api/Inspecao");
                 var json = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine("✅ Conteúdo da resposta da API:");
@@ -71,7 +71,7 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.GetAsync($"api/Inspecao/{id}");
+                var response = await _httpClient.GetAsync($"www/api/Inspecao/{id}");
                 var json = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"✅ Resposta da API para inspeção {id}:");
@@ -124,7 +124,7 @@ namespace TrustYourBrand.Services
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 Console.WriteLine($"Enviando requisição POST para api/Inspecao: {JsonSerializer.Serialize(inspectionDto)}");
-                var response = await _httpClient.PostAsJsonAsync("api/Inspecao", inspectionDto);
+                var response = await _httpClient.PostAsJsonAsync("www/api/Inspecao", inspectionDto);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"Resposta do POST: Status {response.StatusCode}, Conteúdo: {responseContent}");
@@ -190,7 +190,7 @@ namespace TrustYourBrand.Services
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 Console.WriteLine($"Enviando requisição PUT para api/Inspecao/{id}: {JsonSerializer.Serialize(inspectionDto)}");
-                var response = await _httpClient.PutAsJsonAsync($"api/Inspecao/{id}", inspectionDto);
+                var response = await _httpClient.PutAsJsonAsync($"www/api/Inspecao/{id}", inspectionDto);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"Resposta do PUT: Status {response.StatusCode}, Conteúdo: {responseContent}");
@@ -241,7 +241,7 @@ namespace TrustYourBrand.Services
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 Console.WriteLine($"Fazendo requisição DELETE para api/Inspecao/{id}");
-                var response = await _httpClient.DeleteAsync($"api/Inspecao/{id}");
+                var response = await _httpClient.DeleteAsync($"www/api/Inspecao/{id}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"Resposta do DELETE: Status {response.StatusCode}, Conteúdo: {responseContent}");
