@@ -166,11 +166,23 @@ namespace TrustYourBrand.Services
         public async Task<List<BrandDto>> GetBrands()
         {
             var token = await _localStorageService.GetItemAsync<string>("authToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("No auth token found for GetBrands.");
+                return new List<BrandDto>();
+            }
+
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await _httpClient.GetAsync("api/marca");
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<BrandDto>>();
+
+            var brands = await response.Content.ReadFromJsonAsync<List<BrandDto>>(new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return brands ?? new List<BrandDto>();
         }
 
         public async Task<List<StoreDto>> GetStores()
@@ -185,12 +197,43 @@ namespace TrustYourBrand.Services
 
         public async Task<List<TenantDto>> GetTenants()
         {
-            var token = await _localStorageService.GetItemAsync<string>("authToken");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            try
+            {
+                var token = await _localStorageService.GetItemAsync<string>("authToken");
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No auth token found for GetTenants.");
+                    return new List<TenantDto>();
+                }
 
-            var response = await _httpClient.GetAsync("api/tenant");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<TenantDto>>();
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var response = await _httpClient.GetAsync("api/tenant/me"); // Update to the correct endpoint
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Failed to fetch tenant: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}");
+                    return new List<TenantDto>();
+                }
+
+                var tenant = await response.Content.ReadFromJsonAsync<TenantDto>(new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (tenant == null)
+                {
+                    Console.WriteLine("No tenant data returned.");
+                    return new List<TenantDto>();
+                }
+
+                Console.WriteLine($"Fetched tenant: {JsonSerializer.Serialize(tenant)}");
+                return new List<TenantDto> { tenant }; // Wrap the single tenant in a list
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching tenant: {ex.Message}");
+                return new List<TenantDto>();
+            }
         }
 
         public async Task<LoginResult> UpdateUser(int id, UpdateUserDto userDto)

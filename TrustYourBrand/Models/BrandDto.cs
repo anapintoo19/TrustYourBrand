@@ -2,7 +2,9 @@
 {
     public class BrandDto
     {
-        public int BrandId { get; set; }
-        public string Name { get; set; }
+        public int MarcaId { get; set; }
+        public int TenantId { get; set; }
+        public string Nome { get; set; } 
+        public bool IsActive { get; set; }
     }
 }

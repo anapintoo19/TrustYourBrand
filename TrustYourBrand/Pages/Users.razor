@@ -63,7 +63,7 @@
                         <td>@user.Role</td>
                         <td>@user.Function</td>
                         <td>@user.Department</td>
-                        
+
                     </tr>
                 }
             }
@@ -211,13 +211,14 @@
                             <td>
                                 <div>
                                     <label for="tenant">Tenant</label>
-                                    <select id="tenant" @bind="NewUser.TenantId" disabled>
-                                        <option value="">Select the tenant</option>
-                                        @foreach (var tenant in TenantsDisponiveis)
-                                        {
-                                            <option value="@tenant.TenantId">@tenant.Name</option>
-                                        }
-                                    </select>
+                                    @if (TenantsDisponiveis.Any())
+                                    {
+                                        <input type="text" value="@TenantsDisponiveis[0].Name" readonly disabled/>
+                                    }
+                                    else
+                                    {
+                                        <input type="text" value="No tenant available" readonly disabled/>
+                                    }
                                 </div>
                             </td>
 
@@ -239,18 +240,30 @@
                             <td>
                                 <div>
                                     <label for="brand">Brand</label>
-                                    <select id="brand" @bind="NewUser.Brand">
+                                    <select id="brand" @bind="NewUser.MarcaId">
                                         <option value="">Select the brand</option>
                                         @foreach (var brand in BrandDisponiveis)
                                         {
-                                            <option value="@brand.Name">@brand.Name</option>
+                                            <option value="@brand.MarcaId">@brand.Nome</option>
                                         }
                                     </select>
                                 </div>
                             </td>
+
+                            <td>
+                                <div>
+                                    <label for="language">Language</label>
+                                    <select id="language" @bind="NewUser.Language">
+                                        <option value="">Select the language</option>
+                                        <option value="Português">Portuguese</option>
+                                        <option value="Espanhol">Spanish</option>
+                                        <option value="Inglês">English</option>
+                                    </select>
+                                </div>
+                            </td>
                         </tr>
-                        
-                       
+
+
                     </table>
 
                     <div class="modal-buttons">
@@ -350,34 +363,74 @@
 
                             <td>
                                 <div><label>PIN</label><input type="password" @bind="EditingUser.Pin" disabled /></div>
+                                
                             </td> 
                         </tr>
                         <tr>
                             <td>
-                                <div><label>Country</label><input type="text"  /></div>
+                                <div>
+                                    <label for="country">Country</label>
+                                    <select id="country" @bind="EditingUser.Country">
+                                        <option value="">Select the country</option>
+                                        <option value="Portugal">Portugal</option>
+                                        <option value="Espanha">Spain</option>
+                                    </select>
+                                </div>
                             </td>
 
                             <td>
-                                <div><label>City</label><input type="text" /></div>
+                                <div><label>City</label><input type="text" @bind="EditingUser.City" placeholder="Insert City" /></div>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <div><label>Tenant</label><input type="text" disabled/></div>
+                                <div>
+                                    <label for="tenant">Tenant</label>
+                                    <input type="text" value="@EditingUser.Tenant" readonly disabled />
+                                </div>
                             </td>
 
                             <td>
-                                <div><label>Store Tenant</label><input type="text" /></div>
+                                <div>
+                                    <label for="store">Store Tenant</label>
+                                    <select id="store" @bind="EditingUser.LojaId">
+                                        <option value="">Select the store tenant</option>
+                                        @foreach (var store in StoreDisponiveis)
+                                        {
+                                            <option value="@store.LojaId">@store.Nome</option>
+                                        }
+                                    </select>
+                                </div>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <div><label>Language</label><input type="text" disabled /></div>
+                                <div>
+                                    <label for="brand">Brand</label>
+                                    <select id="brand" @bind="EditingUser.MarcaId">
+                                        <option value="">Select the brand</option>
+                                        @foreach (var brand in BrandDisponiveis)
+                                        {
+                                            <option value="@brand.MarcaId">@brand.Nome</option>
+                                        }
+                                    </select>
+                                </div>
                             </td>
 
+                            
                             <td>
-                                
+                                <div>
+                                    <label for="language">Language</label>
+                                    <select id="language" @bind="EditingUser.Language" disabled>
+                                        <option value="">Select the language</option>
+                                        <option value="Português">Portuguese</option>
+                                        <option value="Espanhol">Spanish</option>
+                                        <option value="Inglês">English</option>
+                                    </select>
+                                </div>
                             </td>
+
+                            
                         </tr>
                     </table>
                     <div class="modal-buttons">
@@ -456,6 +509,7 @@
         DepartamentosDisponiveis = await UserService.GetDepartments();
         FuncoesDisponiveis = await UserService.GetFunctions();
         BrandDisponiveis = await UserService.GetBrands();
+        Console.WriteLine("BrandDisponiveis: " + System.Text.Json.JsonSerializer.Serialize(BrandDisponiveis));
         StoreDisponiveis = await UserService.GetStores(); 
         TenantsDisponiveis = await UserService.GetTenants();
 
@@ -466,6 +520,7 @@
         try
         {
             Userslist = await UserService.GetUsers(null);
+            Console.WriteLine("Userslist: " + System.Text.Json.JsonSerializer.Serialize(Userslist));
             TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
         }
         catch
@@ -484,6 +539,15 @@
 
     private void EditUser(TrustYourBrand.Models.User user)
     {
+        Console.WriteLine($"A abrir modal de edição para o utilizador: {user.FirstName} {user.LastName}, Idioma: {user.Language}");
+        Console.WriteLine("Language do utilizador: " + user.Language);
+        Console.WriteLine("Brand do utilizador: " + user.Brand);
+
+        var function = FuncoesDisponiveis.FirstOrDefault(f => f.Name == user.Function);
+        var department = DepartamentosDisponiveis.FirstOrDefault(d => d.Nome == user.Department);
+        var store = StoreDisponiveis.FirstOrDefault(s => s.Nome == user.Store);
+        var brand = BrandDisponiveis.FirstOrDefault(b => b.Nome == user.Brand);
+
         EditingUser = new TrustYourBrand.Models.User
             {
                 Id = user.Id,
@@ -491,17 +555,27 @@
                 LastName = user.LastName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-                DepartmentId = user.DepartmentId,
+                DepartmentId = department?.DepartmentId,
                 Department = user.Department,
-                FunctionId = user.FunctionId,
+                FunctionId = function?.FunctionId,
                 Function = user.Function,
-                Birthday = user.Birthday,
-                Gender = user.Gender,
+                Birthday = user.Birthday, 
+                Gender = user.Gender,     
                 Role = user.Role,
-                // Country = user.Country,
-                // City = user.City,
-                // Brand = user.Brand,
-                IsActive = user.IsActive
+                RoleId = user.RoleId,
+                Country = user.Country,
+                TenantId = user.TenantId,
+                Tenant = user.Tenant,
+                LojaId = store?.LojaId,
+                Store = user.Store,
+                City = user.City,
+                MarcaId = brand?.MarcaId,
+                Brand = user.Brand,
+                Language = user.Language,
+                IsActive = user.IsActive,
+                Pin = user.Pin,           
+                IsFirstLogin = user.IsFirstLogin,
+                CreatedByUserId = user.CreatedByUserId
             };
 
         ShowEditUser = true;
@@ -539,7 +613,12 @@
                 RoleId = roleSelecionada.RoleId,
                 IsActive = EditingUser.IsActive,
                 IsFirstLogin = EditingUser.IsFirstLogin,
-                Pin = EditingUser.Pin
+                Pin = EditingUser.Pin,
+                Country = EditingUser.Country,
+                City = EditingUser.City,
+                LojaId = EditingUser.LojaId,
+                Language = EditingUser.Language,
+                MarcaId = EditingUser.MarcaId
             };
 
         var result = await UserService.UpdateUser(EditingUser.Id, dto);
@@ -586,6 +665,10 @@
     private void OpenCreateUser()
     {
         NewUser = new();
+        if (TenantsDisponiveis.Any())
+        {
+            NewUser.TenantId = TenantsDisponiveis[0].TenantId; // Automatically set the TenantId
+        }
         ShowCreateUser = true;
     }
 

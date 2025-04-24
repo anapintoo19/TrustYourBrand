@@ -54,6 +54,23 @@ builder.Services.AddHttpClient("DepartmentApiClient", client =>
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
 
+// Tenant api
+builder.Services.AddHttpClient("TenantApiClient", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5097/");
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+})
+.AddHttpMessageHandler<AuthTokenHandler>();
+
+// Brand api
+builder.Services.AddHttpClient("BrandApiClient", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5097/");
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+})
+.AddHttpMessageHandler<AuthTokenHandler>();
+
+
 // Registra os serviços que dependem do HttpClient
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
