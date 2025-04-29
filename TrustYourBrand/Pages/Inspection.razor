@@ -7,7 +7,7 @@
 @inject TrustYourBrand.Services.IInspectionService InspectionService
 @inject TrustYourBrand.Services.ILocalStorageService LocalStorageService
 @inject TrustYourBrand.Services.IStoreService StoreService
-@inject TrustYourBrand.Services.IUserService UserService    
+@inject TrustYourBrand.Services.IUserService UserService
 @inject NavigationManager NavigationManager
 
 <div class="table-container">
@@ -419,63 +419,110 @@
                                 break;
                             case 4:
                                 <h3 style="text-align: left; color: #6aa4d5;">Question</h3>
-                                <div class="dropdown-section">
-                                    <select>
-                                        <option value="">Add Section</option>
-                                        <option value="">Bilhar</option>
-                                        <option value="">Sala</option>
-                                    </select>
-                                </div>
-                                <div class="table-container-selection">
-                                    <table class="selection-table">
-                                        <thead>
-                                            <tr>
-                                                <th id="sectionHeader">Section</th>
-                                                <th>Response</th>
-                                                <th class="action-column"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><input type="text" placeholder="Type your question here" style="width: 100%;" /></td>
-                                                <td>
-                                                    <select class="response-select" disabled>
-                                                        <option value="">Select the Response</option>
-                                                        <option value="">Yes/No</option>
-                                                        <option value="">0-10 (Scale)</option>
-                                                        <option value="">Good/Enough/Bad</option>
-                                                    </select>
-                                                </td>
-                                                <td class="action-column">
-                                                    <span class="material-symbols-outlined action-icon delete-icon">delete</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><input type="text" placeholder="Type your question here" style="width: 100%;" /></td>
-                                                <td>
-                                                    <select class="response-select" disabled>
-                                                        <option value="">Select the Response</option>
-                                                        <option value="">Yes/No</option>
-                                                        <option value="">0-10 (Scale)</option>
-                                                        <option value="">Good/Enough/Bad</option>
-                                                    </select>
-                                                </td>
-                                                <td class="action-column">
-                                                    <span class="material-symbols-outlined action-icon delete-icon">delete</span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                @if (NewInspection.TemplateId.HasValue)
+                                {
+                                    <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.TemplateId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
+                                    <div class="table-container-selection">
+                                        <table class="selection-table">
+                                            <thead>
+                                                <tr>
+                                                    <th id="sectionColumnHeader">Section</th>
+                                                    <th>Question</th>
+                                                    <th>Response</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (TemplateQuestions == null || !TemplateQuestions.Any())
+                                                {
+                                                    <tr>
+                                                        <td colspan="3">No questions available for this template.</td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    @foreach (var question in TemplateQuestions)
+                                                    {
+                                                        <tr>
+                                                            <td>@(question.SeccaoId.HasValue ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == question.SeccaoId)?.Nome ?? "N/A" : "N/A")</td>
+                                                            <td>@question.Text</td>
+                                                            <td>@question.ResponseType</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dropdown-section-container">
+                                        <select id="sectionSelect" style="width: 100%;" @bind="selectedSection">
+                                            <option value="">Select the section of store</option>
+                                            @foreach (var sec in SectionDisponiveis)
+                                            {
+                                                <option value="@sec.SeccaoId">@sec.Nome</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="table-container-selection">
+                                        <table class="selection-table">
+                                            <thead>
+                                                <tr>
+                                                    <th id="sectionColumnHeader">Section</th>
+                                                    <th>Question</th>
+                                                    <th>Response</th>
+                                                    <th class="action-column"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (!NewInspection.Questions.Any())
+                                                {
+                                                    <tr>
+                                                        <td colspan="4">No questions added yet.</td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    @for (int i = 0; i < NewInspection.Questions.Count; i++)
+                                                    {
+                                                        var questionIndex = i;
+                                                        var question = NewInspection.Questions[i];
+                                                        <tr>
+                                                            <td>@(selectedSection.HasValue ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == selectedSection)?.Nome ?? "N/A" : "N/A")</td>
+                                                            <td>
+                                                                <input type="text" placeholder="Type your question here" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
+                                                            </td>
+                                                            <td>
+                                                                <select class="response-select" @bind="question.ResponseType">
+                                                                    <option value="">Select the Response</option>
+                                                                    <option value="Yes/No">Yes/No</option>
+                                                                    <option value="0-10 (Scale)">0-10 (Scale)</option>
+                                                                    <option value="Good/Enough/Bad">Good/Enough/Bad</option>
+                                                                </select>
+                                                            </td>
+                                                            <td class="action-column">
+                                                                <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => RemoveQuestion(questionIndex)">delete</span>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
 
-                                    <div class="pagination-table-selection">
-                                        <span>Page 1 of 1</span>
-                                        <div class="pagination-buttons-selection">
-                                            <button class="btn btn-pagination-selection">Prev</button>
-                                            <button class="btn btn-pagination-selection btn-active">1</button>
-                                            <button class="btn btn-pagination-selection">Next</button>
+                                        <div class="add-question-section">
+                                            <button type="button" class="btn btn-add-question" @onclick="AddQuestion">Add New Question</button>
+                                        </div>
+
+                                        <div class="pagination-table-selection">
+                                            <span>Page 1 of 1</span>
+                                            <div class="pagination-buttons-selection">
+                                                <button class="btn btn-pagination-selection">Prev</button>
+                                                <button class="btn btn-pagination-selection btn-active">1</button>
+                                                <button class="btn btn-pagination-selection">Next</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                                 break;
                         }
                     </div>
@@ -546,7 +593,7 @@
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
                                             <label for="template" style="text-align:left;">Template</label>
-                                            <select id="template" style="width: 100%;" @bind="NewInspection.TemplateId">
+                                            <select id="template" style="width: 100%;" @bind="NewInspection.TemplateId" @bind:after="OnTemplateChanged">
                                                 <option value="">Select the template</option>
                                                 @foreach (var template in TemplateDisponiveis)
                                                 {
@@ -594,7 +641,7 @@
                                             <input type="text" id="description" placeholder="Enter the Description of the inspection" style="width: 100%;" @bind="NewInspection.Description" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
-                                            <label for="brand" style="text-align:left; margin-top: 20px;">Brand</label> 
+                                            <label for="brand" style="text-align:left; margin-top: 20px;">Brand</label>
                                             <select id="brand" style="width: 100%;" @bind="NewInspection.MarcaId">
                                                 <option value="">Select the brand</option>
                                                 @foreach (var brand in BrandDisponiveis)
@@ -627,7 +674,7 @@
                                                 <th>Inspector</th>
                                             </tr>
                                         </thead>
-                                        <tbody >
+                                        <tbody>
                                             @if (StoreList == null)
                                             {
                                                 <tr><td colspan="9">Loading...</td></tr>
@@ -718,7 +765,6 @@
                                                         <td>@user.Department</td>
                                                         <td>@user.Function</td>
                                                         <td>@user.Role</td>
-
                                                     </tr>
                                                 }
                                             }
@@ -737,73 +783,118 @@
                                 break;
                             case 4:
                                 <h3 style="text-align: left; color: #6aa4d5;">Question</h3>
-                                <div class="dropdown-section">
-                                    <select id="brand" style="width: 100%;" @bind="selectedSection">
-                                        <option value="">Select the section</option>
-                                        @foreach (var section in SectionDisponiveis)
-                                        {
-                                            <option value="@section.SeccaoId">@section.Nome</option>
-                                        }
-                                    </select>
-                                </div>
-                                <div class="table-container-selection">
-                                    <table class="selection-table">
-                                        <thead>
-                                            <tr>
-                                                <th id="sectionHeader">Section</th>
-                                                <th>Question</th>
-                                                <th>Response</th>
-                                                <th class="action-column"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if (!NewInspection.Questions.Any())
-                                            {
-                                                <tr>
-                                                    <td colspan="4">No questions added yet.</td>
-                                                </tr>
-                                            }
-                                            else
-                                            {
-                                                @for (int i = 0; i < NewInspection.Questions.Count; i++)
-                                                {
-                                                    var questionIndex = i; // Captura o índice para uso no loop
-                                                    var question = NewInspection.Questions[i];
+                                @if (NewInspection.TemplateId.HasValue)
+                                {
+                                    @if (isLoadingQuestions)
+                                    {
+                                        <p>Loading questions...</p>
+                                    }
+                                    else
+                                    {
+                                        <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.TemplateId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
+                                        <div class="table-container-selection">
+                                            <table class="selection-table">
+                                                <thead>
                                                     <tr>
-                                                        <td>@selectedSection</td>
-                                                        <td>
-                                                            <input type="text" placeholder="Type your question here" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
-                                                        </td>
-                                                        <td>
-                                                            <select class="response-select" @bind="question.ResponseType">
-                                                                <option value="">Select the Response</option>
-                                                                <option value="Yes/No">Yes/No</option>
-                                                                <option value="0-10 (Scale)">0-10 (Scale)</option>
-                                                                <option value="Good/Enough/Bad">Good/Enough/Bad</option>
-                                                            </select>
-                                                        </td>
-                                                        <td class="action-column">
-                                                            <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => RemoveQuestion(questionIndex)">delete</span>
-                                                        </td>
+                                                        <th id="sectionColumnHeader">Section</th>
+                                                        <th>Question</th>
+                                                        <th>Response</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (TemplateQuestions == null || !TemplateQuestions.Any())
+                                                    {
+                                                        <tr>
+                                                            <td colspan="3">No questions available for this template.</td>
+                                                        </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        @foreach (var question in TemplateQuestions)
+                                                        {
+                                                            <tr>
+                                                                <td>@(question.SeccaoId.HasValue ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == question.SeccaoId)?.Nome ?? "N/A" : "N/A")</td>
+                                                                <td>@question.Text</td>
+                                                                <td>@question.ResponseType</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <!-- Código existente para perguntas personalizadas -->
+                                    <div class="dropdown-section-container">
+                                        <select id="sectionSelect" style="width: 100%;" @bind="selectedSection">
+                                            <option value="">Select the section of store</option>
+                                            @foreach (var sec in SectionDisponiveis)
+                                            {
+                                                <option value="@sec.SeccaoId">@sec.Nome</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="table-container-selection">
+                                        <table class="selection-table">
+                                            <thead>
+                                                <tr>
+                                                    <th id="sectionColumnHeader">Section</th>
+                                                    <th>Question</th>
+                                                    <th>Response</th>
+                                                    <th class="action-column"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (!NewInspection.Questions.Any())
+                                                {
+                                                    <tr>
+                                                        <td colspan="4">No questions added yet.</td>
                                                     </tr>
                                                 }
-                                            }
-                                        </tbody>
-                                    </table>
+                                                else
+                                                {
+                                                    @for (int i = 0; i < NewInspection.Questions.Count; i++)
+                                                    {
+                                                        var questionIndex = i;
+                                                        var question = NewInspection.Questions[i];
+                                                        <tr>
+                                                            <td>@(selectedSection.HasValue ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == selectedSection)?.Nome ?? "N/A" : "N/A")</td>
+                                                            <td>
+                                                                <input type="text" placeholder="Type your question here" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
+                                                            </td>
+                                                            <td>
+                                                                <select class="response-select" @bind="question.ResponseType">
+                                                                    <option value="">Select the Response</option>
+                                                                    <option value="Yes/No">Yes/No</option>
+                                                                    <option value="0-10 (Scale)">0-10 (Scale)</option>
+                                                                    <option value="Good/Enough/Bad">Good/Enough/Bad</option>
+                                                                </select>
+                                                            </td>
+                                                            <td class="action-column">
+                                                                <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => RemoveQuestion(questionIndex)">delete</span>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
 
-                                    <div class="add-question-section">
-                                        <button type="button" class="btn btn-add-question" @onclick="AddQuestion">Add New Question</button>
-                                    </div>
+                                        <div class="add-question-section">
+                                            <button type="button" class="btn btn-add-question" @onclick="AddQuestion">Add New Question</button>
+                                        </div>
 
-                                    <div class="pagination-table-selection">
-                                        <span>Page 1 of 1</span>
-                                        <div class="pagination-buttons-selection">
-                                            <button class="btn btn-pagination-selection">Prev</button>
-                                            <button class="btn btn-pagination-selection btn-active">1</button>
-                                            <button class="btn btn-pagination-selection">Next</button>
+                                        <div class="pagination-table-selection">
+                                            <span>Page 1 of 1</span>
+                                            <div class="pagination-buttons-selection">
+                                                <button class="btn btn-pagination-selection">Prev</button>
+                                                <button class="btn btn-pagination-selection btn-active">1</button>
+                                                <button class="btn btn-pagination-selection">Next</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                                 break;
                         }
                     </div>
@@ -824,6 +915,15 @@
             </div>
         </div>
     }
+
+    @if (errorMessage != null)
+    {
+        <div class="error-message">@errorMessage</div>
+    }
+    @if (successMessage != null)
+    {
+        <div class="success-message">@successMessage</div>
+    }
 </div>
 
 <link href="css/Inspection.css" rel="stylesheet" />
@@ -833,12 +933,13 @@
 @code {
     private bool ShowCreateInspection { get; set; } = false;
     private int CurrentStep { get; set; } = 1;
-    private string selectedSection = "";
+    private int? selectedSection = null;
 
     private bool ShowDeleteModal { get; set; } = false;
     private bool ShowEditModal { get; set; } = false;
     private int? ExpandedInspectionId { get; set; } = null;
 
+    private bool isLoadingQuestions { get; set; } = false;
     private int CurrentPage { get; set; } = 1;
     private int TotalPages { get; set; } = 1;
     private const int PageSize = 8;
@@ -855,6 +956,7 @@
     private List<SectionDto> SectionDisponiveis { get; set; } = new();
     private List<StoreDto> StoreList { get; set; } = new List<StoreDto>();
     private List<TrustYourBrand.Models.User> Userslist { get; set; } = new();
+    private List<CustomQuestion> TemplateQuestions { get; set; } = new();
 
     private void SetStep(int step)
     {
@@ -870,12 +972,11 @@
         public DateTime? StartDate { get; set; }
         public DateTime? DueDate { get; set; }
         public string? Description { get; set; }
-        public int MarcaId { get; set; }
+        public int? MarcaId { get; set; }
         public string? Brand { get; set; }
         public List<int> SelectedStoreIds { get; set; } = new List<int>();
         public List<int> SelectedGuestIds { get; set; } = new List<int>();
         public List<CustomQuestion> Questions { get; set; } = new List<CustomQuestion>();
-
     }
 
     private List<StoreDto> PaginatedStores =>
@@ -913,6 +1014,7 @@
         await LoadUsersFromService();
         await LoadStoresFromService();
         await LoadInspections();
+        await LoadTemplateQuestions();
         BrandDisponiveis = await InspectionService.GetBrands();
         TemplateDisponiveis = await InspectionService.GetTemplates();
         SectionDisponiveis = await InspectionService.GetSection();
@@ -923,16 +1025,12 @@
         try
         {
             Userslist = await UserService.GetUsers(null);
-            Console.WriteLine("Userslist: " + System.Text.Json.JsonSerializer.Serialize(Userslist));
             TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
         }
         catch
         {
             Userslist = new();
         }
-
-        TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
-
     }
 
     private async Task LoadStoresFromService()
@@ -1022,6 +1120,56 @@
         }
     }
 
+    private async Task LoadTemplateQuestions()
+    {
+        isLoadingQuestions = true;
+        try
+        {
+            if (NewInspection.TemplateId.HasValue)
+            {
+                TemplateQuestions = await InspectionService.GetTemplateQuestions(NewInspection.TemplateId.Value);
+                NewInspection.Questions.Clear(); // Limpar perguntas personalizadas
+                Console.WriteLine($"Loaded {TemplateQuestions.Count} questions for template ID {NewInspection.TemplateId.Value}");
+            }
+            else
+            {
+                TemplateQuestions = new List<CustomQuestion>();
+                NewInspection.Questions.Clear();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load template questions: {ex.Message}";
+            TemplateQuestions = new List<CustomQuestion>();
+            Console.WriteLine($"❌ Error loading template questions: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingQuestions = false;
+            StateHasChanged();
+        }
+    }
+
+    private int? SelectedTemplateId
+    {
+        get => NewInspection.TemplateId;
+        set
+        {
+            if (value != NewInspection.TemplateId)
+            {
+                NewInspection.TemplateId = value;
+                _ = LoadTemplateQuestions(); // Disparar carregamento ao alterar template
+            }
+        }
+    }
+
+    private async Task OnTemplateChanged()
+    {
+        TemplateQuestions.Clear(); // Limpar perguntas anteriores
+        await LoadTemplateQuestions(); // Carregar novas perguntas
+        StateHasChanged(); // Atualizar a UI
+    }
+
     private void ToggleSelectAllStores(bool isChecked)
     {
         if (isChecked)
@@ -1046,12 +1194,12 @@
         }
     }
 
-
     private void OpenCreateInspection()
     {
         NewInspection = new InspectionFormModel();
         ShowCreateInspection = true;
         CurrentStep = 1;
+        TemplateQuestions = new List<CustomQuestion>();
         errorMessage = null;
         successMessage = null;
     }
@@ -1061,62 +1209,50 @@
         ShowCreateInspection = false;
         NewInspection = new InspectionFormModel();
         CurrentStep = 1;
+        TemplateQuestions = new List<CustomQuestion>();
         errorMessage = null;
         successMessage = null;
     }
 
     private void NextStep()
     {
-        Console.WriteLine("Next button clicked!");
         if (CurrentStep < 4)
         {
             if (CurrentStep == 1)
             {
-                Console.WriteLine($"InspectionName: {NewInspection.InspectionName}");
-                Console.WriteLine($"TemplateId: {NewInspection.TemplateId}");
-                Console.WriteLine($"StartDate: {NewInspection.StartDate}");
-                Console.WriteLine($"DueDate: {NewInspection.DueDate}");
-
                 if (string.IsNullOrEmpty(NewInspection.InspectionName))
                 {
                     errorMessage = "The Inspection Name field is required.";
-                    Console.WriteLine("❌ InspectionName is empty.");
-                    return;
-                }
-                if (!NewInspection.TemplateId.HasValue)
-                {
-                    errorMessage = "The Template field is required.";
-                    Console.WriteLine("❌ TemplateId is null.");
                     return;
                 }
                 if (!NewInspection.StartDate.HasValue)
                 {
                     errorMessage = "The Start Date field is required.";
-                    Console.WriteLine("❌ StartDate is null.");
                     return;
                 }
                 if (!NewInspection.DueDate.HasValue)
                 {
                     errorMessage = "The Due Date field is required.";
-                    Console.WriteLine("❌ DueDate is null.");
                     return;
                 }
             }
             if (CurrentStep == 2 && NewInspection.SelectedStoreIds.Count == 0)
             {
                 errorMessage = "Please select at least one store in the Store Selection step.";
-                Console.WriteLine("❌ No store selected.");
                 return;
             }
             if (CurrentStep == 3 && NewInspection.SelectedGuestIds.Count == 0)
             {
                 errorMessage = "Please select at least one user in the Guest step.";
-                Console.WriteLine("❌ No user selected.");
                 return;
             }
             CurrentStep++;
+            if (CurrentStep == 4 && NewInspection.TemplateId.HasValue)
+            {
+                // Recarregar perguntas ao entrar no passo 4
+                _ = LoadTemplateQuestions();
+            }
             errorMessage = null;
-            Console.WriteLine($"✅ Advancing to step {CurrentStep}");
             StateHasChanged();
         }
     }
@@ -1135,40 +1271,46 @@
         try
         {
             if (string.IsNullOrEmpty(NewInspection.InspectionName) ||
-                !NewInspection.TemplateId.HasValue ||
                 !NewInspection.StartDate.HasValue ||
                 !NewInspection.DueDate.HasValue ||
                 NewInspection.SelectedStoreIds.Count == 0 ||
                 NewInspection.SelectedGuestIds.Count == 0)
             {
                 errorMessage = "Please fill in all required fields.";
-                Console.WriteLine("❌ Validation failed: Required fields not filled.");
                 return;
             }
 
             var dto = new CreateInspectionDto
-                {
-                    LojaId = NewInspection.SelectedStoreIds.First(),
-                    UserId = NewInspection.SelectedGuestIds.First(),
-                    DataInicio = NewInspection.StartDate.Value,
-                    DataFim = NewInspection.DueDate.Value,
-                    Descricao = NewInspection.Description,
-                    Frequencia = NewInspection.Frequency,
-                    InspecaoName = NewInspection.InspectionName,
-                    Estado = "Ongoing",
-                    IsActive = true,
-                    FormularioId = NewInspection.TemplateId,
-                    MarcaId = NewInspection.MarcaId,
-                    SeccaoIds = null,
-                    Mode = "Launched",
-                    PerguntasPersonalizadas = NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+            {
+                LojaId = NewInspection.SelectedStoreIds.First(),
+                UserId = NewInspection.SelectedGuestIds.First(),
+                DataInicio = NewInspection.StartDate.Value,
+                DataFim = NewInspection.DueDate.Value,
+                Descricao = NewInspection.Description,
+                Frequencia = NewInspection.Frequency,
+                InspecaoName = NewInspection.InspectionName,
+                Estado = "Ongoing",
+                IsActive = true,
+                FormularioId = NewInspection.TemplateId,
+                MarcaId = NewInspection.MarcaId,
+                SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
+                Mode = "Launched",
+                PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
+                    ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
                     {
                         Texto = q.Text,
                         TipoResposta = q.ResponseType,
-                        Opcoes = q.Options, // Já é uma List<string>
+                        Opcoes = q.Options,
                         Resposta = null
                     }).ToList()
-                };
+                    : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                    {
+                        Texto = q.Text,
+                        TipoResposta = q.ResponseType,
+                        Opcoes = q.Options,
+                        Resposta = null
+                    }).ToList()
+            };
 
             var result = await InspectionService.CreateInspectionAsync(dto);
 
@@ -1178,19 +1320,17 @@
                 ShowCreateInspection = false;
                 NewInspection = new InspectionFormModel();
                 CurrentStep = 1;
+                TemplateQuestions = new List<CustomQuestion>();
                 await LoadInspections();
-                Console.WriteLine($"✅ Inspection created with ID: {result.CreatedInspectionId}");
             }
             else
             {
                 errorMessage = result.ErrorMessage;
-                Console.WriteLine($"❌ Error creating inspection: {result.ErrorMessage}");
             }
         }
         catch (Exception ex)
         {
             errorMessage = $"Unexpected error: {ex.Message}";
-            Console.WriteLine($"❌ Exception creating inspection: {ex.Message}");
         }
     }
 
@@ -1199,28 +1339,36 @@
         try
         {
             var dto = new CreateInspectionDto
-                {
-                    LojaId = NewInspection.SelectedStoreIds.FirstOrDefault(),
-                    UserId = NewInspection.SelectedGuestIds.FirstOrDefault(),
-                    DataInicio = NewInspection.StartDate ?? DateTime.Now,
-                    DataFim = NewInspection.DueDate ?? DateTime.Now.AddDays(7),
-                    Descricao = NewInspection.Description,
-                    Frequencia = NewInspection.Frequency,
-                    InspecaoName = NewInspection.InspectionName ?? "Draft",
-                    Estado = "Standby",
-                    IsActive = true,
-                    FormularioId = NewInspection.TemplateId,
-                    MarcaId = null,
-                    SeccaoIds = null,
-                    Mode = "Draft",
-                    PerguntasPersonalizadas = NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+            {
+                LojaId = NewInspection.SelectedStoreIds.FirstOrDefault(),
+                UserId = NewInspection.SelectedGuestIds.FirstOrDefault(),
+                DataInicio = NewInspection.StartDate ?? DateTime.Now,
+                DataFim = NewInspection.DueDate ?? DateTime.Now.AddDays(7),
+                Descricao = NewInspection.Description,
+                Frequencia = NewInspection.Frequency,
+                InspecaoName = NewInspection.InspectionName ?? "Draft",
+                Estado = "Standby",
+                IsActive = true,
+                FormularioId = NewInspection.TemplateId,
+                MarcaId = NewInspection.MarcaId,
+                SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
+                Mode = "Draft",
+                PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
+                    ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
                     {
                         Texto = q.Text,
                         TipoResposta = q.ResponseType,
                         Opcoes = q.Options,
                         Resposta = null
                     }).ToList()
-                };
+                    : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                    {
+                        Texto = q.Text,
+                        TipoResposta = q.ResponseType,
+                        Opcoes = q.Options,
+                        Resposta = null
+                    }).ToList()
+            };
 
             var result = await InspectionService.CreateInspectionAsync(dto);
 
@@ -1230,19 +1378,17 @@
                 ShowCreateInspection = false;
                 NewInspection = new InspectionFormModel();
                 CurrentStep = 1;
+                TemplateQuestions = new List<CustomQuestion>();
                 await LoadInspections();
-                Console.WriteLine($"✅ Draft saved with ID: {result.CreatedInspectionId}");
             }
             else
             {
                 errorMessage = result.ErrorMessage;
-                Console.WriteLine($"❌ Error saving draft: {result.ErrorMessage}");
             }
         }
         catch (Exception ex)
         {
             errorMessage = $"Unexpected error: {ex.Message}";
-            Console.WriteLine($"❌ Exception saving draft: {ex.Message}");
         }
     }
 
@@ -1275,7 +1421,6 @@
         catch (Exception ex)
         {
             errorMessage = $"Unexpected error: {ex.Message}";
-            Console.WriteLine($"❌ Exception deactivating inspection: {ex.Message}");
         }
     }
 
@@ -1287,24 +1432,28 @@
             if (inspection != null)
             {
                 NewInspection = new InspectionFormModel
+                {
+                    TemplateId = inspection.TemplateId,
+                    Language = inspection.Language,
+                    InspectionName = inspection.InspectionName,
+                    Frequency = inspection.Frequency,
+                    StartDate = inspection.StartDate,
+                    DueDate = inspection.DueDate,
+                    Description = inspection.Description,
+                    Brand = inspection.Brand?.ToString(),
+                    SelectedStoreIds = inspection.LojaId.HasValue ? new List<int> { inspection.LojaId.Value } : new List<int>(),
+                    SelectedGuestIds = inspection.UserId.HasValue ? new List<int> { inspection.UserId.Value } : new List<int>(),
+                    Questions = inspection.Questions?.Select(q => new CustomQuestion
                     {
-                        TemplateId = inspection.TemplateId,
-                        Language = inspection.Language,
-                        InspectionName = inspection.InspectionName,
-                        Frequency = inspection.Frequency,
-                        StartDate = inspection.StartDate,
-                        DueDate = inspection.DueDate,
-                        Description = inspection.Description,
-                        Brand = inspection.Brand?.ToString(),
-                        SelectedStoreIds = inspection.LojaId.HasValue ? new List<int> { inspection.LojaId.Value } : new List<int>(),
-                        SelectedGuestIds = inspection.UserId.HasValue ? new List<int> { inspection.UserId.Value } : new List<int>(),
-                        Questions = inspection.Questions?.Select(q => new CustomQuestion
-                        {
-                            Text = q.Text,
-                            ResponseType = q.ResponseType,
-                            Options = q.Options
-                        }).ToList() ?? new List<CustomQuestion>()
-                    };
+                        Text = q.Text,
+                        ResponseType = q.ResponseType,
+                        Options = q.Options
+                    }).ToList() ?? new List<CustomQuestion>()
+                };
+                if (NewInspection.TemplateId.HasValue)
+                {
+                    TemplateQuestions = await InspectionService.GetTemplateQuestions(NewInspection.TemplateId.Value);
+                }
                 ShowEditModal = true;
                 CurrentStep = 1;
                 errorMessage = null;
@@ -1317,7 +1466,6 @@
         catch (Exception ex)
         {
             errorMessage = $"Error loading inspection: {ex.Message}";
-            Console.WriteLine($"❌ Error loading inspection: {ex.Message}");
         }
     }
 
@@ -1345,18 +1493,17 @@
         {
             NewInspection.SelectedGuestIds.Remove(guestId);
         }
-
-        StateHasChanged(); 
+        StateHasChanged();
     }
 
     private void AddQuestion()
     {
         NewInspection.Questions.Add(new CustomQuestion
-            {
-                Text = "",
-                ResponseType = "",
-                Options = new List<string>()
-            });
+        {
+            Text = "",
+            ResponseType = "",
+            Options = new List<string>()
+        });
     }
 
     private void RemoveQuestion(int index)
@@ -1390,15 +1537,11 @@
             }
 
             inspection.Estado = newStatus;
-
-            Console.WriteLine($"✅ Inspection '{inspection.InspectionName}' status updated to: {inspection.Estado}");
-
             await LoadInspections();
         }
         catch (Exception ex)
         {
             errorMessage = $"Error updating status: {ex.Message}";
-            Console.WriteLine($"❌ Error updating status: {ex.Message}");
         }
     }
 
@@ -1414,4 +1557,3 @@
         };
     }
 }
-

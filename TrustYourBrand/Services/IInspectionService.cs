@@ -12,5 +12,6 @@ namespace TrustYourBrand.Services
         Task<List<BrandDto>> GetBrands();
         Task<List<TemplateDto>> GetTemplates();
         Task<List<SectionDto>> GetSection();
+        Task<List<CustomQuestion>> GetTemplateQuestions(int templateId);
     }
 }

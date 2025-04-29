@@ -34,7 +34,12 @@
     // Classe para perguntas personalizadas
     public class CustomQuestion
     {
+        public int Id { get; set; }
+        public int? SeccaoId { get; set; }
+        public int? TemplateId { get; set; }
+        public int? InspecaoId { get; set; }
         public string Text { get; set; }
+        public string Resposta { get; set; }
         public string ResponseType { get; set; }
         public List<string>? Options { get; set; }
     }

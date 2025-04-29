@@ -128,6 +128,42 @@ namespace TrustYourBrand.Services
             return sections ?? new List<SectionDto>();
         }
 
+        public async Task<List<CustomQuestion>> GetTemplateQuestions(int templateId)
+        {
+            try
+            {
+                var formularios = await _httpClient.GetFromJsonAsync<List<FormularioResponse>>("http://localhost:5097/api/formulario");
+                Console.WriteLine($"API Response: {JsonSerializer.Serialize(formularios)}");
+
+                var formulario = formularios?.FirstOrDefault(f => f.FormularioId == templateId);
+
+                if (formulario == null || formulario.Perguntas == null)
+                {
+                    Console.WriteLine($"No questions found for template ID {templateId}");
+                    return new List<CustomQuestion>();
+                }
+
+                var questions = formulario.Perguntas.Select(p => new CustomQuestion
+                {
+                    Id = p.Id,
+                    TemplateId = templateId,
+                    SeccaoId = p.SeccaoId, 
+                    Text = p.Texto,
+                    ResponseType = p.TipoResposta,
+                    Options = p.Opcoes?.ToList() ?? new List<string>(),
+                    Resposta = p.Resposta
+                }).ToList();
+
+                Console.WriteLine($"Loaded {questions.Count} questions for template ID {templateId}");
+                return questions;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching template questions: {ex.Message}");
+                return new List<CustomQuestion>();
+            }
+        }
+
         public async Task<InspectionDto> GetInspectionByIdAsync(int id)
         {
             try
@@ -362,4 +398,24 @@ namespace TrustYourBrand.Services
         public int InspecaoId { get; set; }
         public bool PermitePerguntasPersonalizadas { get; set; }
     }
+
+    // Classe auxiliar para desserializar a resposta do endpoint GET api/Formulario
+    public class FormularioResponse
+    {
+        public int FormularioId { get; set; }
+        public string Nome { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
+        public List<PerguntaResponse> Perguntas { get; set; } = new List<PerguntaResponse>();
+    }
+
+    public class PerguntaResponse
+    {
+        public int Id { get; set; }
+        public int? SeccaoId { get; set; }
+        public string Texto { get; set; } = string.Empty;
+        public string TipoResposta { get; set; } = string.Empty;
+        public string? Resposta { get; set; }
+        public string[]? Opcoes { get; set; }
+    }
 }
+
