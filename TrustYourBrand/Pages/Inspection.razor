@@ -6,6 +6,8 @@
 @inject IHttpClientFactory HttpClientFactory
 @inject TrustYourBrand.Services.IInspectionService InspectionService
 @inject TrustYourBrand.Services.ILocalStorageService LocalStorageService
+@inject TrustYourBrand.Services.IStoreService StoreService
+@inject TrustYourBrand.Services.IUserService UserService    
 @inject NavigationManager NavigationManager
 
 <div class="table-container">
@@ -516,22 +518,22 @@
                 <form>
                     <div class="stepper-container">
                         <div class="step @(CurrentStep >= 1 ? "active" : "")">
-                            <div class="circle">1</div>
+                            <div class="circle" @onclick="() => SetStep(1)">1</div>
                             <span>Information</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 2 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 2 ? "active" : "")">
-                            <div class="circle">2</div>
+                            <div class="circle" @onclick="() => SetStep(2)">2</div>
                             <span>Store Selection</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 3 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 3 ? "active" : "")">
-                            <div class="circle">3</div>
+                            <div class="circle" @onclick="() => SetStep(3)">3</div>
                             <span>Guest</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 4 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 4 ? "active" : "")">
-                            <div class="circle">4</div>
+                            <div class="circle" @onclick="() => SetStep(4)">4</div>
                             <span>Question</span>
                         </div>
                     </div>
@@ -544,7 +546,13 @@
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
                                             <label for="template" style="text-align:left;">Template</label>
-                                            <input id="nome" type="number" style="width: 100%;" @bind="NewInspection.TemplateId" />
+                                            <select id="template" style="width: 100%;" @bind="NewInspection.TemplateId">
+                                                <option value="">Select the template</option>
+                                                @foreach (var template in TemplateDisponiveis)
+                                                {
+                                                    <option value="@template.TemplateId">@template.Nome</option>
+                                                }
+                                            </select>
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
                                             <label for="language" style="text-align:left;">Language</label>
@@ -586,8 +594,14 @@
                                             <input type="text" id="description" placeholder="Enter the Description of the inspection" style="width: 100%;" @bind="NewInspection.Description" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
-                                            <label for="brand" style="text-align:left; margin-top: 20px;">Brand</label>
-                                            <input type="text" id="brand" placeholder="Enter the Brand" style="width: 100%;" @bind="NewInspection.Brand" />
+                                            <label for="brand" style="text-align:left; margin-top: 20px;">Brand</label> 
+                                            <select id="brand" style="width: 100%;" @bind="NewInspection.MarcaId">
+                                                <option value="">Select the brand</option>
+                                                @foreach (var brand in BrandDisponiveis)
+                                                {
+                                                    <option value="@brand.MarcaId">@brand.Nome</option>
+                                                }
+                                            </select>
                                         </td>
                                     </tr>
                                 </table>
@@ -599,7 +613,9 @@
                                         <thead>
                                             <tr>
                                                 <th>
-                                                    <input type="checkbox" class="store-checkbox select-all-checkbox" />
+                                                    <input type="checkbox"
+                                                           class="store-checkbox select-all-checkbox"
+                                                           @onchange="(e) => ToggleSelectAllStores((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
                                                 <th>Store Name</th>
                                                 <th>Country</th>
@@ -611,33 +627,37 @@
                                                 <th>Inspector</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" class="store-checkbox store-row-checkbox" />
-                                                </td>
-                                                <td>Norte Shopping</td>
-                                                <td>Portugal</td>
-                                                <td>Matosinhos</td>
-                                                <td>Shopping</td>
-                                                <td>Norte</td>
-                                                <td>Luis Pereira</td>
-                                                <td>Open</td>
-                                                <td>Pedro Silva</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" class="store-checkbox store-row-checkbox" />
-                                                </td>
-                                                <td>Arrábida Shop</td>
-                                                <td>Portugal</td>
-                                                <td>Arrábida</td>
-                                                <td>Shopping</td>
-                                                <td>Centro</td>
-                                                <td>Maria Santos</td>
-                                                <td>Open</td>
-                                                <td>João Costa</td>
-                                            </tr>
+                                        <tbody >
+                                            @if (StoreList == null)
+                                            {
+                                                <tr><td colspan="9">Loading...</td></tr>
+                                            }
+                                            else if (!StoreList.Any())
+                                            {
+                                                <tr><td colspan="9">No stores found.</td></tr>
+                                            }
+                                            else
+                                            {
+                                                @foreach (var store in PaginatedStores)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox"
+                                                                   class="store-checkbox store-row-checkbox"
+                                                                   checked="@NewInspection.SelectedStoreIds.Contains(store.LojaId)"
+                                                                   @onchange="(e) => UpdateStoreSelection(store.LojaId, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                        </td>
+                                                        <td>@store.Nome</td>
+                                                        <td>@store.Country</td>
+                                                        <td>@store.City</td>
+                                                        <td>@store.StoreType</td>
+                                                        <td>@store.Zona</td>
+                                                        <td>@store.StoreManager</td>
+                                                        <td>@store.Condition</td>
+                                                        <td>@store.Inspector</td>
+                                                    </tr>
+                                                }
+                                            }
                                         </tbody>
                                     </table>
 
@@ -658,7 +678,9 @@
                                         <thead>
                                             <tr>
                                                 <th>
-                                                    <input type="checkbox" class="store-checkbox select-all-checkbox" />
+                                                    <input type="checkbox"
+                                                           class="store-checkbox select-all-checkbox"
+                                                           @onchange="(e) => ToggleSelectAllGuests((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
                                                 <th>First Name</th>
                                                 <th>Last Name</th>
@@ -670,30 +692,36 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" class="store-checkbox store-row-checkbox" />
-                                                </td>
-                                                <td>Miguel</td>
-                                                <td>Teixeira</td>
-                                                <td>admin@gmail.com</td>
-                                                <td>Norte Shopping</td>
-                                                <td>Human Resources</td>
-                                                <td>Director</td>
-                                                <td>Inspector</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" class="store-checkbox store-row-checkbox" />
-                                                </td>
-                                                <td>Rúben</td>
-                                                <td>Maia</td>
-                                                <td>assistant@gmail.com</td>
-                                                <td>Arrábida Shopping</td>
-                                                <td>Marketing</td>
-                                                <td>Director</td>
-                                                <td>Assistant</td>
-                                            </tr>
+                                            @if (Userslist == null)
+                                            {
+                                                <tr><td colspan="8">Loading...</td></tr>
+                                            }
+                                            else if (!Userslist.Any())
+                                            {
+                                                <tr><td colspan="8">No users found.</td></tr>
+                                            }
+                                            else
+                                            {
+                                                @foreach (var user in PaginatedUsers)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox"
+                                                                   class="store-checkbox store-row-checkbox"
+                                                                   checked="@NewInspection.SelectedGuestIds.Contains(user.Id)"
+                                                                   @onchange="(e) => UpdateGuestSelection(user.Id, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                        </td>
+                                                        <td>@user.FirstName</td>
+                                                        <td>@user.LastName</td>
+                                                        <td>@user.Email</td>
+                                                        <td>@user.Store</td>
+                                                        <td>@user.Department</td>
+                                                        <td>@user.Function</td>
+                                                        <td>@user.Role</td>
+
+                                                    </tr>
+                                                }
+                                            }
                                         </tbody>
                                     </table>
 
@@ -710,10 +738,12 @@
                             case 4:
                                 <h3 style="text-align: left; color: #6aa4d5;">Question</h3>
                                 <div class="dropdown-section">
-                                    <select>
-                                        <option value="">Add Section</option>
-                                        <option value="">Bilhar</option>
-                                        <option value="">Sala</option>
+                                    <select id="brand" style="width: 100%;" @bind="selectedSection">
+                                        <option value="">Select the section</option>
+                                        @foreach (var section in SectionDisponiveis)
+                                        {
+                                            <option value="@section.SeccaoId">@section.Nome</option>
+                                        }
                                     </select>
                                 </div>
                                 <div class="table-container-selection">
@@ -721,27 +751,49 @@
                                         <thead>
                                             <tr>
                                                 <th id="sectionHeader">Section</th>
+                                                <th>Question</th>
                                                 <th>Response</th>
                                                 <th class="action-column"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td><input type="text" placeholder="Type your question here" style="width: 100%;" @bind="NewInspection.Questions" /></td>
-                                                <td>
-                                                    <select class="response-select" disabled>
-                                                        <option value="">Select the Response</option>
-                                                        <option value="">Yes/No</option>
-                                                        <option value="">0-10 (Scale)</option>
-                                                        <option value="">Good/Enough/Bad</option>
-                                                    </select>
-                                                </td>
-                                                <td class="action-column">
-                                                    <span class="material-symbols-outlined action-icon delete-icon">delete</span>
-                                                </td>
-                                            </tr>
+                                            @if (!NewInspection.Questions.Any())
+                                            {
+                                                <tr>
+                                                    <td colspan="4">No questions added yet.</td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                @for (int i = 0; i < NewInspection.Questions.Count; i++)
+                                                {
+                                                    var questionIndex = i; // Captura o índice para uso no loop
+                                                    var question = NewInspection.Questions[i];
+                                                    <tr>
+                                                        <td>@selectedSection</td>
+                                                        <td>
+                                                            <input type="text" placeholder="Type your question here" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
+                                                        </td>
+                                                        <td>
+                                                            <select class="response-select" @bind="question.ResponseType">
+                                                                <option value="">Select the Response</option>
+                                                                <option value="Yes/No">Yes/No</option>
+                                                                <option value="0-10 (Scale)">0-10 (Scale)</option>
+                                                                <option value="Good/Enough/Bad">Good/Enough/Bad</option>
+                                                            </select>
+                                                        </td>
+                                                        <td class="action-column">
+                                                            <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => RemoveQuestion(questionIndex)">delete</span>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
                                         </tbody>
                                     </table>
+
+                                    <div class="add-question-section">
+                                        <button type="button" class="btn btn-add-question" @onclick="AddQuestion">Add New Question</button>
+                                    </div>
 
                                     <div class="pagination-table-selection">
                                         <span>Page 1 of 1</span>
@@ -781,6 +833,8 @@
 @code {
     private bool ShowCreateInspection { get; set; } = false;
     private int CurrentStep { get; set; } = 1;
+    private string selectedSection = "";
+
     private bool ShowDeleteModal { get; set; } = false;
     private bool ShowEditModal { get; set; } = false;
     private int? ExpandedInspectionId { get; set; } = null;
@@ -796,6 +850,16 @@
 
     private List<InspectionDto> Inspections { get; set; } = new List<InspectionDto>();
     private InspectionFormModel NewInspection { get; set; } = new InspectionFormModel();
+    private List<BrandDto> BrandDisponiveis { get; set; } = new();
+    private List<TemplateDto> TemplateDisponiveis { get; set; } = new();
+    private List<SectionDto> SectionDisponiveis { get; set; } = new();
+    private List<StoreDto> StoreList { get; set; } = new List<StoreDto>();
+    private List<TrustYourBrand.Models.User> Userslist { get; set; } = new();
+
+    private void SetStep(int step)
+    {
+        CurrentStep = step;
+    }
 
     private class InspectionFormModel
     {
@@ -806,11 +870,25 @@
         public DateTime? StartDate { get; set; }
         public DateTime? DueDate { get; set; }
         public string? Description { get; set; }
+        public int MarcaId { get; set; }
         public string? Brand { get; set; }
         public List<int> SelectedStoreIds { get; set; } = new List<int>();
         public List<int> SelectedGuestIds { get; set; } = new List<int>();
         public List<CustomQuestion> Questions { get; set; } = new List<CustomQuestion>();
+
     }
+
+    private List<StoreDto> PaginatedStores =>
+        StoreList
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+
+    private List<TrustYourBrand.Models.User> PaginatedUsers =>
+        Userslist
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
 
     private void ShowInspectionDetails(InspectionDto inspection)
     {
@@ -832,7 +910,44 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadUsersFromService();
+        await LoadStoresFromService();
         await LoadInspections();
+        BrandDisponiveis = await InspectionService.GetBrands();
+        TemplateDisponiveis = await InspectionService.GetTemplates();
+        SectionDisponiveis = await InspectionService.GetSection();
+    }
+
+    private async Task LoadUsersFromService()
+    {
+        try
+        {
+            Userslist = await UserService.GetUsers(null);
+            Console.WriteLine("Userslist: " + System.Text.Json.JsonSerializer.Serialize(Userslist));
+            TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
+        }
+        catch
+        {
+            Userslist = new();
+        }
+
+        TotalPages = (int)Math.Ceiling(Userslist.Count / (double)PageSize);
+
+    }
+
+    private async Task LoadStoresFromService()
+    {
+        try
+        {
+            StoreList = await StoreService.GetStoresAsync();
+            TotalPages = (int)Math.Ceiling(StoreList.Count / (double)PageSize);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao carregar lojas: {ex.Message}");
+            StoreList = new List<StoreDto>();
+            TotalPages = 1;
+        }
     }
 
     private async Task LoadInspections()
@@ -906,6 +1021,31 @@
             Inspections = new List<InspectionDto>();
         }
     }
+
+    private void ToggleSelectAllStores(bool isChecked)
+    {
+        if (isChecked)
+        {
+            NewInspection.SelectedStoreIds = StoreList.Select(s => s.LojaId).ToList();
+        }
+        else
+        {
+            NewInspection.SelectedStoreIds.Clear();
+        }
+    }
+
+    private void ToggleSelectAllGuests(bool isChecked)
+    {
+        if (isChecked)
+        {
+            NewInspection.SelectedGuestIds = Userslist.Select(u => u.Id).ToList();
+        }
+        else
+        {
+            NewInspection.SelectedGuestIds.Clear();
+        }
+    }
+
 
     private void OpenCreateInspection()
     {
@@ -1018,14 +1158,14 @@
                     Estado = "Ongoing",
                     IsActive = true,
                     FormularioId = NewInspection.TemplateId,
-                    MarcaId = null,
+                    MarcaId = NewInspection.MarcaId,
                     SeccaoIds = null,
                     Mode = "Launched",
                     PerguntasPersonalizadas = NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
                     {
                         Texto = q.Text,
                         TipoResposta = q.ResponseType,
-                        Opcoes = q.Options,
+                        Opcoes = q.Options, // Já é uma List<string>
                         Resposta = null
                     }).ToList()
                 };
@@ -1205,11 +1345,18 @@
         {
             NewInspection.SelectedGuestIds.Remove(guestId);
         }
+
+        StateHasChanged(); 
     }
 
     private void AddQuestion()
     {
-        NewInspection.Questions.Add(new CustomQuestion());
+        NewInspection.Questions.Add(new CustomQuestion
+            {
+                Text = "",
+                ResponseType = "",
+                Options = new List<string>()
+            });
     }
 
     private void RemoveQuestion(int index)
@@ -1267,3 +1414,4 @@
         };
     }
 }
+

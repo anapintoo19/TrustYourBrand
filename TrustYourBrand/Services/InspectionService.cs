@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using TrustYourBrand.Models;
@@ -30,7 +31,8 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.GetAsync("www/api/Inspecao");
+                //var response = await _httpClient.GetAsync("www/api/Inspecao");
+                var response = await _httpClient.GetAsync("api/Inspecao");
                 var json = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine("✅ Conteúdo da resposta da API:");
@@ -57,6 +59,75 @@ namespace TrustYourBrand.Services
             }
         }
 
+        public async Task<List<BrandDto>> GetBrands()
+        {
+            var token = await _localStorageService.GetItemAsync<string>("authToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("No auth token found for GetBrands.");
+                return new List<BrandDto>();
+            }
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            //var response = await _httpClient.GetAsync("www/api/marca");
+            var response = await _httpClient.GetAsync("http://localhost:5097/api/marca");
+            response.EnsureSuccessStatusCode();
+
+            var brands = await response.Content.ReadFromJsonAsync<List<BrandDto>>(new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return brands ?? new List<BrandDto>();
+        }
+
+        public async Task<List<TemplateDto>> GetTemplates()
+        {
+            var token = await _localStorageService.GetItemAsync<string>("authToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("No auth token found for GetTemplates.");
+                return new List<TemplateDto>();
+            }
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            //var response = await _httpClient.GetAsync("www/api/formulario");
+            var response = await _httpClient.GetAsync("http://localhost:5097/api/formulario");
+            response.EnsureSuccessStatusCode();
+
+            var templates = await response.Content.ReadFromJsonAsync<List<TemplateDto>>(new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return templates ?? new List<TemplateDto>();
+        }
+
+        public async Task<List<SectionDto>> GetSection()
+        {
+            var token = await _localStorageService.GetItemAsync<string>("authToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("No auth token found for GetSection.");
+                return new List<SectionDto>();
+            }
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            //var response = await _httpClient.GetAsync("www/api/seccao");
+            var response = await _httpClient.GetAsync("http://localhost:5097/api/seccao");
+            response.EnsureSuccessStatusCode();
+
+            var sections = await response.Content.ReadFromJsonAsync<List<SectionDto>>(new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return sections ?? new List<SectionDto>();
+        }
+
         public async Task<InspectionDto> GetInspectionByIdAsync(int id)
         {
             try
@@ -71,7 +142,8 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.GetAsync($"www/api/Inspecao/{id}");
+                //var response = await _httpClient.GetAsync($"www/api/Inspecao/{id}");
+                var response = await _httpClient.GetAsync($"api/Inspecao/{id}");
                 var json = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"✅ Resposta da API para inspeção {id}:");
@@ -124,7 +196,8 @@ namespace TrustYourBrand.Services
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 Console.WriteLine($"Enviando requisição POST para api/Inspecao: {JsonSerializer.Serialize(inspectionDto)}");
-                var response = await _httpClient.PostAsJsonAsync("www/api/Inspecao", inspectionDto);
+                //var response = await _httpClient.PostAsJsonAsync("www/api/Inspecao", inspectionDto);
+                var response = await _httpClient.PostAsJsonAsync("api/Inspecao", inspectionDto);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"Resposta do POST: Status {response.StatusCode}, Conteúdo: {responseContent}");
@@ -190,7 +263,8 @@ namespace TrustYourBrand.Services
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 Console.WriteLine($"Enviando requisição PUT para api/Inspecao/{id}: {JsonSerializer.Serialize(inspectionDto)}");
-                var response = await _httpClient.PutAsJsonAsync($"www/api/Inspecao/{id}", inspectionDto);
+                //var response = await _httpClient.PutAsJsonAsync($"www/api/Inspecao/{id}", inspectionDto);
+                var response = await _httpClient.PutAsJsonAsync($"api/Inspecao/{id}", inspectionDto);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"Resposta do PUT: Status {response.StatusCode}, Conteúdo: {responseContent}");
@@ -241,7 +315,8 @@ namespace TrustYourBrand.Services
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 Console.WriteLine($"Fazendo requisição DELETE para api/Inspecao/{id}");
-                var response = await _httpClient.DeleteAsync($"www/api/Inspecao/{id}");
+                //var response = await _httpClient.DeleteAsync($"www/api/Inspecao/{id}");
+                var response = await _httpClient.DeleteAsync($"api/Inspecao/{id}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"Resposta do DELETE: Status {response.StatusCode}, Conteúdo: {responseContent}");

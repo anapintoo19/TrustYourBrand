@@ -18,7 +18,8 @@ namespace TrustYourBrand.Services
         public async Task<LoginResult> LoginAsync(LoginModel model)
         {
             var httpClient = _httpClientFactory.CreateClient("ApiClient");
-            var response = await httpClient.PostAsJsonAsync("www/api/auth/login", model);
+            //var response = await httpClient.PostAsJsonAsync("www/api/auth/login", model);
+            var response = await httpClient.PostAsJsonAsync("api/auth/login", model);
             if (response.IsSuccessStatusCode)
             {
                 var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>(new System.Text.Json.JsonSerializerOptions
@@ -57,7 +58,8 @@ namespace TrustYourBrand.Services
         public async Task<bool> CheckUserExists(string phoneNumber)
         {
             var httpClient = _httpClientFactory.CreateClient("ApiClient");
-            var response = await httpClient.GetAsync($"www/api/auth/checkuserexists/{phoneNumber}");
+            //var response = await httpClient.GetAsync($"www/api/auth/checkuserexists/{phoneNumber}");
+            var response = await httpClient.GetAsync($"api/auth/checkuserexists/{phoneNumber}");
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
@@ -86,7 +88,8 @@ namespace TrustYourBrand.Services
 
             // Enviar NewPin e ConfirmNewPin no corpo da requisição
             var setPinDto = new { NewPin = newPin, ConfirmNewPin = confirmNewPin };
-            var response = await httpClient.PostAsJsonAsync("www/api/auth/set-pin", setPinDto); // Ajustado para o endpoint correto
+            //var response = await httpClient.PostAsJsonAsync("www/api/auth/set-pin", setPinDto);
+            var response = await httpClient.PostAsJsonAsync("api/auth/set-pin", setPinDto);
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<ChangePinResponse>(new System.Text.Json.JsonSerializerOptions

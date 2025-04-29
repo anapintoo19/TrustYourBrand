@@ -9,5 +9,8 @@ namespace TrustYourBrand.Services
         Task<InspectionResult> CreateInspectionAsync(CreateInspectionDto inspectionDto);
         Task<InspectionResult> UpdateInspectionAsync(int id, UpdateInspectionDto inspectionDto);
         Task<InspectionResult> DeleteInspectionAsync(int id);
+        Task<List<BrandDto>> GetBrands();
+        Task<List<TemplateDto>> GetTemplates();
+        Task<List<SectionDto>> GetSection();
     }
 }

@@ -32,7 +32,8 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var query = createdByUserId.HasValue ? $"?createdByUserId={createdByUserId}" : "";
-                var response = await _httpClient.GetAsync($"www/api/user{query}");
+                //var response = await _httpClient.GetAsync($"www/api/user{query}");
+                var response = await _httpClient.GetAsync($"api/user{query}");
                 var json = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine("✅ Conteúdo da resposta da API:");
@@ -86,7 +87,8 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 Console.WriteLine($"Enviando requisição POST para api/user: {JsonSerializer.Serialize(user)}");
-                var response = await _httpClient.PostAsJsonAsync("www/api/user", user);
+                //var response = await _httpClient.PostAsJsonAsync("www/api/user", user);
+                var response = await _httpClient.PostAsJsonAsync("api/user", user);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"Resposta do POST: Status {response.StatusCode}, Conteúdo: {responseContent}");
@@ -143,7 +145,8 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.GetAsync("www/api/user/roles");
+                //var response = await _httpClient.GetAsync("www/api/user/roles");
+                var response = await _httpClient.GetAsync("api/user/roles");
                 if (!response.IsSuccessStatusCode)
                     return new List<RoleDto>();
 
@@ -174,7 +177,8 @@ namespace TrustYourBrand.Services
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _httpClient.GetAsync("www/api/marca");
+            //var response = await _httpClient.GetAsync("www/api/marca");
+            var response = await _httpClient.GetAsync("api/marca");
             response.EnsureSuccessStatusCode();
 
             var brands = await response.Content.ReadFromJsonAsync<List<BrandDto>>(new JsonSerializerOptions
@@ -190,7 +194,8 @@ namespace TrustYourBrand.Services
             var token = await _localStorageService.GetItemAsync<string>("authToken");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _httpClient.GetAsync("www/api/store");
+            //var response = await _httpClient.GetAsync("www/api/store");
+            var response = await _httpClient.GetAsync("api/store");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<StoreDto>>();
         }
@@ -208,7 +213,8 @@ namespace TrustYourBrand.Services
 
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.GetAsync("www/api/tenant/me"); // Update to the correct endpoint
+                //var response = await _httpClient.GetAsync("www/api/tenant/me");
+                var response = await _httpClient.GetAsync("api/tenant/me");
                 if (!response.IsSuccessStatusCode)
                 {
                     Console.WriteLine($"Failed to fetch tenant: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}");
@@ -245,8 +251,8 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.PutAsJsonAsync($"www/api/user/{id}", userDto);
-
+                //var response = await _httpClient.PutAsJsonAsync($"www/api/user/{id}", userDto);
+                var response = await _httpClient.PutAsJsonAsync($"api/user/{id}", userDto);
                 var content = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
@@ -274,7 +280,8 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.GetAsync("www/api/department");
+                //var response = await _httpClient.GetAsync("www/api/department");
+                var response = await _httpClient.GetAsync("api/department");
                 if (!response.IsSuccessStatusCode)
                     return new List<DepartmentDto>();
 
@@ -303,7 +310,9 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _httpClient.GetAsync("www/api/function");
+                //var response = await _httpClient.GetAsync("www/api/function");
+
+                var response = await _httpClient.GetAsync("api/function");
                 if (!response.IsSuccessStatusCode) return new List<FunctionDto>();
 
                 var json = await response.Content.ReadAsStringAsync();
@@ -336,7 +345,8 @@ namespace TrustYourBrand.Services
 
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                 Console.WriteLine($"Fazendo requisição DELETE para api/user/{id}");
-                var response = await _httpClient.DeleteAsync($"www/api/user/{id}");
+                //var response = await _httpClient.DeleteAsync($"www/api/user/{id}");
+                var response = await _httpClient.DeleteAsync($"api/user/{id}");
                 var responseContent = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"Resposta recebida: StatusCode={response.StatusCode}, Content={responseContent}");
 
@@ -384,7 +394,8 @@ namespace TrustYourBrand.Services
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var updatePinDto = new { Pin = newPin };
-                var response = await _httpClient.PutAsJsonAsync($"www/api/user/{userId}", updatePinDto);
+                //var response = await _httpClient.PutAsJsonAsync($"www/api/user/{userId}", updatePinDto);
+                var response = await _httpClient.PutAsJsonAsync($"api/user/{userId}", updatePinDto);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
