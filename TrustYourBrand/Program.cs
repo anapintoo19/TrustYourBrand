@@ -86,6 +86,7 @@ builder.Services.AddScoped<IForgotPinService, ForgotPinService>();
 builder.Services.AddScoped<IStoreService, StoreService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IInspectionService, InspectionService>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 builder.Services.AddSyncfusionBlazor();
 

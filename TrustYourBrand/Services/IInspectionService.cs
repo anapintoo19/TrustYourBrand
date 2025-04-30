@@ -10,8 +10,7 @@ namespace TrustYourBrand.Services
         Task<InspectionResult> UpdateInspectionAsync(int id, UpdateInspectionDto inspectionDto);
         Task<InspectionResult> DeleteInspectionAsync(int id);
         Task<List<BrandDto>> GetBrands();
-        Task<List<TemplateDto>> GetTemplates();
         Task<List<SectionDto>> GetSection();
-        Task<List<CustomQuestion>> GetTemplateQuestions(int templateId);
+        
     }
 }

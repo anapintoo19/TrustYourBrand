@@ -1,4 +1,6 @@
-﻿namespace TrustYourBrand.Models
+﻿using System.Text.Json.Serialization;
+
+namespace TrustYourBrand.Models
 {
     public class SectionDto
     {

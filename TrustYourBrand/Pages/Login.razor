@@ -22,7 +22,8 @@
                 <label>Phone Number:</label>
                 <InputText @bind-Value="loginModel.PhoneNumber"
                            placeholder="Type Phone Number (910 000 000)"
-                           class="@((string.IsNullOrEmpty(loginModel.PhoneNumber) || errorMessage != null) && formSubmitted ? "input-error" : "")" />
+                           class="@((string.IsNullOrEmpty(loginModel.PhoneNumber) || errorMessage != null) && formSubmitted ? "input-error" : "")" 
+                           maxlength="9" />
                 <ValidationMessage For="@(() => loginModel.PhoneNumber)" />
             </div>
             <div class="login-label">
@@ -30,7 +31,8 @@
                 <InputText @bind-Value="loginModel.Pin"
                            placeholder="Type PIN _ _ _ _"
                            type="password"
-                           class="@((string.IsNullOrEmpty(loginModel.Pin) || errorMessage != null) && formSubmitted ? "input-error" : "")" />
+                           class="@((string.IsNullOrEmpty(loginModel.Pin) || errorMessage != null) && formSubmitted ? "input-error" : "")" 
+                           maxlength="4"/>
                 <ValidationMessage For="@(() => loginModel.Pin)" />
             </div>
             <button type="submit" @onclick="() => formSubmitted = true">SUBMIT</button>

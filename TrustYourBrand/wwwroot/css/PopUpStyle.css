@@ -146,12 +146,17 @@
         width: 100%; /* Ensure the div takes the full width of the td */
     }
 
+
+
     /* Override the width for inputs and selects in the edit-user-table */
     .edit-user-table input,
     .edit-user-table select {
         flex: 1;
         width: 100%; /* Ensure the input/select takes the full available width of the flex container */
         max-width: 100%; /* Prevent overflow */
+    }
+    .edit-user-table select{
+        color: #ccc;
     }
 
         /* Estilização dos selects desabilitados */
@@ -167,3 +172,6 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
+
+
+

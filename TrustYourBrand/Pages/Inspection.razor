@@ -8,6 +8,7 @@
 @inject TrustYourBrand.Services.ILocalStorageService LocalStorageService
 @inject TrustYourBrand.Services.IStoreService StoreService
 @inject TrustYourBrand.Services.IUserService UserService
+@inject TrustYourBrand.Services.ITemplateService TemplateService
 @inject NavigationManager NavigationManager
 
 <div class="table-container">
@@ -421,7 +422,7 @@
                                 <h3 style="text-align: left; color: #6aa4d5;">Question</h3>
                                 @if (NewInspection.TemplateId.HasValue)
                                 {
-                                    <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.TemplateId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
+                                    <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
                                     <div class="table-container-selection">
                                         <table class="selection-table">
                                             <thead>
@@ -597,7 +598,7 @@
                                                 <option value="">Select the template</option>
                                                 @foreach (var template in TemplateDisponiveis)
                                                 {
-                                                    <option value="@template.TemplateId">@template.Nome</option>
+                                                    <option value="@template.FormularioId">@template.Nome</option>
                                                 }
                                             </select>
                                         </td>
@@ -791,7 +792,7 @@
                                     }
                                     else
                                     {
-                                        <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.TemplateId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
+                                        <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
                                         <div class="table-container-selection">
                                             <table class="selection-table">
                                                 <thead>
@@ -1016,7 +1017,7 @@
         await LoadInspections();
         await LoadTemplateQuestions();
         BrandDisponiveis = await InspectionService.GetBrands();
-        TemplateDisponiveis = await InspectionService.GetTemplates();
+        TemplateDisponiveis = await TemplateService.GetTemplates();
         SectionDisponiveis = await InspectionService.GetSection();
     }
 
@@ -1127,7 +1128,7 @@
         {
             if (NewInspection.TemplateId.HasValue)
             {
-                TemplateQuestions = await InspectionService.GetTemplateQuestions(NewInspection.TemplateId.Value);
+                TemplateQuestions = await TemplateService.GetTemplateQuestions(NewInspection.TemplateId.Value);
                 NewInspection.Questions.Clear(); // Limpar perguntas personalizadas
                 Console.WriteLine($"Loaded {TemplateQuestions.Count} questions for template ID {NewInspection.TemplateId.Value}");
             }
@@ -1452,7 +1453,7 @@
                 };
                 if (NewInspection.TemplateId.HasValue)
                 {
-                    TemplateQuestions = await InspectionService.GetTemplateQuestions(NewInspection.TemplateId.Value);
+                    TemplateQuestions = await TemplateService.GetTemplateQuestions(NewInspection.TemplateId.Value);
                 }
                 ShowEditModal = true;
                 CurrentStep = 1;

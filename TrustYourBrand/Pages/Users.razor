@@ -107,178 +107,208 @@
         <div class="modal-overlay">
             <div class="modal-content">
                 <h3>Create User</h3>
-                <form>
-
-                    <table class="edit-user-table">
-                        <tr>
-                            <td>
-                                <div><label for="firstName">First Name*</label><input id="firstName" type="text" placeholder="Insert First Name" @bind="NewUser.FirstName" /></div>
-                            </td>
-                            <td>
-                                <div><label for="lastName">Last Name*</label><input id="lastName" type="text" placeholder="Insert Last Name" @bind="NewUser.LastName" /></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div><label for="email">E-mail*</label><input id="email" type="email" placeholder="Insert Email" @bind="NewUser.Email" /></div>
-                            </td>
-                            <td>
-                                <div><label for="pin">PIN</label><input id="pin" type="password" placeholder="Insert Pin" @bind="NewUser.Pin" /></div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <div>
-                                    <label for="function">Function</label>
-                                    <select id="function" @bind="NewUser.FunctionId">
-                                        <option value="">Select the function</option>
-                                        @foreach (var func in FuncoesDisponiveis)
-                                        {
-                                            <option value="@func.FunctionId">@func.Name</option>
-                                        }
-                                    </select>
+                @if (ShowCreateUser)
+                {
+                    <div class="modal-overlay">
+                        <div class="modal-content">
+                            <h3>Create User</h3>
+                            <EditForm Model="@NewUser" OnValidSubmit="@CreateUser">
+                                <DataAnnotationsValidator />
+                                <table class="edit-user-table">
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <label for="firstName">First Name*</label>
+                                                <InputText id="firstName" @bind-Value="@NewUser.FirstName" />
+                                                <ValidationMessage For="@(() => NewUser.FirstName)" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <label for="lastName">Last Name*</label>
+                                                <InputText id="lastName" @bind-Value="@NewUser.LastName" />
+                                                <ValidationMessage For="@(() => NewUser.LastName)" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <label for="email">E-mail*</label>
+                                                <InputText id="email" type="email" @bind-Value="@NewUser.Email" />
+                                                <ValidationMessage For="@(() => NewUser.Email)" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <label for="pin">PIN</label>
+                                                <InputText id="pin" type="password" @bind-Value="@NewUser.Pin" />
+                                                <ValidationMessage For="@(() => NewUser.Pin)" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <label for="function">Function</label>
+                                                <InputSelect id="function" @bind-Value="@NewUser.FunctionId">
+                                                    <option value="">Select the function</option>
+                                                    @foreach (var func in FuncoesDisponiveis)
+                                                    {
+                                                        <option value="@func.FunctionId">@func.Name</option>
+                                                    }
+                                                </InputSelect>
+                                                <ValidationMessage For="@(() => NewUser.FunctionId)" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <label for="phoneNumber">Phone Number*</label>
+                                                <InputText id="phoneNumber" type="tel" @bind-Value="@NewUser.PhoneNumber" inputmode="numeric" pattern="[0-9]{9}" maxlength="9" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+                                                <ValidationMessage For="@(() => NewUser.PhoneNumber)" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <label for="birthday">Birthday</label>
+                                                <InputDate id="birthday" @bind-Value="@NewUser.Birthday" />
+                                                <ValidationMessage For="@(() => NewUser.Birthday)" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <label for="department">Department</label>
+                                                <InputSelect id="department" @bind-Value="@NewUser.DepartmentId">
+                                                    <option value="">Select the department</option>
+                                                    @foreach (var dept in DepartamentosDisponiveis)
+                                                    {
+                                                        <option value="@dept.DepartmentId">@dept.Nome</option>
+                                                    }
+                                                </InputSelect>
+                                                <ValidationMessage For="@(() => NewUser.DepartmentId)" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <label for="role">Role</label>
+                                                <InputSelect id="role" @bind-Value="@NewUser.Role">
+                                                    <option value="">Select the role</option>
+                                                    @foreach (var role in RolesDisponiveis.Where(r => r.Name != "Tenant"))
+                                                    {
+                                                        <option value="@role.Name">@role.Name</option>
+                                                    }
+                                                </InputSelect>
+                                                <ValidationMessage For="@(() => NewUser.Role)" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <label for="gender">Gender</label>
+                                                <InputSelect id="gender" @bind-Value="@NewUser.Gender">
+                                                    <option value="">Select the gender</option>
+                                                    <option value="Masculino">Male</option>
+                                                    <option value="Feminino">Female</option>
+                                                </InputSelect>
+                                                <ValidationMessage For="@(() => NewUser.Gender)" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <label for="country">Country</label>
+                                                <InputSelect id="country" @bind-Value="@NewUser.Country">
+                                                    <option value="">Select the country</option>
+                                                    <option value="Portugal">Portugal</option>
+                                                    <option value="Espanha">Spain</option>
+                                                </InputSelect>
+                                                <ValidationMessage For="@(() => NewUser.Country)" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <label for="city">City</label>
+                                                <InputText id="city" @bind-Value="@NewUser.City" />
+                                                <ValidationMessage For="@(() => NewUser.City)" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <label for="tenant">Tenant</label>
+                                                @if (TenantsDisponiveis.Any())
+                                                {
+                                                    <input type="text" value="@TenantsDisponiveis[0].Name" readonly disabled />
+                                                }
+                                                else
+                                                {
+                                                    <input type="text" value="No tenant available" readonly disabled />
+                                                }
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <label for="store">Store Tenant</label>
+                                                <InputSelect id="store" @bind-Value="@NewUser.LojaId">
+                                                    <option value="">Select the store tenant</option>
+                                                    @foreach (var store in StoreDisponiveis)
+                                                    {
+                                                        <option value="@store.LojaId">@store.Nome</option>
+                                                    }
+                                                </InputSelect>
+                                                <ValidationMessage For="@(() => NewUser.LojaId)" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <label for="brand">Brand</label>
+                                                <InputSelect id="brand" @bind-Value="@NewUser.MarcaId">
+                                                    <option value="">Select the brand</option>
+                                                    @foreach (var brand in BrandDisponiveis)
+                                                    {
+                                                        <option value="@brand.MarcaId">@brand.Nome</option>
+                                                    }
+                                                </InputSelect>
+                                                <ValidationMessage For="@(() => NewUser.MarcaId)" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <label for="language">Language</label>
+                                                <InputSelect id="language" @bind-Value="@NewUser.Language">
+                                                    <option value="">Select the language</option>
+                                                    <option value="Português">Portuguese</option>
+                                                    <option value="Espanhol">Spanish</option>
+                                                    <option value="Inglês">English</option>
+                                                </InputSelect>
+                                                <ValidationMessage For="@(() => NewUser.Language)" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div class="modal-buttons">
+                                    <button type="submit" class="btn btn-confirm">CREATE USER</button>
+                                    <button type="button" class="btn btn-cancel" @onclick="CancelCreate">CANCEL</button>
                                 </div>
-                            </td>
-                            <td>
-                                <div><label for="phoneNumber">Phone Number*</label><input id="phoneNumber" type="tel" placeholder="Insert Phone Number" @bind="NewUser.PhoneNumber" /></div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <div><label for="birthday">Birthday</label><input id="birthday" type="date" @bind="NewUser.Birthday" /></div>
-                            </td>
-                            <td>
-                                <div>
-                                    <label for="department">Department</label>
-                                    <select id="department" @bind="NewUser.DepartmentId">
-                                        <option value="">Select the department</option>
-                                        @foreach (var dept in DepartamentosDisponiveis)
-                                        {
-                                            <option value="@dept.DepartmentId">@dept.Nome</option>
-                                        }
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <div>
-                                    <label for="role">Role</label>
-                                    <select id="role" @bind="NewUser.Role">
-                                        <option value="">Select the role</option>
-                                        @foreach (var role in RolesDisponiveis.Where(r => r.Name != "Tenant"))
-                                        {
-                                            <option value="@role.Name">@role.Name</option>
-                                        }
-
-                                    </select>
-                                </div>
-                            </td>
-
-                            <td>
-                                <div>
-                                    <label for="gender">Gender</label>
-                                    <select id="gender" @bind="NewUser.Gender">
-                                        <option value="">Select the gender</option>
-                                        <option value="Masculino">Male</option>
-                                        <option value="Feminino">Female</option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <div>
-                                    <label for="country">Country</label>
-                                    <select id="country" @bind="NewUser.Country">
-                                        <option value="">Select the country</option>
-                                        <option value="Portugal">Portugal</option>
-                                        <option value="Espanha">Spain</option>
-                                    </select>
-                                </div>
-                            </td>
-
-                            <td>
-                                <div><label for="city">City</label><input id="city" type="text" placeholder="Insert City" @bind="NewUser.City" /></div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <div>
-                                    <label for="tenant">Tenant</label>
-                                    @if (TenantsDisponiveis.Any())
-                                    {
-                                        <input type="text" value="@TenantsDisponiveis[0].Name" readonly disabled/>
-                                    }
-                                    else
-                                    {
-                                        <input type="text" value="No tenant available" readonly disabled/>
-                                    }
-                                </div>
-                            </td>
-
-                            <td>
-                                <div>
-                                    <label for="store">Store Tenant</label>
-                                    <select id="store" @bind="NewUser.LojaId">
-                                        <option value="">Select the store tenant</option>
-                                        @foreach (var store in StoreDisponiveis)
-                                        {
-                                            <option value="@store.LojaId">@store.Nome</option>
-                                        }
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <div>
-                                    <label for="brand">Brand</label>
-                                    <select id="brand" @bind="NewUser.MarcaId">
-                                        <option value="">Select the brand</option>
-                                        @foreach (var brand in BrandDisponiveis)
-                                        {
-                                            <option value="@brand.MarcaId">@brand.Nome</option>
-                                        }
-                                    </select>
-                                </div>
-                            </td>
-
-                            <td>
-                                <div>
-                                    <label for="language">Language</label>
-                                    <select id="language" @bind="NewUser.Language">
-                                        <option value="">Select the language</option>
-                                        <option value="Português">Portuguese</option>
-                                        <option value="Espanhol">Spanish</option>
-                                        <option value="Inglês">English</option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-
-
-                    </table>
-
-                    <div class="modal-buttons">
-                        <button type="button" class="btn btn-confirm" @onclick="CreateUser">CREATE USER</button>
-                        <button type="button" class="btn btn-cancel" @onclick="CancelCreate">CANCEL</button>
+                                @if (!string.IsNullOrEmpty(errorMessage))
+                                {
+                                    <p style="color: red;">@errorMessage</p>
+                                }
+                                @if (!string.IsNullOrEmpty(successMessage))
+                                {
+                                    <p style="color: green;">@successMessage</p>
+                                }
+                            </EditForm>
+                        </div>
                     </div>
-                    @if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        <p style="color: red;">@errorMessage</p>
-                    }
-                    @if (!string.IsNullOrEmpty(successMessage))
-                    {
-                        <p style="color: green;">@successMessage</p>
-                    }
-                </form>
+                }
             </div>
         </div>
     }
@@ -685,9 +715,9 @@
         errorMessage = null;
         successMessage = null;
 
-        if (string.IsNullOrWhiteSpace(NewUser.FirstName) || string.IsNullOrWhiteSpace(NewUser.LastName) || string.IsNullOrWhiteSpace(NewUser.PhoneNumber) || string.IsNullOrWhiteSpace(NewUser.Email))
+        if (string.IsNullOrWhiteSpace(NewUser.FirstName) || string.IsNullOrWhiteSpace(NewUser.LastName) || string.IsNullOrWhiteSpace(NewUser.Email))
         {
-            errorMessage = "The First Name, Last Name, Phone Number and Email fields are mandatory.";
+            errorMessage = "The First Name, Last Name and Email fields are mandatory.";
             return;
         }
 
