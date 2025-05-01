@@ -1,17 +1,24 @@
-using Microsoft.AspNetCore.Components.Web;
+ï»¿using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using TrustYourBrand;
 using TrustYourBrand.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 using Syncfusion.Blazor;
+using AKSoftware.Localization.MultiLanguages;
+using System.Reflection;
+using System.Globalization;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Registra o AuthTokenHandler como um serviço
+builder.Services.AddLanguageContainer(Assembly.GetExecutingAssembly(), CultureInfo.GetCultureInfo("en-US"));
+Console.WriteLine("LanguageContainer configurado com cultura padrÃ£o: en-US");
+//builder.Services.AddLanguageContainer(Assembly.GetExecutingAssembly();
+
+// Registra o AuthTokenHandler como um serviÃ§o
 builder.Services.AddScoped<AuthTokenHandler>();
 
 // Configura o HttpClient para "ApiClient" com o AuthTokenHandler API LOGIN
@@ -78,7 +85,7 @@ builder.Services.AddHttpClient("BrandApiClient", client =>
 .AddHttpMessageHandler<AuthTokenHandler>();
 
 
-// Registra os serviços que dependem do HttpClient
+// Registra os serviï¿½os que dependem do HttpClient
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();

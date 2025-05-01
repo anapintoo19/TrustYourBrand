@@ -9,14 +9,15 @@
 @inject TrustYourBrand.Services.IStoreService StoreService
 @inject TrustYourBrand.Services.IUserService UserService
 @inject TrustYourBrand.Services.ITemplateService TemplateService
+@inject ILanguageContainerService LanguageContainer
 @inject NavigationManager NavigationManager
 
 <div class="table-container">
     <div class="table-header">
         <div class="action-buttons">
             <button class="btn btn-action" @onclick="OpenCreateInspection">Create New Inspection</button>
-            <button class="btn btn-action">Export</button>
-            <button class="btn btn-action">Import</button>
+            <button class="btn btn-action">@LanguageContainer.Keys["Export"]</button>
+            <button class="btn btn-action">@LanguageContainer.Keys["Import"]</button>
             <button class="btn btn-action">Select columns</button>
         </div>
         <div class="search-bar">

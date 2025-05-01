@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject TrustYourBrand.Services.ILocalStorageService LocalStorage
+@inject ILanguageContainerService LanguageContainer
 @inject IJSRuntime JS
 
 <div class="page">
@@ -24,8 +25,9 @@
                 @if (showLanguageDropdown)
                 {
                     <div class="dropdown-content">
-                        <button class="dropdown-item" @onclick='() => ChangeLanguage("pt")'>Portuguese</button>
-                        <button class="dropdown-item" @onclick='() => ChangeLanguage("en")'>English</button>
+                        <button class="dropdown-item" @onclick='() => SetLangauge("pt-PT")'>Portuguese</button>
+                        <button class="dropdown-item" @onclick='() => SetLangauge("en-US")'>English</button>
+                        <button class="dropdown-item" @onclick='() => SetLangauge("es-ES")'>Spanish</button>
                     </div>
                 }
             </div>
@@ -58,31 +60,24 @@
     private string currentPage = "/inspection"; // Página padrão
     private bool showDropdown = false;
     private bool showLanguageDropdown = false;
-    private string currentLanguage = "en"; // language padrão
+    private string currentLanguage = "en-US"; // language padrão
     private string PageName => GetPageNameFromUrl(currentPage);
 
-    protected override async Task OnInitializedAsync() 
+    protected override async Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += OnLocationChanged;
         currentPage = NavigationManager.Uri;
-        await LoadSavedLanguage(); 
+
+        // Carrega a cultura atual do LanguageContainer
+        var currentCulture = LanguageContainer.CurrentCulture.Name;
+        currentLanguage = currentCulture;
+        
     }
 
-    private async Task LoadSavedLanguage() 
+    private void SetLangauge(string cultureCode)
     {
-        var savedLanguage = await LocalStorage.GetItemAsync<string>("language");
-        currentLanguage = savedLanguage ?? "en";
+        LanguageContainer.SetLanguage(System.Globalization.CultureInfo.GetCultureInfo(cultureCode));
     }
-
-    private async Task ChangeLanguage(string languageCode) 
-    {
-        currentLanguage = languageCode;
-        showLanguageDropdown = false;
-        await LocalStorage.SetItemAsync("language", languageCode);
-        StateHasChanged();
-        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
-    }
-
 
     private string GetPageNameFromUrl(string url)
     {
@@ -142,7 +137,6 @@
 
     }
 
-    
 
     public void Dispose()
     {
@@ -150,7 +144,7 @@
     }
 }
 
-<style >
+<style>
     .page-header {
         padding: 30px 20px;
         background-color: #f5f5f5; /* Cor de fundo clara para destacar o header */
@@ -158,11 +152,11 @@
         text-align: left; /* Centraliza o texto */
     }
 
-    .page-header h2 {
-        margin: 0;
-        font-size: 2rem; /* Tamanho do texto */
-        color: #6aa4d5; /* Cor do texto */
-    }
+        .page-header h2 {
+            margin: 0;
+            font-size: 2rem; /* Tamanho do texto */
+            color: #6aa4d5; /* Cor do texto */
+        }
 
     .content {
         margin-top: 60px; /* Adiciona espaço acima do conteúdo, movendo a tabela mais para baixo */
