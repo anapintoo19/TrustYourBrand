@@ -2,6 +2,7 @@
 @inject NavigationManager NavigationManager
 @inject TrustYourBrand.Services.ILocalStorageService LocalStorage
 @inject ILanguageContainerService LanguageContainer
+@inject TrustYourBrand.Services.CultureChangeService CultureChangeService
 @inject IJSRuntime JS
 
 <div class="page">
@@ -12,9 +13,7 @@
     <main>
         <div class="top-row px-4">
             <a class="nav-link menu-btn btn-hamburguer @(collapseNavMenu ? "" : "active")" href="@currentPage" aria-label="Toggle navigation menu" @onclick="ToggleNavMenu">
-
                 <span class="material-symbols-outlined icon-thick icon-spacing menu-icon">menu</span>
-
             </a>
 
             <div class="language-dropdown">
@@ -25,9 +24,8 @@
                 @if (showLanguageDropdown)
                 {
                     <div class="dropdown-content">
-                        <button class="dropdown-item" @onclick='() => SetLangauge("pt-PT")'>Portuguese</button>
-                        <button class="dropdown-item" @onclick='() => SetLangauge("en-US")'>English</button>
-                        <button class="dropdown-item" @onclick='() => SetLangauge("es-ES")'>Spanish</button>
+                        <button class="dropdown-item" @onclick='() => SetLanguage("pt-PT")'>Portuguese</button>
+                        <button class="dropdown-item" @onclick='() => SetLanguage("en-US")'>English</button>
                     </div>
                 }
             </div>
@@ -60,7 +58,7 @@
     private string currentPage = "/inspection"; // Página padrão
     private bool showDropdown = false;
     private bool showLanguageDropdown = false;
-    private string currentLanguage = "en-US"; // language padrão
+    private string currentLanguage = "en-US"; // Cultura padrão
     private string PageName => GetPageNameFromUrl(currentPage);
 
     protected override async Task OnInitializedAsync()
@@ -68,15 +66,44 @@
         NavigationManager.LocationChanged += OnLocationChanged;
         currentPage = NavigationManager.Uri;
 
-        // Carrega a cultura atual do LanguageContainer
-        var currentCulture = LanguageContainer.CurrentCulture.Name;
-        currentLanguage = currentCulture;
-        
+        // Carrega a cultura salva do LocalStorage
+        var savedCulture = await LocalStorage.GetItemAsync<string>("culture");
+        var supportedCultures = new[] { "en-US", "pt-PT", "es-ES" };
+        currentLanguage = supportedCultures.Contains(savedCulture) ? savedCulture : "en-US";
+
+        LanguageContainer.SetLanguage(CultureInfo.GetCultureInfo(currentLanguage));
+        CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(currentLanguage);
+        CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(currentLanguage);
+
+        Console.WriteLine($"Cultura inicial no MainLayout: {currentLanguage}");
     }
 
-    private void SetLangauge(string cultureCode)
+    private async Task SetLanguage(string cultureCode)
     {
-        LanguageContainer.SetLanguage(System.Globalization.CultureInfo.GetCultureInfo(cultureCode));
+        try
+        {
+            // Define a nova cultura
+            LanguageContainer.SetLanguage(CultureInfo.GetCultureInfo(cultureCode));
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(cultureCode);
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(cultureCode);
+
+            // Salva a cultura no LocalStorage
+            await LocalStorage.SetItemAsync("culture", cultureCode);
+            Console.WriteLine($"Cultura {cultureCode} salva no LocalStorage");
+
+            // Atualiza o idioma exibido
+            currentLanguage = cultureCode;
+
+            // Notifica outros componentes sobre a mudança de cultura
+            CultureChangeService.NotifyCultureChanged();
+
+            // Força a re-renderização do componente atual
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao mudar para cultura {cultureCode}: {ex.Message}");
+        }
     }
 
     private string GetPageNameFromUrl(string url)
@@ -121,11 +148,11 @@
         showDropdown = false; // Fecha o outro dropdown se estiver aberto
     }
 
-    private void Logout()
+    private async Task Logout()
     {
         try
         {
-            // await LocalStorage.RemoveItemAsync("authToken");
+            await LocalStorage.RemoveItemAsync("authToken"); // Descomentado para remover o token
             showDropdown = false;
             NavigationManager.NavigateTo("/login?logout=true", forceLoad: true); // Adicionado parâmetro para indicar logout
             Console.WriteLine("Logout realizado com sucesso!");
@@ -134,9 +161,7 @@
         {
             Console.WriteLine($"Erro ao fazer logout: {ex.Message}");
         }
-
     }
-
 
     public void Dispose()
     {

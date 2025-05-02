@@ -9,6 +9,7 @@
 @inject TrustYourBrand.Services.IStoreService StoreService
 @inject TrustYourBrand.Services.IUserService UserService
 @inject TrustYourBrand.Services.ITemplateService TemplateService
+@inject TrustYourBrand.Services.CultureChangeService CultureChangeService
 @inject ILanguageContainerService LanguageContainer
 @inject NavigationManager NavigationManager
 
@@ -1013,6 +1014,15 @@
 
     protected override async Task OnInitializedAsync()
     {
+
+        CultureChangeService.OnCultureChanged += StateHasChanged;
+
+        Console.WriteLine($"Cultura atual na página Inspection: {LanguageContainer.CurrentCulture.Name}");
+        Console.WriteLine($"Chave 'Inspection': {LanguageContainer.Keys["Inspection"]}");
+        Console.WriteLine($"Chave 'Export': {LanguageContainer.Keys["Export"]}");
+        Console.WriteLine($"Chave 'Import': {LanguageContainer.Keys["Import"]}");
+    
+
         await LoadUsersFromService();
         await LoadStoresFromService();
         await LoadInspections();

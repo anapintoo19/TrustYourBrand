@@ -14,6 +14,10 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+
+// Registra o CultureChangeService
+builder.Services.AddSingleton<CultureChangeService>();
+
 builder.Services.AddLanguageContainer(Assembly.GetExecutingAssembly(), CultureInfo.GetCultureInfo("en-US"));
 Console.WriteLine("LanguageContainer configurado com cultura padrão: en-US");
 //builder.Services.AddLanguageContainer(Assembly.GetExecutingAssembly();
@@ -97,6 +101,31 @@ builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 builder.Services.AddSyncfusionBlazor();
 
+var host = builder.Build();
 
+// Carrega a cultura salva do LocalStorage
+var localStorageService = host.Services.GetRequiredService<ILocalStorageService>();
+var languageContainer = host.Services.GetRequiredService<ILanguageContainerService>();
 
-await builder.Build().RunAsync();
+try
+{
+    var savedCulture = await localStorageService.GetItemAsync<string>("culture");
+    Console.WriteLine($"Cultura salva no LocalStorage: {savedCulture ?? "Nenhuma"}");
+
+    var supportedCultures = new[] { "en-US", "pt-PT", "es-ES" };
+    var culture = supportedCultures.Contains(savedCulture) ? savedCulture : "en-US";
+    Console.WriteLine($"Cultura selecionada: {culture}");
+
+    languageContainer.SetLanguage(CultureInfo.GetCultureInfo(culture));
+    CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(culture);
+    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(culture);
+
+    // Log manual das culturas suportadas
+    Console.WriteLine("Culturas disponíveis: " + string.Join(", ", supportedCultures));
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Erro ao carregar cultura do LocalStorage: {ex.Message}");
+}
+
+await host.RunAsync();
