@@ -1,3 +1,19 @@
-﻿Inspection: Inspection
-Export: Export
+﻿Export: Export
 Import: Import
+
+# LOGIN RAZOR #
+PhoneNumberLabel: Phone Number
+Submit: SUBMIT
+ForgotPassword: Forgot Your PIN?
+LoginLabel: Type
+# POP-UP CHANGE PIN#
+ChangePassword: Change Your PIN
+Paragrafo: Please, set a new PIN to continue.
+NewpinLabel: New PIN
+NewpinPlaceholder: Enter new 4-digit PIN
+ConfirmPinLabel: Confirm PIN
+ConfirmPinPlaceholder: Confirm new 4-digit PIN
+
+
+#Botões#
+ConfirmButton: CONFIRM

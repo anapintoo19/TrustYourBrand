@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using TrustYourBrand.Models;
 
@@ -11,12 +12,14 @@ namespace TrustYourBrand.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorageService;
-        public InspectionService(HttpClient httpClient, ILocalStorageService localStorageService)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public InspectionService(IHttpClientFactory httpClientFactory, ILocalStorageService localStorageService)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("InspectionApiClient");
             _localStorageService = localStorageService;
         }
-    
+
         public async Task<List<InspectionDto>> GetInspectionsAsync()
         {
             try
@@ -239,17 +242,22 @@ namespace TrustYourBrand.Services
                 }
 
                 _httpClient.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                    new AuthenticationHeaderValue("Bearer", token);
 
-                Console.WriteLine($"Enviando requisição PUT para api/Inspecao/{id}: {JsonSerializer.Serialize(inspectionDto)}");
-                //var response = await _httpClient.PutAsJsonAsync($"www/api/Inspecao/{id}", inspectionDto);
-                var response = await _httpClient.PutAsJsonAsync($"api/Inspecao/{id}", inspectionDto);
+                var content = new StringContent(
+                    JsonSerializer.Serialize(inspectionDto),
+                    Encoding.UTF8,
+                    "application/json");
+
+                Console.WriteLine($"Enviando requisição PUT para api/Inspecao/{id}");
+                var response = await _httpClient.PutAsync($"api/Inspecao/{id}", content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 Console.WriteLine($"Resposta do PUT: Status {response.StatusCode}, Conteúdo: {responseContent}");
 
                 if (response.IsSuccessStatusCode)
                 {
+                    Console.WriteLine($"Inspeção {id} atualizada com sucesso.");
                     return new InspectionResult
                     {
                         Success = true,
@@ -267,7 +275,7 @@ namespace TrustYourBrand.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Exceção no UpdateInspection: {ex.GetType().Name} - {ex.Message}");
+                Console.WriteLine($"❌ Erro ao atualizar inspeção: {ex.Message}");
                 return new InspectionResult
                 {
                     Success = false,

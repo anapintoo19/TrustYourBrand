@@ -224,22 +224,22 @@
                 <form>
                     <div class="stepper-container">
                         <div class="step @(CurrentStep >= 1 ? "active" : "")">
-                            <div class="circle">1</div>
+                            <div class="circle" @onclick="() => SetStep(1)">1</div>
                             <span>Information</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 2 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 2 ? "active" : "")">
-                            <div class="circle">2</div>
+                            <div class="circle" @onclick="() => SetStep(2)">2</div>
                             <span>Store Selection</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 3 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 3 ? "active" : "")">
-                            <div class="circle">3</div>
+                            <div class="circle" @onclick="() => SetStep(3)">3</div>
                             <span>Guest</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 4 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 4 ? "active" : "")">
-                            <div class="circle">4</div>
+                            <div class="circle" @onclick="() => SetStep(4)">4</div>
                             <span>Question</span>
                         </div>
                     </div>
@@ -252,16 +252,17 @@
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
                                             <label for="template" style="text-align:left;">Template</label>
-                                            <select id="template" class="template-select" style="width: 100%;">
-                                                <option value="">Select the Template</option>
-                                                <option value="">Shoe Quality Control</option>
-                                                <option value="">Cleaning Assessment</option>
-                                                <option value="">Elevator Control</option>
+                                            <select id="template" style="width: 100%;" @bind="EditingInspection.TemplateId" @bind:after="OnTemplateChanged">
+                                                <option value="">Select the template</option>
+                                                @foreach (var template in TemplateDisponiveis)
+                                                {
+                                                    <option value="@template.FormularioId">@template.Nome</option>
+                                                }
                                             </select>
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
                                             <label for="language" style="text-align:left;">Language</label>
-                                            <select id="language" class="template-select" style="width: 100%;">
+                                            <select id="language" class="template-select" style="width: 100%;" @bind="EditingInspection.Language">
                                                 <option value="">Select the Language</option>
                                                 <option value="">Portuguese</option>
                                                 <option value="">English</option>
@@ -271,11 +272,11 @@
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
                                             <label for="name" style="text-align:left; margin-top: 20px;">Inspection Name</label>
-                                            <input type="text" id="name" class="input-name" placeholder="Enter the Name of the inspection" style="width: 100%;" />
+                                            <input type="text" id="name" class="input-name" style="width: 100%;" @bind="EditingInspection.InspectionName"/>
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
                                             <label for="frequency" style="text-align:left; margin-top: 20px;">Frequency</label>
-                                            <select id="frequency" class="template-select" style="width: 100%;">
+                                            <select id="frequency" class="template-select" style="width: 100%;" @bind="EditingInspection.Frequency">
                                                 <option value="">Select the Frequency</option>
                                                 <option value="">Weekly</option>
                                                 <option value="">Monthly</option>
@@ -286,21 +287,27 @@
                                     <tr>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="start" style="text-align:left; margin-top: 20px;">Start Date</label>
-                                            <input type="date" id="start" style="width: 100%;" />
+                                            <input type="date" id="start" style="width: 100%;" @bind="EditingInspection.StartDate"/>
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="due" style="text-align:left; margin-top: 20px;">Due Date</label>
-                                            <input type="date" id="due" style="width: 100%;" />
+                                            <input type="date" id="due" style="width: 100%;" @bind="EditingInspection.DueDate" />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="description" style="text-align:left; margin-top: 20px;">Description</label>
-                                            <input type="text" id="description" placeholder="Enter the Description of the inspection" style="width: 100%;" />
+                                            <input type="text" id="description" style="width: 100%;" @bind="EditingInspection.Description" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="brand" style="text-align:left; margin-top: 20px;">Brand</label>
-                                            <input type="text" id="brand" placeholder="Enter the Brand" style="width: 100%;" />
+                                            <select id="brand" style="width: 100%;" @bind="EditingInspection.MarcaId">
+                                                <option value="">Select the brand</option>
+                                                @foreach (var brand in BrandDisponiveis)
+                                                {
+                                                    <option value="@brand.MarcaId">@brand.Nome</option>
+                                                }
+                                            </select>
                                         </td>
                                     </tr>
                                 </table>
@@ -312,7 +319,9 @@
                                         <thead>
                                             <tr>
                                                 <th>
-                                                    <input type="checkbox" class="store-checkbox select-all-checkbox" />
+                                                    <input type="checkbox"
+                                                           class="store-checkbox select-all-checkbox"
+                                                           @onchange="(e) => ToggleSelectAllStores((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
                                                 <th>Store Name</th>
                                                 <th>Country</th>
@@ -325,32 +334,36 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" class="store-checkbox store-row-checkbox" />
-                                                </td>
-                                                <td>Norte Shopping</td>
-                                                <td>Portugal</td>
-                                                <td>Matosinhos</td>
-                                                <td>Shopping</td>
-                                                <td>Norte</td>
-                                                <td>Luis Pereira</td>
-                                                <td>Open</td>
-                                                <td>Pedro Silva</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" class="store-checkbox store-row-checkbox" />
-                                                </td>
-                                                <td>Arrábida Shop</td>
-                                                <td>Portugal</td>
-                                                <td>Arrábida</td>
-                                                <td>Shopping</td>
-                                                <td>Centro</td>
-                                                <td>Maria Santos</td>
-                                                <td>Open</td>
-                                                <td>João Costa</td>
-                                            </tr>
+                                            @if (StoreList == null)
+                                            {
+                                                <tr><td colspan="9">Loading...</td></tr>
+                                            }
+                                            else if (!StoreList.Any())
+                                            {
+                                                <tr><td colspan="9">No stores found.</td></tr>
+                                            }
+                                            else
+                                            {
+                                                @foreach (var store in PaginatedStores)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox"
+                                                                   class="store-checkbox store-row-checkbox"
+                                                                   checked="@NewInspection.SelectedStoreIds.Contains(store.LojaId)"
+                                                                   @onchange="(e) => UpdateStoreSelection(store.LojaId, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                        </td>
+                                                        <td>@store.Nome</td>
+                                                        <td>@store.Country</td>
+                                                        <td>@store.City</td>
+                                                        <td>@store.StoreType</td>
+                                                        <td>@store.Zona</td>
+                                                        <td>@store.StoreManager</td>
+                                                        <td>@store.Condition</td>
+                                                        <td>@store.Inspector</td>
+                                                    </tr>
+                                                }
+                                            }
                                         </tbody>
                                     </table>
 
@@ -364,6 +377,7 @@
                                     </div>
                                 </div>
                                 break;
+
                             case 3:
                                 <h3 style="text-align: left; color: #6aa4d5;">Guest</h3>
                                 <div class="table-container-selection">
@@ -371,7 +385,9 @@
                                         <thead>
                                             <tr>
                                                 <th>
-                                                    <input type="checkbox" class="store-checkbox select-all-checkbox" />
+                                                    <input type="checkbox"
+                                                           class="store-checkbox select-all-checkbox"
+                                                           @onchange="(e) => ToggleSelectAllGuests((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
                                                 <th>First Name</th>
                                                 <th>Last Name</th>
@@ -383,30 +399,35 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" class="store-checkbox store-row-checkbox" />
-                                                </td>
-                                                <td>Miguel</td>
-                                                <td>Teixeira</td>
-                                                <td>admin@gmail.com</td>
-                                                <td>Norte Shopping</td>
-                                                <td>Recursos Humanos</td>
-                                                <td>Director</td>
-                                                <td>Inspector</td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" class="store-checkbox store-row-checkbox" />
-                                                </td>
-                                                <td>Rúben</td>
-                                                <td>Maia</td>
-                                                <td>assistent@gmail.com</td>
-                                                <td>Arrábida Shopping</td>
-                                                <td>Marketing</td>
-                                                <td>Director</td>
-                                                <td>Assistant</td>
-                                            </tr>
+                                            @if (Userslist == null)
+                                            {
+                                                <tr><td colspan="8">Loading...</td></tr>
+                                            }
+                                            else if (!Userslist.Any())
+                                            {
+                                                <tr><td colspan="8">No users found.</td></tr>
+                                            }
+                                            else
+                                            {
+                                                @foreach (var user in PaginatedUsers)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox"
+                                                                   class="store-checkbox store-row-checkbox"
+                                                                   checked="@NewInspection.SelectedGuestIds.Contains(user.Id)"
+                                                                   @onchange="(e) => UpdateGuestSelection(user.Id, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                        </td>
+                                                        <td>@user.FirstName</td>
+                                                        <td>@user.LastName</td>
+                                                        <td>@user.Email</td>
+                                                        <td>@user.Store</td>
+                                                        <td>@user.Department</td>
+                                                        <td>@user.Function</td>
+                                                        <td>@user.Role</td>
+                                                    </tr>
+                                                }
+                                            }
                                         </tbody>
                                     </table>
 
@@ -420,44 +441,53 @@
                                     </div>
                                 </div>
                                 break;
+
                             case 4:
                                 <h3 style="text-align: left; color: #6aa4d5;">Question</h3>
                                 @if (NewInspection.TemplateId.HasValue)
                                 {
-                                    <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
-                                    <div class="table-container-selection">
-                                        <table class="selection-table">
-                                            <thead>
-                                                <tr>
-                                                    <th id="sectionColumnHeader">Section</th>
-                                                    <th>Question</th>
-                                                    <th>Response</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if (TemplateQuestions == null || !TemplateQuestions.Any())
-                                                {
+                                    @if (isLoadingQuestions)
+                                    {
+                                        <p>Loading questions...</p>
+                                    }
+                                    else
+                                    {
+                                        <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
+                                        <div class="table-container-selection">
+                                            <table class="selection-table">
+                                                <thead>
                                                     <tr>
-                                                        <td colspan="3">No questions available for this template.</td>
+                                                        <th id="sectionColumnHeader">Section</th>
+                                                        <th>Question</th>
+                                                        <th>Response</th>
                                                     </tr>
-                                                }
-                                                else
-                                                {
-                                                    @foreach (var question in TemplateQuestions)
+                                                </thead>
+                                                <tbody>
+                                                    @if (TemplateQuestions == null || !TemplateQuestions.Any())
                                                     {
                                                         <tr>
-                                                            <td>@(question.SeccaoId.HasValue ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == question.SeccaoId)?.Nome ?? "N/A" : "N/A")</td>
-                                                            <td>@question.Text</td>
-                                                            <td>@question.ResponseType</td>
+                                                            <td colspan="3">No questions available for this template.</td>
                                                         </tr>
                                                     }
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                    else
+                                                    {
+                                                        @foreach (var question in TemplateQuestions)
+                                                        {
+                                                            <tr>
+                                                                <td>@(question.SeccaoId.HasValue ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == question.SeccaoId)?.Nome ?? "N/A" : "N/A")</td>
+                                                                <td>@question.Text</td>
+                                                                <td>@question.ResponseType</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
                                 }
                                 else
                                 {
+                                    <!-- Código existente para perguntas personalizadas -->
                                     <div class="dropdown-section-container">
                                         <select id="sectionSelect" style="width: 100%;" @bind="selectedSection">
                                             <option value="">Select the section of store</option>
@@ -527,13 +557,14 @@
                                     </div>
                                 }
                                 break;
+
                         }
                     </div>
                     <div class="navigation">
                         @if (CurrentStep == 4)
                         {
                             <button type="button" @onclick="PreviousStep">PREVIOUS</button>
-                            <button type="button" class="btn-create-inspection">EDIT INSPECTION</button>
+                            <button type="button" class="btn-create-inspection" @onclick="UpdateInspection">EDIT INSPECTION</button>
                         }
                         else
                         {
@@ -950,7 +981,23 @@
     private string? errorMessage;
     private string? successMessage;
 
+    
+
+    private int? SelectedTemplateId
+    {
+        get => NewInspection.TemplateId;
+        set
+        {
+            if (value != NewInspection.TemplateId)
+            {
+                NewInspection.TemplateId = value;
+                _ = LoadTemplateQuestions(); // Disparar carregamento ao alterar template
+            }
+        }
+    }
+
     private TrustYourBrand.Models.InspectionDto? InspectionToDelete { get; set; }
+    private InspectionFormModel? EditingInspection { get; set; }
 
     private List<InspectionDto> Inspections { get; set; } = new List<InspectionDto>();
     private InspectionFormModel NewInspection { get; set; } = new InspectionFormModel();
@@ -960,11 +1007,6 @@
     private List<StoreDto> StoreList { get; set; } = new List<StoreDto>();
     private List<TrustYourBrand.Models.User> Userslist { get; set; } = new();
     private List<CustomQuestion> TemplateQuestions { get; set; } = new();
-
-    private void SetStep(int step)
-    {
-        CurrentStep = step;
-    }
 
     private class InspectionFormModel
     {
@@ -994,18 +1036,6 @@
             .Take(PageSize)
             .ToList();
 
-    private void ShowInspectionDetails(InspectionDto inspection)
-    {
-        if (ExpandedInspectionId == inspection.Id)
-        {
-            ExpandedInspectionId = null;
-        }
-        else
-        {
-            ExpandedInspectionId = inspection.Id;
-        }
-    }
-
     private List<TrustYourBrand.Models.InspectionDto> PaginatedInspections =>
         Inspections
             .Skip((CurrentPage - 1) * PageSize)
@@ -1015,13 +1045,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-        CultureChangeService.OnCultureChanged += StateHasChanged;
-
-        Console.WriteLine($"Cultura atual na página Inspection: {LanguageContainer.CurrentCulture.Name}");
-        Console.WriteLine($"Chave 'Inspection': {LanguageContainer.Keys["Inspection"]}");
-        Console.WriteLine($"Chave 'Export': {LanguageContainer.Keys["Export"]}");
-        Console.WriteLine($"Chave 'Import': {LanguageContainer.Keys["Import"]}");
-    
+        CultureChangeService.OnCultureChanged += StateHasChanged;CultureChangeService.OnCultureChanged += StateHasChanged;
 
         await LoadUsersFromService();
         await LoadStoresFromService();
@@ -1064,89 +1088,34 @@
     {
         try
         {
-            Inspections = new List<InspectionDto>
-            {
-                new InspectionDto
-                {
-                    Id = 1,
-                    Type = "Cleaning Inspection",
-                    InspectionName = "Cleaning Inspection - Store C",
-                    Frequency = "Annually",
-                    Mode = "Draft",
-                    Estado = "Standby",
-                    TotalTasks = 0,
-                    CompletedTasks = 0,
-                    StartDate = DateTime.Now.AddDays(-10),
-                    DueDate = DateTime.Now.AddDays(20),
-                    FinishDate = null,
-                    Language = "Portuguese",
-                    Questions = new List<CustomQuestion> { new CustomQuestion(), new CustomQuestion(), new CustomQuestion() },
-                    Purpose = "Check all the lamps in the showcases!",
-                    StoresCount = 1,
-                    StatusBreakdown = new StatusBreakdown { Ongoing = 1, Closed = 0, Standby = 0, Canceled = 0 }
-                },
-                new InspectionDto
-                {
-                    Id = 2,
-                    Type = "Cleaning Inspection",
-                    InspectionName = "Cleaning Inspection - Store B",
-                    Frequency = "Annually",
-                    Mode = "Launched",
-                    Estado = "Ongoing",
-                    TotalTasks = 6,
-                    CompletedTasks = 3,
-                    StartDate = DateTime.Now.AddDays(-5),
-                    DueDate = DateTime.Now.AddDays(15),
-                    FinishDate = null,
-                    Language = "Portuguese",
-                    Questions = new List<CustomQuestion> { new CustomQuestion(), new CustomQuestion() },
-                    Purpose = "Ensure general store cleanliness",
-                    StoresCount = 1,
-                    StatusBreakdown = new StatusBreakdown { Ongoing = 1, Closed = 0, Standby = 0, Canceled = 0 }
-                },
-                new InspectionDto
-                {
-                    Id = 3,
-                    Type = "Quality Inspection",
-                    InspectionName = "Quality Inspection - Store A",
-                    Frequency = "Weekly",
-                    Mode = "Draft",
-                    Estado = "Standby",
-                    TotalTasks = 0,
-                    CompletedTasks = 0,
-                    StartDate = DateTime.Now.AddDays(-2),
-                    DueDate = DateTime.Now.AddDays(5),
-                    FinishDate = null,
-                    Language = "Portuguese",
-                    Questions = new List<CustomQuestion> { new CustomQuestion() },
-                    Purpose = "Evaluate product quality",
-                    StoresCount = 1,
-                    StatusBreakdown = new StatusBreakdown { Ongoing = 0, Closed = 0, Standby = 1, Canceled = 0 }
-                }
-            };
+            Inspections = (await InspectionService.GetInspectionsAsync())
+                .Where(i => i.IsActive)
+                .ToList();
+            TotalPages = (int)Math.Ceiling(Inspections.Count / (double)PageSize);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading stores: {ex.Message}");
+            Console.WriteLine($"Error loading inspections: {ex.Message}");
             Inspections = new List<InspectionDto>();
         }
     }
 
     private async Task LoadTemplateQuestions()
     {
+        var targetInspection = ShowEditModal && EditingInspection != null ? EditingInspection : NewInspection;
         isLoadingQuestions = true;
         try
         {
-            if (NewInspection.TemplateId.HasValue)
+            if (targetInspection.TemplateId.HasValue)
             {
-                TemplateQuestions = await TemplateService.GetTemplateQuestions(NewInspection.TemplateId.Value);
-                NewInspection.Questions.Clear(); // Limpar perguntas personalizadas
-                Console.WriteLine($"Loaded {TemplateQuestions.Count} questions for template ID {NewInspection.TemplateId.Value}");
+                TemplateQuestions = await TemplateService.GetTemplateQuestions(targetInspection.TemplateId.Value);
+                targetInspection.Questions.Clear();
+                Console.WriteLine($"Loaded {TemplateQuestions.Count} questions for template ID {targetInspection.TemplateId.Value}");
             }
             else
             {
                 TemplateQuestions = new List<CustomQuestion>();
-                NewInspection.Questions.Clear();
+                targetInspection.Questions.Clear();
             }
         }
         catch (Exception ex)
@@ -1162,47 +1131,56 @@
         }
     }
 
-    private int? SelectedTemplateId
-    {
-        get => NewInspection.TemplateId;
-        set
-        {
-            if (value != NewInspection.TemplateId)
-            {
-                NewInspection.TemplateId = value;
-                _ = LoadTemplateQuestions(); // Disparar carregamento ao alterar template
-            }
-        }
-    }
 
     private async Task OnTemplateChanged()
     {
-        TemplateQuestions.Clear(); // Limpar perguntas anteriores
-        await LoadTemplateQuestions(); // Carregar novas perguntas
-        StateHasChanged(); // Atualizar a UI
+        var targetInspection = ShowEditModal && EditingInspection != null ? EditingInspection : NewInspection;
+        TemplateQuestions.Clear();
+        if (targetInspection.TemplateId.HasValue)
+        {
+            await LoadTemplateQuestions();
+        }
+        StateHasChanged();
     }
+
 
     private void ToggleSelectAllStores(bool isChecked)
     {
+        var targetList = ShowEditModal && EditingInspection != null ? EditingInspection.SelectedStoreIds : NewInspection.SelectedStoreIds;
         if (isChecked)
         {
-            NewInspection.SelectedStoreIds = StoreList.Select(s => s.LojaId).ToList();
+            targetList.Clear();
+            targetList.AddRange(StoreList.Select(s => s.LojaId));
         }
         else
         {
-            NewInspection.SelectedStoreIds.Clear();
+            targetList.Clear();
         }
     }
 
     private void ToggleSelectAllGuests(bool isChecked)
     {
+        var targetList = ShowEditModal && EditingInspection != null ? EditingInspection.SelectedGuestIds : NewInspection.SelectedGuestIds;
         if (isChecked)
         {
-            NewInspection.SelectedGuestIds = Userslist.Select(u => u.Id).ToList();
+            targetList.Clear();
+            targetList.AddRange(Userslist.Select(u => u.Id));
         }
         else
         {
-            NewInspection.SelectedGuestIds.Clear();
+            targetList.Clear();
+        }
+    }
+
+    private void ShowInspectionDetails(InspectionDto inspection)
+    {
+        if (ExpandedInspectionId == inspection.Id)
+        {
+            ExpandedInspectionId = null;
+        }
+        else
+        {
+            ExpandedInspectionId = inspection.Id;
         }
     }
 
@@ -1224,6 +1202,11 @@
         TemplateQuestions = new List<CustomQuestion>();
         errorMessage = null;
         successMessage = null;
+    }
+
+    private void SetStep(int step)
+    {
+        CurrentStep = step;
     }
 
     private void NextStep()
@@ -1282,67 +1265,115 @@
     {
         try
         {
-            if (string.IsNullOrEmpty(NewInspection.InspectionName) ||
-                !NewInspection.StartDate.HasValue ||
-                !NewInspection.DueDate.HasValue ||
-                NewInspection.SelectedStoreIds.Count == 0 ||
-                NewInspection.SelectedGuestIds.Count == 0)
+            // Step 1: Validate all required fields
+            if (string.IsNullOrEmpty(NewInspection.InspectionName))
             {
-                errorMessage = "Please fill in all required fields.";
+                errorMessage = "Inspection Name is required.";
+                return;
+            }
+            if (string.IsNullOrEmpty(NewInspection.Language))
+            {
+                errorMessage = "Language is required.";
+                return;
+            }
+            if (!NewInspection.StartDate.HasValue)
+            {
+                errorMessage = "Start Date is required.";
+                return;
+            }
+            if (!NewInspection.DueDate.HasValue)
+            {
+                errorMessage = "Due Date is required.";
+                return;
+            }
+            if (!NewInspection.MarcaId.HasValue)
+            {
+                errorMessage = "Brand is required.";
+                return;
+            }
+            if (NewInspection.SelectedStoreIds.Count == 0)
+            {
+                errorMessage = "At least one store must be selected.";
+                return;
+            }
+            if (NewInspection.SelectedGuestIds.Count == 0)
+            {
+                errorMessage = "At least one guest must be selected.";
+                return;
+            }
+            if (!NewInspection.TemplateId.HasValue && !NewInspection.Questions.Any())
+            {
+                errorMessage = "Either select a template or add at least one custom question.";
+                return;
+            }
+            if (!NewInspection.TemplateId.HasValue && NewInspection.Questions.Any(q => string.IsNullOrEmpty(q.Text) || string.IsNullOrEmpty(q.ResponseType)))
+            {
+                errorMessage = "All custom questions must have text and a response type.";
                 return;
             }
 
-            var dto = new CreateInspectionDto
+            // Step 2: Create DTO for each store and user combination
+            foreach (var storeId in NewInspection.SelectedStoreIds)
             {
-                LojaId = NewInspection.SelectedStoreIds.First(),
-                UserId = NewInspection.SelectedGuestIds.First(),
-                DataInicio = NewInspection.StartDate.Value,
-                DataFim = NewInspection.DueDate.Value,
-                Descricao = NewInspection.Description,
-                Frequencia = NewInspection.Frequency,
-                InspecaoName = NewInspection.InspectionName,
-                Estado = "Ongoing",
-                IsActive = true,
-                FormularioId = NewInspection.TemplateId,
-                MarcaId = NewInspection.MarcaId,
-                SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
-                Mode = "Launched",
-                PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
-                    ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
-                    {
-                        Texto = q.Text,
-                        TipoResposta = q.ResponseType,
-                        Opcoes = q.Options,
-                        Resposta = null
-                    }).ToList()
-                    : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
-                    {
-                        Texto = q.Text,
-                        TipoResposta = q.ResponseType,
-                        Opcoes = q.Options,
-                        Resposta = null
-                    }).ToList()
-            };
+                foreach (var userId in NewInspection.SelectedGuestIds)
+                {
+                    var dto = new CreateInspectionDto
+                        {
+                            LojaId = storeId,
+                            UserId = userId,
+                            DataInicio = NewInspection.StartDate.Value,
+                            DataFim = NewInspection.DueDate.Value,
+                            Descricao = NewInspection.Description,
+                            Frequencia = NewInspection.Frequency,
+                            InspecaoName = NewInspection.InspectionName,
+                            Estado = "Ongoing",
+                            IsActive = true,
+                            FormularioId = NewInspection.TemplateId,
+                            MarcaId = NewInspection.MarcaId,
+                            Language = NewInspection.Language,
+                            Status = "Active",
+                            Mode = "Launched",
+                            SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
+                            PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
+                                ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
+                                {
+                                    Texto = q.Text,
+                                    TipoResposta = q.ResponseType,
+                                    Opcoes = q.Options,
+                                    Resposta = null
+                                }).ToList()
+                                : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                                {
+                                    Texto = q.Text,
+                                    TipoResposta = q.ResponseType,
+                                    Opcoes = q.Options,
+                                    Resposta = null
+                                }).ToList()
+                        };
 
-            var result = await InspectionService.CreateInspectionAsync(dto);
+                    // Step 3: Call the service to create the inspection
+                    var result = await InspectionService.CreateInspectionAsync(dto);
 
-            if (result.Success)
-            {
-                successMessage = result.Message;
-                ShowCreateInspection = false;
-                NewInspection = new InspectionFormModel();
-                CurrentStep = 1;
-                TemplateQuestions = new List<CustomQuestion>();
-                await LoadInspections();
+                    if (!result.Success)
+                    {
+                        errorMessage = result.ErrorMessage;
+                        return;
+                    }
+                }
             }
-            else
-            {
-                errorMessage = result.ErrorMessage;
-            }
+
+            // Step 4: Handle success
+            successMessage = "Inspection(s) created successfully.";
+            ShowCreateInspection = false;
+            NewInspection = new InspectionFormModel();
+            CurrentStep = 1;
+            TemplateQuestions = new List<CustomQuestion>();
+            await LoadInspections();
         }
         catch (Exception ex)
         {
             errorMessage = $"Unexpected error: {ex.Message}";
+            Console.WriteLine($"Error creating inspection: {ex}");
         }
     }
 
@@ -1350,57 +1381,84 @@
     {
         try
         {
-            var dto = new CreateInspectionDto
+            // Step 1: Validate minimal required fields
+            if (string.IsNullOrEmpty(NewInspection.InspectionName))
             {
-                LojaId = NewInspection.SelectedStoreIds.FirstOrDefault(),
-                UserId = NewInspection.SelectedGuestIds.FirstOrDefault(),
-                DataInicio = NewInspection.StartDate ?? DateTime.Now,
-                DataFim = NewInspection.DueDate ?? DateTime.Now.AddDays(7),
-                Descricao = NewInspection.Description,
-                Frequencia = NewInspection.Frequency,
-                InspecaoName = NewInspection.InspectionName ?? "Draft",
-                Estado = "Standby",
-                IsActive = true,
-                FormularioId = NewInspection.TemplateId,
-                MarcaId = NewInspection.MarcaId,
-                SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
-                Mode = "Draft",
-                PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
-                    ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
-                    {
-                        Texto = q.Text,
-                        TipoResposta = q.ResponseType,
-                        Opcoes = q.Options,
-                        Resposta = null
-                    }).ToList()
-                    : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
-                    {
-                        Texto = q.Text,
-                        TipoResposta = q.ResponseType,
-                        Opcoes = q.Options,
-                        Resposta = null
-                    }).ToList()
-            };
-
-            var result = await InspectionService.CreateInspectionAsync(dto);
-
-            if (result.Success)
-            {
-                successMessage = "Draft saved successfully!";
-                ShowCreateInspection = false;
-                NewInspection = new InspectionFormModel();
-                CurrentStep = 1;
-                TemplateQuestions = new List<CustomQuestion>();
-                await LoadInspections();
+                errorMessage = "Inspection Name is required to save a draft.";
+                return;
             }
-            else
+
+            // Step 2: Create DTO for each store and user combination
+            if (NewInspection.SelectedStoreIds.Count == 0 || NewInspection.SelectedGuestIds.Count == 0)
             {
-                errorMessage = result.ErrorMessage;
+                errorMessage = "At least one store and one guest must be selected to save a draft.";
+                return;
             }
+
+            foreach (var storeId in NewInspection.SelectedStoreIds)
+            {
+                foreach (var userId in NewInspection.SelectedGuestIds)
+                {
+                    var dto = new CreateInspectionDto
+                        {
+                            LojaId = storeId,
+                            UserId = userId,
+                            DataInicio = NewInspection.StartDate ?? DateTime.Now,
+                            DataFim = NewInspection.DueDate ?? DateTime.Now.AddDays(7),
+                            Descricao = NewInspection.Description,
+                            Frequencia = NewInspection.Frequency,
+                            InspecaoName = NewInspection.InspectionName,
+                            Estado = "Standby",
+                            IsActive = true,
+                            FormularioId = NewInspection.TemplateId,
+                            MarcaId = NewInspection.MarcaId,
+                            Language = NewInspection.Language ?? "English", // Default to English if not specified
+                            Status = "Active",
+                            Mode = "Draft",
+                            SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
+                            PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
+                                ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
+                                {
+                                    Texto = q.Text,
+                                    TipoResposta = q.ResponseType,
+                                    Opcoes = q.Options,
+                                    Resposta = null
+                                }).ToList()
+                                : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                                {
+                                    Texto = q.Text,
+                                    TipoResposta = q.ResponseType,
+                                    Opcoes = q.Options,
+                                    Resposta = null
+                                }).ToList()
+                        };
+
+                    // Step 3: Call the service to create the draft
+                    var result = await InspectionService.CreateInspectionAsync(dto);
+
+                    if (!result.Success)
+                    {
+                        errorMessage = result.ErrorMessage;
+                        return;
+                    }
+                }
+            }
+
+            // Step 4: Handle success
+            successMessage = "Draft saved successfully!";
+            ShowCreateInspection = false;
+            NewInspection = new InspectionFormModel();
+            CurrentStep = 1;
+            TemplateQuestions = new List<CustomQuestion>();
+            await LoadInspections();
+            StateHasChanged();
+            await Task.Delay(2000);
+            successMessage = null;
         }
         catch (Exception ex)
         {
             errorMessage = $"Unexpected error: {ex.Message}";
+            Console.WriteLine($"Error saving draft: {ex}");
         }
     }
 
@@ -1423,16 +1481,29 @@
             if (InspectionToDelete != null)
             {
                 var result = await InspectionService.DeleteInspectionAsync(InspectionToDelete.Id);
-                ShowDeleteModal = false;
-                InspectionToDelete = null;
-                await LoadInspections();
-                await Task.Delay(2000);
-                errorMessage = null;
+                if (result.Success)
+                {
+                    successMessage = $"Inspection '{InspectionToDelete.InspectionName}' deleted successfully.";
+                    ShowDeleteModal = false;
+                    InspectionToDelete = null;
+                    await LoadInspections();
+                    await Task.Delay(2000); // Optional delay to show success message
+                    successMessage = null;
+                }
+                else
+                {
+                    errorMessage = result.ErrorMessage ?? "Failed to delete inspection.";
+                }
             }
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("request URI"))
+        {
+            errorMessage = "API request failed: Base address is not configured. Please check the application configuration.";
         }
         catch (Exception ex)
         {
             errorMessage = $"Unexpected error: {ex.Message}";
+            Console.WriteLine($"Error deleting inspection: {ex}");
         }
     }
 
@@ -1443,86 +1514,243 @@
             var inspection = await InspectionService.GetInspectionByIdAsync(inspectionId);
             if (inspection != null)
             {
-                NewInspection = new InspectionFormModel
-                {
-                    TemplateId = inspection.TemplateId,
-                    Language = inspection.Language,
-                    InspectionName = inspection.InspectionName,
-                    Frequency = inspection.Frequency,
-                    StartDate = inspection.StartDate,
-                    DueDate = inspection.DueDate,
-                    Description = inspection.Description,
-                    Brand = inspection.Brand?.ToString(),
-                    SelectedStoreIds = inspection.LojaId.HasValue ? new List<int> { inspection.LojaId.Value } : new List<int>(),
-                    SelectedGuestIds = inspection.UserId.HasValue ? new List<int> { inspection.UserId.Value } : new List<int>(),
-                    Questions = inspection.Questions?.Select(q => new CustomQuestion
+                // Log the loaded inspection data
+                Console.WriteLine($"Inspection Loaded: ID={inspection.Id}, Name={inspection.InspectionName}, TemplateId={inspection.TemplateId}, StartDate={inspection.StartDate}, Language={inspection.Language}, Frequency={inspection.Frequency}, MarcaId={inspection.MarcaId}, LojaId={inspection.LojaId}, UserId={inspection.UserId}");
+
+                // Initialize EditingInspection
+                EditingInspection = new InspectionFormModel
                     {
-                        Text = q.Text,
-                        ResponseType = q.ResponseType,
-                        Options = q.Options
-                    }).ToList() ?? new List<CustomQuestion>()
-                };
-                if (NewInspection.TemplateId.HasValue)
+                        TemplateId = inspection.TemplateId,
+                        Language = inspection.Language ?? "English",
+                        InspectionName = inspection.InspectionName ?? string.Empty,
+                        Frequency = inspection.Frequency ?? string.Empty,
+                        StartDate = inspection.StartDate,
+                        DueDate = inspection.DueDate,
+                        Description = inspection.Description ?? string.Empty,
+                        MarcaId = inspection.MarcaId,
+                        SelectedStoreIds = inspection.LojaId.HasValue ? new List<int> { inspection.LojaId.Value } : new List<int>(),
+                        SelectedGuestIds = inspection.UserId.HasValue ? new List<int> { inspection.UserId.Value } : new List<int>(),
+                        Questions = inspection.Questions?.Select(q => new CustomQuestion
+                        {
+                            Text = q.Text ?? string.Empty,
+                            ResponseType = q.ResponseType ?? string.Empty,
+                            Options = q.Options ?? new List<string>()
+                        }).ToList() ?? new List<CustomQuestion>()
+                    };
+
+                // Log EditingInspection to verify mapping
+                Console.WriteLine($"EditingInspection: Name={EditingInspection.InspectionName}, TemplateId={EditingInspection.TemplateId}, StartDate={EditingInspection.StartDate}, Language={EditingInspection.Language}, Frequency={EditingInspection.Frequency}, MarcaId={EditingInspection.MarcaId}");
+
+                selectedSection = inspection.SeccaoIds?.FirstOrDefault();
+
+                // Load template questions if applicable
+                TemplateQuestions = new List<CustomQuestion>();
+                if (EditingInspection.TemplateId.HasValue)
                 {
-                    TemplateQuestions = await TemplateService.GetTemplateQuestions(NewInspection.TemplateId.Value);
+                    try
+                    {
+                        TemplateQuestions = await TemplateService.GetTemplateQuestions(EditingInspection.TemplateId.Value);
+                        Console.WriteLine($"Loaded {TemplateQuestions.Count} template questions for TemplateId={EditingInspection.TemplateId}");
+                        if (inspection.Questions == null || !inspection.Questions.Any())
+                        {
+                            EditingInspection.Questions.Clear();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        errorMessage = $"Failed to load template questions: {ex.Message}";
+                        Console.WriteLine($"Error loading template questions: {ex}");
+                    }
                 }
+
+                ExpandedInspectionId = inspectionId;
                 ShowEditModal = true;
                 CurrentStep = 1;
                 errorMessage = null;
+                successMessage = null;
+                StateHasChanged();
             }
             else
             {
                 errorMessage = "Inspection not found.";
+                Console.WriteLine($"Inspection with ID {inspectionId} not found.");
             }
         }
         catch (Exception ex)
         {
             errorMessage = $"Error loading inspection: {ex.Message}";
+            Console.WriteLine($"Error loading inspection: {ex}");
+        }
+    }
+
+    private async Task UpdateInspection()
+    {
+        try
+        {
+            // Step 1: Validate all required fields
+            // if (string.IsNullOrEmpty(NewInspection.InspectionName))
+            // {
+            //     errorMessage = "Inspection Name is required.";
+            //     return;
+            // }
+            // if (string.IsNullOrEmpty(NewInspection.Language))
+            // {
+            //     errorMessage = "Language is required.";
+            //     return;
+            // }
+            // if (!NewInspection.StartDate.HasValue)
+            // {
+            //     errorMessage = "Start Date is required.";
+            //     return;
+            // }
+            // if (!NewInspection.DueDate.HasValue)
+            // {
+            //     errorMessage = "Due Date is required.";
+            //     return;
+            // }
+            // if (!NewInspection.MarcaId.HasValue)
+            // {
+            //     errorMessage = "Brand is required.";
+            //     return;
+            // }
+            // if (NewInspection.SelectedStoreIds.Count == 0)
+            // {
+            //     errorMessage = "At least one store must be selected.";
+            //     return;
+            // }
+            // if (NewInspection.SelectedGuestIds.Count == 0)
+            // {
+            //     errorMessage = "At least one guest must be selected.";
+            //     return;
+            // }
+            // if (!NewInspection.TemplateId.HasValue && !NewInspection.Questions.Any())
+            // {
+            //     errorMessage = "Either select a template or add at least one custom question.";
+            //     return;
+            // }
+            // if (!NewInspection.TemplateId.HasValue && NewInspection.Questions.Any(q => string.IsNullOrEmpty(q.Text) || string.IsNullOrEmpty(q.ResponseType)))
+            // {
+            //     errorMessage = "All custom questions must have text and a response type.";
+            //     return;
+            // }
+
+            // Step 2: Get the inspection ID
+            var inspectionToUpdate = Inspections.FirstOrDefault(i => i.Id == ExpandedInspectionId);
+            if (inspectionToUpdate == null)
+            {
+                errorMessage = "Inspection not found for update.";
+                return;
+            }
+
+            // Step 3: Create DTO for the updated inspection
+            var dto = new UpdateInspectionDto
+                {
+                    Id = inspectionToUpdate.Id,
+                    LojaId = NewInspection.SelectedStoreIds.FirstOrDefault(), // Assume single store
+                    UserId = NewInspection.SelectedGuestIds.FirstOrDefault(), // Assume single user
+                    DataInicio = NewInspection.StartDate.Value,
+                    DataFim = NewInspection.DueDate.Value,
+                    Descricao = NewInspection.Description,
+                    Frequencia = NewInspection.Frequency,
+                    InspecaoName = NewInspection.InspectionName,
+                    Estado = "Standby",
+                    IsActive = true,
+                    FormularioId = NewInspection.TemplateId,
+                    MarcaId = NewInspection.MarcaId,
+                    Language = NewInspection.Language,
+                    Status = "Active",
+                    Mode = "Draft",
+                    SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
+                    PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
+                        ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
+                        {
+                            Texto = q.Text,
+                            TipoResposta = q.ResponseType,
+                            Opcoes = q.Options,
+                            Resposta = null
+                        }).ToList()
+                        : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                        {
+                            Texto = q.Text,
+                            TipoResposta = q.ResponseType,
+                            Opcoes = q.Options,
+                            Resposta = null
+                        }).ToList()
+                };
+
+            // Step 4: Call the service to update the inspection
+            var result = await InspectionService.UpdateInspectionAsync(inspectionToUpdate.Id, dto);
+
+            if (!result.Success)
+            {
+                errorMessage = result.ErrorMessage;
+                return;
+            }
+
+            // Step 5: Handle success
+            successMessage = "Inspection updated successfully.";
+            ShowEditModal = false;
+            NewInspection = new InspectionFormModel();
+            CurrentStep = 1;
+            TemplateQuestions = new List<CustomQuestion>();
+            await LoadInspections();
+            StateHasChanged();
+            await Task.Delay(2000);
+            successMessage = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unexpected error: {ex.Message}";
+            Console.WriteLine($"Error updating inspection: {ex}");
         }
     }
 
     private void UpdateStoreSelection(int storeId, bool isChecked)
     {
+        var targetList = ShowEditModal && EditingInspection != null ? EditingInspection.SelectedStoreIds : NewInspection.SelectedStoreIds;
         if (isChecked)
         {
-            if (!NewInspection.SelectedStoreIds.Contains(storeId))
-                NewInspection.SelectedStoreIds.Add(storeId);
+            if (!targetList.Contains(storeId))
+                targetList.Add(storeId);
         }
         else
         {
-            NewInspection.SelectedStoreIds.Remove(storeId);
+            targetList.Remove(storeId);
         }
     }
 
     private void UpdateGuestSelection(int guestId, bool isChecked)
     {
+        var targetList = ShowEditModal && EditingInspection != null ? EditingInspection.SelectedGuestIds : NewInspection.SelectedGuestIds;
         if (isChecked)
         {
-            if (!NewInspection.SelectedGuestIds.Contains(guestId))
-                NewInspection.SelectedGuestIds.Add(guestId);
+            if (!targetList.Contains(guestId))
+                targetList.Add(guestId);
         }
         else
         {
-            NewInspection.SelectedGuestIds.Remove(guestId);
+            targetList.Remove(guestId);
         }
         StateHasChanged();
     }
 
     private void AddQuestion()
     {
-        NewInspection.Questions.Add(new CustomQuestion
-        {
-            Text = "",
-            ResponseType = "",
-            Options = new List<string>()
-        });
+        var targetList = ShowEditModal && EditingInspection != null ? EditingInspection.Questions : NewInspection.Questions;
+        targetList.Add(new CustomQuestion
+            {
+                Text = "",
+                ResponseType = "",
+                Options = new List<string>()
+            });
     }
 
     private void RemoveQuestion(int index)
     {
-        if (index >= 0 && index < NewInspection.Questions.Count)
+        var targetList = ShowEditModal && EditingInspection != null ? EditingInspection.Questions : NewInspection.Questions;
+        if (index >= 0 && index < targetList.Count)
         {
-            NewInspection.Questions.RemoveAt(index);
+            targetList.RemoveAt(index);
         }
     }
 

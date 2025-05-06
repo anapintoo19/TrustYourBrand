@@ -21,10 +21,12 @@
         public DateTime? DueDate { get; set; }
         public string? Description { get; set; }
         public string? Brand { get; set; }
+        public int? MarcaId { get; set; }
         public int TotalTasks { get; set; }
         public int CompletedTasks { get; set; }
         public int? LojaId { get; set; } 
-        public int? UserId { get; set; } 
+        public int? UserId { get; set; }
+        public List<int>? SeccaoIds { get; set; }
         public double ProgressPercentage => TotalTasks > 0 ? (CompletedTasks * 100.0) / TotalTasks : 0;
         public List<int> SelectedStoreIds { get; set; } = new List<int>();
         public List<int> SelectedGuestIds { get; set; } = new List<int>();

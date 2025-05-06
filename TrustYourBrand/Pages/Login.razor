@@ -3,8 +3,9 @@
 @inject ILoginService LoginService
 @inject NavigationManager NavigationManager
 @inject TrustYourBrand.Services.ILocalStorageService LocalStorage
-@inject ILocalStorageService LocalStorage
 @inject IUserService UserService
+@inject TrustYourBrand.Services.CultureChangeService CultureChangeService
+@inject ILanguageContainerService LanguageContainer
 @using TrustYourBrand.Models
 @using TrustYourBrand.Services
 @using System.IdentityModel.Tokens.Jwt
@@ -19,23 +20,23 @@
             <ValidationSummary />
 
             <div class="login-label">
-                <label>Phone Number:</label>
+                <label>@LanguageContainer.Keys["PhoneNumberLabel"]:</label>
                 <InputText @bind-Value="loginModel.PhoneNumber"
-                           placeholder="Type Phone Number (910 000 000)"
-                           class="@((string.IsNullOrEmpty(loginModel.PhoneNumber) || errorMessage != null) && formSubmitted ? "input-error" : "")" 
+                           placeholder="@PhoneNumberPlaceholder"
+                           class="@((string.IsNullOrEmpty(loginModel.PhoneNumber) || errorMessage != null) && formSubmitted ? "input-error" : "")"
                            maxlength="9" />
                 <ValidationMessage For="@(() => loginModel.PhoneNumber)" />
             </div>
             <div class="login-label">
                 <label>PIN:</label>
                 <InputText @bind-Value="loginModel.Pin"
-                           placeholder="Type PIN _ _ _ _"
+                           placeholder="@PinPlaceholder"
                            type="password"
-                           class="@((string.IsNullOrEmpty(loginModel.Pin) || errorMessage != null) && formSubmitted ? "input-error" : "")" 
-                           maxlength="4"/>
+                           class="@((string.IsNullOrEmpty(loginModel.Pin) || errorMessage != null) && formSubmitted ? "input-error" : "")"
+                           maxlength="4" />
                 <ValidationMessage For="@(() => loginModel.Pin)" />
             </div>
-            <button type="submit" @onclick="() => formSubmitted = true">SUBMIT</button>
+            <button type="submit" @onclick="() => formSubmitted = true">@LanguageContainer.Keys["Submit"]</button>
         </EditForm>
 
         @if (!string.IsNullOrEmpty(errorMessage))
@@ -44,7 +45,7 @@
         }
 
         <p>
-            <a href="/forgot-pin" class="forgot-pin">Forgot Your PIN?</a>
+            <a href="/forgot-pin" class="forgot-pin">@LanguageContainer.Keys["ForgotPassword"]</a>
         </p>
     </div>
 </div>
@@ -53,33 +54,33 @@
 {
     <div class="pin-popup-overlay">
         <div class="pin-popup">
-            <h3>Change Your PIN</h3>
-            <p>Please, set a new PIN to continue.</p>
+            <h3>@LanguageContainer.Keys["ChangePassword"]</h3>
+            <p>@LanguageContainer.Keys["Paragrafo"]</p>
 
             <EditForm Model="@changePinModel" OnValidSubmit="@HandleChangePinSubmit">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
                 <div class="forgot-pin-label">
-                    <label>New PIN:</label>
+                    <label>@LanguageContainer.Keys["NewpinLabel"]:</label>
                     <InputText type="password"
                                @bind-Value="changePinModel.NewPin"
-                               placeholder="Enter new 4-digit PIN"
+                               placeholder="@NewPinPlaceholder"
                                class="@((string.IsNullOrEmpty(changePinModel.NewPin) && changePinFormSubmitted) || (changePinErrorMessage != null && changePinFormSubmitted) ? "input-error" : "")" />
                     <ValidationMessage For="@(() => changePinModel.NewPin)" />
                 </div>
 
                 <div class="forgot-pin-label">
-                    <label>Confirm New PIN:</label>
+                    <label>@LanguageContainer.Keys["ConfirmPinLabel"]:</label>
                     <InputText type="password"
                                @bind-Value="changePinModel.ConfirmPin"
-                               placeholder="Confirm new 4-digit PIN"
+                               placeholder="@ConfirmPinPlaceholder"
                                class="@((string.IsNullOrEmpty(changePinModel.ConfirmPin) && changePinFormSubmitted) || (changePinErrorMessage != null && changePinFormSubmitted) ? "input-error" : "")" />
                     <ValidationMessage For="@(() => changePinModel.ConfirmPin)" />
                 </div>
 
                 <div class="button-container">
-                    <button type="submit" class="btn-primary">CONFIRM</button>
+                    <button type="submit" class="btn-primary">@LanguageContainer.Keys["ConfirmButton"]</button>
                 </div>
             </EditForm>
 
@@ -107,8 +108,15 @@
     private bool changePinFormSubmitted = false;
     private string? userId;
 
+    // Propriedades para os placeholders
+    private string PhoneNumberPlaceholder => $"{LanguageContainer.Keys["LoginLabel"]} (910 000 000)";
+    private string PinPlaceholder => $"{LanguageContainer.Keys["LoginLabel"]} _ _ _ _";
+    private string NewPinPlaceholder => $"{LanguageContainer.Keys["NewpinPlaceholder"]}";
+    private string ConfirmPinPlaceholder => $"{LanguageContainer.Keys["ConfirmPinPlaceholder"]}";
+
     protected override void OnInitialized()
     {
+        CultureChangeService.OnCultureChanged += StateHasChanged;
         if (loginModel == null)
         {
             loginModel = new LoginModel();
@@ -361,6 +369,4 @@
         border: 2px solid red !important;
         outline: none !important;
     }
-
-        
 </style>

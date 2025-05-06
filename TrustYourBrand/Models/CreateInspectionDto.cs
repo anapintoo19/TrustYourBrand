@@ -12,6 +12,7 @@
         public DateTime DataFim { get; set; }
         public int? MarcaId { get; set; }
         public int? FormularioId { get; set; }
+        public string Language { get; set; }
         public string InspecaoName { get; set; }
         public string Status { get; set; }
         public string Mode { get; set; } = "Launched";
