@@ -264,30 +264,30 @@
                                             <label for="language" style="text-align:left;">Language</label>
                                             <select id="language" class="template-select" style="width: 100%;" @bind="EditingInspection.Language">
                                                 <option value="">Select the Language</option>
-                                                <option value="">Portuguese</option>
-                                                <option value="">English</option>
+                                                <option value="Portuguese">Portuguese</option>
+                                                <option value="English">English</option>
                                             </select>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
                                             <label for="name" style="text-align:left; margin-top: 20px;">Inspection Name</label>
-                                            <input type="text" id="name" class="input-name" style="width: 100%;" @bind="EditingInspection.InspectionName"/>
+                                            <input type="text" id="name" class="input-name" style="width: 100%;" @bind="EditingInspection.InspectionName" />
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
                                             <label for="frequency" style="text-align:left; margin-top: 20px;">Frequency</label>
                                             <select id="frequency" class="template-select" style="width: 100%;" @bind="EditingInspection.Frequency">
                                                 <option value="">Select the Frequency</option>
-                                                <option value="">Weekly</option>
-                                                <option value="">Monthly</option>
-                                                <option value="">Annually</option>
+                                                <option value="Weekly">Weekly</option>
+                                                <option value="Monthly">Monthly</option>
+                                                <option value="Annually">Annually</option>
                                             </select>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="start" style="text-align:left; margin-top: 20px;">Start Date</label>
-                                            <input type="date" id="start" style="width: 100%;" @bind="EditingInspection.StartDate"/>
+                                            <input type="date" id="start" style="width: 100%;" @bind="EditingInspection.StartDate" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="due" style="text-align:left; margin-top: 20px;">Due Date</label>
@@ -350,7 +350,7 @@
                                                         <td>
                                                             <input type="checkbox"
                                                                    class="store-checkbox store-row-checkbox"
-                                                                   checked="@NewInspection.SelectedStoreIds.Contains(store.LojaId)"
+                                                                   checked="@EditingInspection.SelectedStoreIds.Contains(store.LojaId)"
                                                                    @onchange="(e) => UpdateStoreSelection(store.LojaId, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                         </td>
                                                         <td>@store.Nome</td>
@@ -415,7 +415,7 @@
                                                         <td>
                                                             <input type="checkbox"
                                                                    class="store-checkbox store-row-checkbox"
-                                                                   checked="@NewInspection.SelectedGuestIds.Contains(user.Id)"
+                                                                   checked="@EditingInspection.SelectedGuestIds.Contains(user.Id)"
                                                                    @onchange="(e) => UpdateGuestSelection(user.Id, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                         </td>
                                                         <td>@user.FirstName</td>
@@ -444,7 +444,7 @@
 
                             case 4:
                                 <h3 style="text-align: left; color: #6aa4d5;">Question</h3>
-                                @if (NewInspection.TemplateId.HasValue)
+                                @if (EditingInspection.TemplateId.HasValue)
                                 {
                                     @if (isLoadingQuestions)
                                     {
@@ -452,7 +452,7 @@
                                     }
                                     else
                                     {
-                                        <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
+                                        <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == EditingInspection.TemplateId)?.Nome ?? "N/A")</p>
                                         <div class="table-container-selection">
                                             <table class="selection-table">
                                                 <thead>
@@ -508,7 +508,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @if (!NewInspection.Questions.Any())
+                                                @if (!EditingInspection.Questions.Any())
                                                 {
                                                     <tr>
                                                         <td colspan="4">No questions added yet.</td>
@@ -516,10 +516,10 @@
                                                 }
                                                 else
                                                 {
-                                                    @for (int i = 0; i < NewInspection.Questions.Count; i++)
+                                                    @for (int i = 0; i < EditingInspection.Questions.Count; i++)
                                                     {
                                                         var questionIndex = i;
-                                                        var question = NewInspection.Questions[i];
+                                                        var question = EditingInspection.Questions[i];
                                                         <tr>
                                                             <td>@(selectedSection.HasValue ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == selectedSection)?.Nome ?? "N/A" : "N/A")</td>
                                                             <td>
@@ -1514,33 +1514,30 @@
             var inspection = await InspectionService.GetInspectionByIdAsync(inspectionId);
             if (inspection != null)
             {
-                // Log the loaded inspection data
                 Console.WriteLine($"Inspection Loaded: ID={inspection.Id}, Name={inspection.InspectionName}, TemplateId={inspection.TemplateId}, StartDate={inspection.StartDate}, Language={inspection.Language}, Frequency={inspection.Frequency}, MarcaId={inspection.MarcaId}, LojaId={inspection.LojaId}, UserId={inspection.UserId}");
 
                 // Initialize EditingInspection
                 EditingInspection = new InspectionFormModel
                     {
                         TemplateId = inspection.TemplateId,
-                        Language = inspection.Language ?? "English",
-                        InspectionName = inspection.InspectionName ?? string.Empty,
-                        Frequency = inspection.Frequency ?? string.Empty,
+                        Language = inspection.Language,
+                        InspectionName = inspection.InspectionName,
+                        Frequency = inspection.Frequency,
                         StartDate = inspection.StartDate,
                         DueDate = inspection.DueDate,
-                        Description = inspection.Description ?? string.Empty,
+                        Description = inspection.Description,
                         MarcaId = inspection.MarcaId,
                         SelectedStoreIds = inspection.LojaId.HasValue ? new List<int> { inspection.LojaId.Value } : new List<int>(),
                         SelectedGuestIds = inspection.UserId.HasValue ? new List<int> { inspection.UserId.Value } : new List<int>(),
                         Questions = inspection.Questions?.Select(q => new CustomQuestion
                         {
-                            Text = q.Text ?? string.Empty,
-                            ResponseType = q.ResponseType ?? string.Empty,
+                            Text = q.Text,
+                            ResponseType = q.ResponseType,
                             Options = q.Options ?? new List<string>()
                         }).ToList() ?? new List<CustomQuestion>()
                     };
 
-                // Log EditingInspection to verify mapping
-                Console.WriteLine($"EditingInspection: Name={EditingInspection.InspectionName}, TemplateId={EditingInspection.TemplateId}, StartDate={EditingInspection.StartDate}, Language={EditingInspection.Language}, Frequency={EditingInspection.Frequency}, MarcaId={EditingInspection.MarcaId}");
-
+                // Load sections if available
                 selectedSection = inspection.SeccaoIds?.FirstOrDefault();
 
                 // Load template questions if applicable
@@ -1566,9 +1563,9 @@
                 ExpandedInspectionId = inspectionId;
                 ShowEditModal = true;
                 CurrentStep = 1;
+                StateHasChanged();
                 errorMessage = null;
                 successMessage = null;
-                StateHasChanged();
             }
             else
             {
@@ -1646,22 +1643,22 @@
             var dto = new UpdateInspectionDto
                 {
                     Id = inspectionToUpdate.Id,
-                    LojaId = NewInspection.SelectedStoreIds.FirstOrDefault(), // Assume single store
-                    UserId = NewInspection.SelectedGuestIds.FirstOrDefault(), // Assume single user
-                    DataInicio = NewInspection.StartDate.Value,
-                    DataFim = NewInspection.DueDate.Value,
-                    Descricao = NewInspection.Description,
-                    Frequencia = NewInspection.Frequency,
-                    InspecaoName = NewInspection.InspectionName,
+                    LojaId = EditingInspection.SelectedStoreIds.FirstOrDefault(),
+                    UserId = EditingInspection.SelectedGuestIds.FirstOrDefault(),
+                    DataInicio = EditingInspection.StartDate.Value,
+                    DataFim = EditingInspection.DueDate.Value,
+                    Descricao = EditingInspection.Description,
+                    Frequencia = EditingInspection.Frequency,
+                    InspecaoName = EditingInspection.InspectionName,
                     Estado = "Standby",
                     IsActive = true,
-                    FormularioId = NewInspection.TemplateId,
-                    MarcaId = NewInspection.MarcaId,
-                    Language = NewInspection.Language,
+                    FormularioId = EditingInspection.TemplateId,
+                    MarcaId = EditingInspection.MarcaId,
+                    Language = EditingInspection.Language,
                     Status = "Active",
                     Mode = "Draft",
                     SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
-                    PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
+                    PerguntasPersonalizadas = EditingInspection.TemplateId.HasValue
                         ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
                         {
                             Texto = q.Text,
@@ -1669,7 +1666,7 @@
                             Opcoes = q.Options,
                             Resposta = null
                         }).ToList()
-                        : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                        : EditingInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
                         {
                             Texto = q.Text,
                             TipoResposta = q.ResponseType,
@@ -1690,7 +1687,7 @@
             // Step 5: Handle success
             successMessage = "Inspection updated successfully.";
             ShowEditModal = false;
-            NewInspection = new InspectionFormModel();
+            EditingInspection = null;
             CurrentStep = 1;
             TemplateQuestions = new List<CustomQuestion>();
             await LoadInspections();

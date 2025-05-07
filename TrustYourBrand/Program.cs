@@ -29,7 +29,8 @@ builder.Services.AddScoped<AuthTokenHandler>();
 builder.Services.AddHttpClient("ApiClient", client =>
 {
     //client.BaseAddress = new Uri("https://tyb-tst.endinahosting.com/");
-    client.BaseAddress = new Uri("http://localhost:5097/");
+    //client.BaseAddress = new Uri("http://localhost:5097/");
+    client.BaseAddress = new Uri("https://localhost:7102/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
@@ -38,7 +39,7 @@ builder.Services.AddHttpClient("ApiClient", client =>
 builder.Services.AddHttpClient("UserApiClient", client =>
 {
     //client.BaseAddress = new Uri("http://tyb-tst.endinahosting.com/");
-    client.BaseAddress = new Uri("http://localhost:5097/");
+    client.BaseAddress = new Uri("https://localhost:7102/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
@@ -47,7 +48,7 @@ builder.Services.AddHttpClient("UserApiClient", client =>
 builder.Services.AddHttpClient("InspectionApiClient", client =>
 {
     //client.BaseAddress = new Uri("https://tyb-tst.endinahosting.com/");
-    client.BaseAddress = new Uri("http://localhost:5097/");
+    client.BaseAddress = new Uri("https://localhost:7102/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
@@ -56,7 +57,7 @@ builder.Services.AddHttpClient("InspectionApiClient", client =>
 builder.Services.AddHttpClient("StoreApiClient", client =>
 {
     //client.BaseAddress = new Uri("https://tyb-tst.endinahosting.com/");
-    client.BaseAddress = new Uri("http://localhost:5097/");
+    client.BaseAddress = new Uri("https://localhost:7102/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
@@ -65,7 +66,7 @@ builder.Services.AddHttpClient("StoreApiClient", client =>
 builder.Services.AddHttpClient("DepartmentApiClient", client =>
 {
     //client.BaseAddress = new Uri("https://tyb-tst.endinahosting.com/");
-    client.BaseAddress = new Uri("http://localhost:5097/");
+    client.BaseAddress = new Uri("https://localhost:7102/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
@@ -74,7 +75,7 @@ builder.Services.AddHttpClient("DepartmentApiClient", client =>
 builder.Services.AddHttpClient("TenantApiClient", client =>
 {
     //client.BaseAddress = new Uri("https://tyb-tst.endinahosting.com/");
-    client.BaseAddress = new Uri("http://localhost:5097/");
+    client.BaseAddress = new Uri("https://localhost:7102/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();
@@ -83,7 +84,7 @@ builder.Services.AddHttpClient("TenantApiClient", client =>
 builder.Services.AddHttpClient("BrandApiClient", client =>
 {
     //client.BaseAddress = new Uri("https://tyb-tst.endinahosting.com/");
-    client.BaseAddress = new Uri("http://localhost:5097/");
+    client.BaseAddress = new Uri("https://localhost:7102/");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 })
 .AddHttpMessageHandler<AuthTokenHandler>();

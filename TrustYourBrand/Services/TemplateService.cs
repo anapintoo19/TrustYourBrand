@@ -29,7 +29,7 @@ namespace TrustYourBrand.Services
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             //var response = await _httpClient.GetAsync("www/api/formulario");
-            var response = await _httpClient.GetAsync("http://localhost:5097/api/formulario");
+            var response = await _httpClient.GetAsync("https://localhost:7102/api/formulario");
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
@@ -49,7 +49,7 @@ namespace TrustYourBrand.Services
             try
             {
                 //var formularios = await _httpClient.GetFromJsonAsync<List<FormularioResponse>>("www/api/formulario");
-                var formularios = await _httpClient.GetFromJsonAsync<List<FormularioResponse>>("http://localhost:5097/api/formulario");
+                var formularios = await _httpClient.GetFromJsonAsync<List<FormularioResponse>>("https://localhost:7102/api/formulario");
                 Console.WriteLine($"API Response: {JsonSerializer.Serialize(formularios)}");
 
                 var formulario = formularios?.FirstOrDefault(f => f.FormularioId == templateId);

@@ -74,7 +74,7 @@ namespace TrustYourBrand.Services
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             //var response = await _httpClient.GetAsync("www/api/marca");
-            var response = await _httpClient.GetAsync("http://localhost:5097/api/marca");
+            var response = await _httpClient.GetAsync("https://localhost:7102/api/marca");
             response.EnsureSuccessStatusCode();
 
             var brands = await response.Content.ReadFromJsonAsync<List<BrandDto>>(new JsonSerializerOptions
@@ -99,7 +99,7 @@ namespace TrustYourBrand.Services
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             //var response = await _httpClient.GetAsync("www/api/seccao");
-            var response = await _httpClient.GetAsync("http://localhost:5097/api/seccao");
+            var response = await _httpClient.GetAsync("https://localhost:7102/api/seccao");
             response.EnsureSuccessStatusCode();
 
             var sections = await response.Content.ReadFromJsonAsync<List<SectionDto>>(new JsonSerializerOptions
