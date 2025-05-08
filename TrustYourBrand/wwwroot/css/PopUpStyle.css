@@ -158,6 +158,10 @@
     .edit-user-table select{
         color: #ccc;
     }
+    .edit-user-table select option{
+        color: black;
+    }
+        
 
         /* Estilização dos selects desabilitados */
         .edit-user-table select:disabled {

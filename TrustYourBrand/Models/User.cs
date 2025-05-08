@@ -14,7 +14,6 @@ namespace TrustYourBrand.Models
         [JsonPropertyName("Role")]
         public string? Role { get; set; }
         [JsonPropertyName("PhoneNumber")]
-        [Required(ErrorMessage = "O número de telefone é obrigatório.")]
         [RegularExpression(@"^[0-9]{9}$", ErrorMessage = "O número de telefone deve conter exatamente 9 dígitos numéricos.")]
         public string? PhoneNumber { get; set; }
         [JsonPropertyName("Pin")]

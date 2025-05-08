@@ -2,8 +2,8 @@
 {
     public class CreateInspectionDto
     {
-        public int LojaId { get; set; }
-        public int UserId { get; set; }
+        public List<int> LojaIds { get; set; }
+        public int? UserId { get; set; }
         public DateTime DataInicio { get; set; }
         public bool IsActive { get; set; } = true;
         public string Descricao { get; set; }
@@ -27,5 +27,6 @@
         public string TipoResposta { get; set; }
         public List<string>? Opcoes { get; set; }
         public string? Resposta { get; set; }
+        public int? SeccaoId { get; set; }
     }
 }

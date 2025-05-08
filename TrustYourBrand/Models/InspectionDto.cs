@@ -24,7 +24,8 @@
         public int? MarcaId { get; set; }
         public int TotalTasks { get; set; }
         public int CompletedTasks { get; set; }
-        public int? LojaId { get; set; } 
+
+        public List<int> LojaIds { get; set; }
         public int? UserId { get; set; }
         public List<int>? SeccaoIds { get; set; }
         public double ProgressPercentage => TotalTasks > 0 ? (CompletedTasks * 100.0) / TotalTasks : 0;

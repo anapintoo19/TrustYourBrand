@@ -3,7 +3,7 @@
     public class UpdateInspectionDto
     {
         public int Id { get; set; }
-        public int? LojaId { get; set; }
+        public List<int>? LojaIds { get; set; }
         public int? UserId { get; set; }
         public DateTime? DataInicio { get; set; }
         public DateTime? DataFim { get; set; }

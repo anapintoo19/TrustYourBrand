@@ -627,35 +627,35 @@
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
                                             <label for="template" style="text-align:left;">Template</label>
-                                            <select id="template" style="width: 100%;" @bind="NewInspection.TemplateId" @bind:after="OnTemplateChanged">
-                                                <option value="">Select the template</option>
+                                            <select id="template" style="width: 100%; color: #ccc" @bind="NewInspection.TemplateId" @bind:after="OnTemplateChanged">
+                                                <option value="" style="color: black;">Select the template</option>
                                                 @foreach (var template in TemplateDisponiveis)
                                                 {
-                                                    <option value="@template.FormularioId">@template.Nome</option>
+                                                    <option value="@template.FormularioId" style="color: black;">@template.Nome</option>
                                                 }
                                             </select>
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
                                             <label for="language" style="text-align:left;">Language</label>
-                                            <select id="language" class="template-select" style="width: 100%;" @bind="NewInspection.Language">
-                                                <option value="">Select the Language</option>
-                                                <option value="Portuguese">Portuguese</option>
-                                                <option value="English">English</option>
+                                            <select id="language" class="template-select" style="width: 100%; color: #ccc" @bind="NewInspection.Language">
+                                                <option value="" style="color: black;">Select the Language</option>
+                                                <option value="Portuguese" style="color: black;">Portuguese</option>
+                                                <option value="English" style="color: black;">English</option>
                                             </select>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
                                             <label for="name" style="text-align:left; margin-top: 20px;">Inspection Name</label>
-                                            <input type="text" id="name" class="input-name" placeholder="Enter the Name of the inspection" style="width: 100%;" @bind="NewInspection.InspectionName" />
+                                            <input type="text" id="name" class="input-name" style="width: 100%;" @bind="NewInspection.InspectionName" />
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
                                             <label for="frequency" style="text-align:left; margin-top: 20px;">Frequency</label>
-                                            <select id="frequency" class="template-select" style="width: 100%;" @bind="NewInspection.Frequency">
-                                                <option value="">Select the Frequency</option>
-                                                <option value="Weekly">Weekly</option>
-                                                <option value="Monthly">Monthly</option>
-                                                <option value="Annually">Annually</option>
+                                            <select id="frequency" class="template-select" style="width: 100%; color: #ccc;" @bind="NewInspection.Frequency">
+                                                <option value="" style="color: black;">Select the Frequency</option>
+                                                <option value="Weekly" style="color: black;">Weekly</option>
+                                                <option value="Monthly" style="color: black;">Monthly</option>
+                                                <option value="Annually" style="color: black;">Annually</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -672,15 +672,15 @@
                                     <tr>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="description" style="text-align:left; margin-top: 20px;">Description</label>
-                                            <input type="text" id="description" placeholder="Enter the Description of the inspection" style="width: 100%;" @bind="NewInspection.Description" />
+                                            <input type="text" id="description" style="width: 100%;" @bind="NewInspection.Description" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
                                             <label for="brand" style="text-align:left; margin-top: 20px;">Brand</label>
-                                            <select id="brand" style="width: 100%;" @bind="NewInspection.MarcaId">
-                                                <option value="">Select the brand</option>
+                                            <select id="brand" style="width: 100%; color: #ccc;" @bind="NewInspection.MarcaId">
+                                                <option value="" style="color: black;">Select the brand</option>
                                                 @foreach (var brand in BrandDisponiveis)
                                                 {
-                                                    <option value="@brand.MarcaId">@brand.Nome</option>
+                                                    <option value="@brand.MarcaId" style="color: black;">@brand.Nome</option>
                                                 }
                                             </select>
                                         </td>
@@ -825,16 +825,21 @@
                                     }
                                     else
                                     {
-                                        <p>Questions from selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
+                                        <p>Questions from the selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
                                         <div class="table-container-selection">
                                             <table class="selection-table">
+                                               @*  <h4 class="section-title"> *@
+                                               @*      Section: @(TemplateQuestions.FirstOrDefault()?.SeccaoId != null *@
+                                               @* ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == TemplateQuestions.FirstOrDefault()?.SeccaoId)?.Nome ?? "N/A" *@
+                                               @* : "N/A") *@
+                                               @*  </h4> *@
                                                 <thead>
                                                     <tr>
-                                                        <th id="sectionColumnHeader">Section</th>
                                                         <th>Question</th>
-                                                        <th>Response</th>
+                                                        <th style="text-align: right;">Response</th>
                                                     </tr>
                                                 </thead>
+
                                                 <tbody>
                                                     @if (TemplateQuestions == null || !TemplateQuestions.Any())
                                                     {
@@ -847,9 +852,9 @@
                                                         @foreach (var question in TemplateQuestions)
                                                         {
                                                             <tr>
-                                                                <td>@(question.SeccaoId.HasValue ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == question.SeccaoId)?.Nome ?? "N/A" : "N/A")</td>
-                                                                <td>@question.Text</td>
-                                                                <td>@question.ResponseType</td>
+                                                                
+                                                                <td style="text-align: left;">@question.Text</td>
+                                                                <td style="text-align: right;">@question.ResponseType</td>
                                                             </tr>
                                                         }
                                                     }
@@ -860,74 +865,82 @@
                                 }
                                 else
                                 {
-                                    <!-- Código existente para perguntas personalizadas -->
                                     <div class="dropdown-section-container">
-                                        <select id="sectionSelect" style="width: 100%;" @bind="selectedSection">
-                                            <option value="">Select the section of store</option>
+                                        @* <label for="sectionSelect" style="text-align:left;">Section</label> *@
+                                        <select id="sectionSelect" style="width: 100%;" @bind="selectedSection" @bind:after="OnSectionChanged">
+                                            <option value="">Select the store section</option>
                                             @foreach (var sec in SectionDisponiveis)
                                             {
                                                 <option value="@sec.SeccaoId">@sec.Nome</option>
                                             }
                                         </select>
                                     </div>
-                                    <div class="table-container-selection">
-                                        <table class="selection-table">
-                                            <thead>
-                                                <tr>
-                                                    <th id="sectionColumnHeader">Section</th>
-                                                    <th>Question</th>
-                                                    <th>Response</th>
-                                                    <th class="action-column"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if (!NewInspection.Questions.Any())
-                                                {
+
+                                    @if (selectedSection.HasValue)
+                                    {
+                                        <div class="table-container-selection">
+                                            <table class="selection-table">
+                                                
+                                                <thead>
                                                     <tr>
-                                                        <td colspan="4">No questions added yet.</td>
+                                                        <th>Question</th>
+                                                        <th>Response</th>
+                                                        <th class="action-column"></th>
                                                     </tr>
-                                                }
-                                                else
-                                                {
-                                                    @for (int i = 0; i < NewInspection.Questions.Count; i++)
+                                                </thead>
+
+                                                <tbody>
+                                                    @if (!FilteredCustomQuestions.Any())
                                                     {
-                                                        var questionIndex = i;
-                                                        var question = NewInspection.Questions[i];
                                                         <tr>
-                                                            <td>@(selectedSection.HasValue ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == selectedSection)?.Nome ?? "N/A" : "N/A")</td>
-                                                            <td>
-                                                                <input type="text" placeholder="Type your question here" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
-                                                            </td>
-                                                            <td>
-                                                                <select class="response-select" @bind="question.ResponseType">
-                                                                    <option value="">Select the Response</option>
-                                                                    <option value="Yes/No">Yes/No</option>
-                                                                    <option value="0-10 (Scale)">0-10 (Scale)</option>
-                                                                    <option value="Good/Enough/Bad">Good/Enough/Bad</option>
-                                                                </select>
-                                                            </td>
-                                                            <td class="action-column">
-                                                                <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => RemoveQuestion(questionIndex)">delete</span>
-                                                            </td>
+                                                            <td colspan="4">No questions added for this section.</td>
                                                         </tr>
                                                     }
-                                                }
-                                            </tbody>
-                                        </table>
+                                                    else
+                                                    {
+                                                        @for (int i = 0; i < FilteredCustomQuestions.Count; i++)
+                                                        {
+                                                            var questionIndex = i;
+                                                            var question = FilteredCustomQuestions[i];
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" placeholder="Enter your question here" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
+                                                                </td>
+                                                                <td>
+                                                                    <select class="response-select" @bind="question.ResponseType">
+                                                                        <option value="">Select the Response</option>
+                                                                        <option value="Yes/No">Yes/No</option>
+                                                                        <option value="0-10 (Scale)">0-10 (Scale)</option>
+                                                                        <option value="Good/Enough/Bad">Good/Enough/Bad</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td class="action-column">
+                                                                    <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => RemoveQuestion(questionIndex)">delete</span>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
 
-                                        <div class="add-question-section">
-                                            <button type="button" class="btn btn-add-question" @onclick="AddQuestion">Add New Question</button>
-                                        </div>
+                                            <div class="add-question-section">
+                                                <button type="button" class="btn btn-add-question" @onclick="AddQuestion">Add New Question</button>
+                                            </div>
 
-                                        <div class="pagination-table-selection">
-                                            <span>Page 1 of 1</span>
-                                            <div class="pagination-buttons-selection">
-                                                <button class="btn btn-pagination-selection">Prev</button>
-                                                <button class="btn btn-pagination-selection btn-active">1</button>
-                                                <button class="btn btn-pagination-selection">Next</button>
+                                            <div class="pagination-table-selection">
+                                                <span>Page 1 of 1</span>
+                                                <div class="pagination-buttons-selection">
+                                                    <button class="btn btn-pagination-selection">Previous</button>
+                                                    <button class="btn btn-pagination-selection btn-active">1</button>
+                                                    <button class="btn btn-pagination-selection">Next</button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    }
+                                    else
+                                    {
+                                        <p>Please select a section to add questions.</p>
+                                    }
                                 }
                                 break;
                         }
@@ -977,6 +990,8 @@
     private int CurrentPage { get; set; } = 1;
     private int TotalPages { get; set; } = 1;
     private const int PageSize = 8;
+
+    private List<CustomQuestion> FilteredCustomQuestions { get; set; } = new List<CustomQuestion>();
 
     private string? errorMessage;
     private string? successMessage;
@@ -1143,6 +1158,15 @@
         StateHasChanged();
     }
 
+    private void OnSectionChanged()
+    {
+        // Filtrar perguntas personalizadas pela secção selecionada
+        FilteredCustomQuestions = NewInspection.Questions
+            .Where(q => q.SeccaoId == selectedSection)
+            .ToList();
+        StateHasChanged();
+    }
+
 
     private void ToggleSelectAllStores(bool isChecked)
     {
@@ -1236,15 +1260,10 @@
                 errorMessage = "Please select at least one store in the Store Selection step.";
                 return;
             }
-            if (CurrentStep == 3 && NewInspection.SelectedGuestIds.Count == 0)
-            {
-                errorMessage = "Please select at least one user in the Guest step.";
-                return;
-            }
+            
             CurrentStep++;
             if (CurrentStep == 4 && NewInspection.TemplateId.HasValue)
             {
-                // Recarregar perguntas ao entrar no passo 4
                 _ = LoadTemplateQuestions();
             }
             errorMessage = null;
@@ -1265,62 +1284,57 @@
     {
         try
         {
-            // Step 1: Validate all required fields
+            // Validações existentes
             if (string.IsNullOrEmpty(NewInspection.InspectionName))
             {
-                errorMessage = "Inspection Name is required.";
+                errorMessage = "O Nome da Inspeção é obrigatório.";
                 return;
             }
             if (string.IsNullOrEmpty(NewInspection.Language))
             {
-                errorMessage = "Language is required.";
+                errorMessage = "A Língua é obrigatória.";
                 return;
             }
             if (!NewInspection.StartDate.HasValue)
             {
-                errorMessage = "Start Date is required.";
+                errorMessage = "A Data de Início é obrigatória.";
                 return;
             }
             if (!NewInspection.DueDate.HasValue)
             {
-                errorMessage = "Due Date is required.";
+                errorMessage = "A Data de Fim é obrigatória.";
                 return;
             }
             if (!NewInspection.MarcaId.HasValue)
             {
-                errorMessage = "Brand is required.";
+                errorMessage = "A Marca é obrigatória.";
                 return;
             }
             if (NewInspection.SelectedStoreIds.Count == 0)
             {
-                errorMessage = "At least one store must be selected.";
-                return;
-            }
-            if (NewInspection.SelectedGuestIds.Count == 0)
-            {
-                errorMessage = "At least one guest must be selected.";
+                errorMessage = "Selecione pelo menos uma loja.";
                 return;
             }
             if (!NewInspection.TemplateId.HasValue && !NewInspection.Questions.Any())
             {
-                errorMessage = "Either select a template or add at least one custom question.";
+                errorMessage = "Selecione um modelo ou adicione pelo menos uma pergunta personalizada.";
                 return;
             }
             if (!NewInspection.TemplateId.HasValue && NewInspection.Questions.Any(q => string.IsNullOrEmpty(q.Text) || string.IsNullOrEmpty(q.ResponseType)))
             {
-                errorMessage = "All custom questions must have text and a response type.";
+                errorMessage = "Todas as perguntas personalizadas devem ter texto e tipo de resposta.";
                 return;
             }
 
-            // Step 2: Create DTO for each store and user combination
+            // Criar DTO para cada loja e combinação de utilizador
             foreach (var storeId in NewInspection.SelectedStoreIds)
             {
-                foreach (var userId in NewInspection.SelectedGuestIds)
+                if (NewInspection.SelectedGuestIds.Count == 0)
                 {
                     var dto = new CreateInspectionDto
                         {
-                            LojaId = storeId,
-                            UserId = userId,
+                            LojaIds = NewInspection.SelectedStoreIds,
+                            UserId = null,
                             DataInicio = NewInspection.StartDate.Value,
                             DataFim = NewInspection.DueDate.Value,
                             Descricao = NewInspection.Description,
@@ -1333,47 +1347,96 @@
                             Language = NewInspection.Language,
                             Status = "Active",
                             Mode = "Launched",
-                            SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
+                            SeccaoIds = NewInspection.Questions.Select(q => q.SeccaoId).Distinct().Where(id => id.HasValue).Select(id => id.Value).ToList(), // Incluir todas as secções usadas
                             PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
                                 ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
                                 {
                                     Texto = q.Text,
                                     TipoResposta = q.ResponseType,
                                     Opcoes = q.Options,
-                                    Resposta = null
+                                    Resposta = null,
+                                    SeccaoId = q.SeccaoId
                                 }).ToList()
                                 : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
                                 {
                                     Texto = q.Text,
                                     TipoResposta = q.ResponseType,
                                     Opcoes = q.Options,
-                                    Resposta = null
+                                    Resposta = null,
+                                    SeccaoId = q.SeccaoId // Incluir SeccaoId
                                 }).ToList()
                         };
 
-                    // Step 3: Call the service to create the inspection
                     var result = await InspectionService.CreateInspectionAsync(dto);
-
                     if (!result.Success)
                     {
                         errorMessage = result.ErrorMessage;
                         return;
                     }
                 }
+                else
+                {
+                    foreach (var userId in NewInspection.SelectedGuestIds)
+                    {
+                        var dto = new CreateInspectionDto
+                            {
+                                LojaIds = NewInspection.SelectedStoreIds,
+                                UserId = userId,
+                                DataInicio = NewInspection.StartDate.Value,
+                                DataFim = NewInspection.DueDate.Value,
+                                Descricao = NewInspection.Description,
+                                Frequencia = NewInspection.Frequency,
+                                InspecaoName = NewInspection.InspectionName,
+                                Estado = "Ongoing",
+                                IsActive = true,
+                                FormularioId = NewInspection.TemplateId,
+                                MarcaId = NewInspection.MarcaId,
+                                Language = NewInspection.Language,
+                                Status = "Active",
+                                Mode = "Launched",
+                                SeccaoIds = NewInspection.Questions.Select(q => q.SeccaoId).Distinct().Where(id => id.HasValue).Select(id => id.Value).ToList(), // Incluir todas as secções usadas
+                                PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
+                                    ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
+                                    {
+                                        Texto = q.Text,
+                                        TipoResposta = q.ResponseType,
+                                        Opcoes = q.Options,
+                                        Resposta = null,
+                                        SeccaoId = q.SeccaoId
+                                    }).ToList()
+                                    : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                                    {
+                                        Texto = q.Text,
+                                        TipoResposta = q.ResponseType,
+                                        Opcoes = q.Options,
+                                        Resposta = null,
+                                        SeccaoId = q.SeccaoId // Incluir SeccaoId
+                                    }).ToList()
+                            };
+
+                        var result = await InspectionService.CreateInspectionAsync(dto);
+                        if (!result.Success)
+                        {
+                            errorMessage = result.ErrorMessage;
+                            return;
+                        }
+                    }
+                }
             }
 
-            // Step 4: Handle success
-            successMessage = "Inspection(s) created successfully.";
+            // Sucesso
+            successMessage = "Inspeção(ões) criada(s) com sucesso.";
             ShowCreateInspection = false;
             NewInspection = new InspectionFormModel();
             CurrentStep = 1;
             TemplateQuestions = new List<CustomQuestion>();
+            FilteredCustomQuestions = new List<CustomQuestion>();
             await LoadInspections();
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unexpected error: {ex.Message}";
-            Console.WriteLine($"Error creating inspection: {ex}");
+            errorMessage = $"Erro inesperado: {ex.Message}";
+            Console.WriteLine($"Erro ao criar inspeção: {ex}");
         }
     }
 
@@ -1381,28 +1444,27 @@
     {
         try
         {
-            // Step 1: Validate minimal required fields
+            // Validações existentes
             if (string.IsNullOrEmpty(NewInspection.InspectionName))
             {
-                errorMessage = "Inspection Name is required to save a draft.";
+                errorMessage = "O Nome da Inspeção é obrigatório para guardar um rascunho.";
                 return;
             }
-
-            // Step 2: Create DTO for each store and user combination
-            if (NewInspection.SelectedStoreIds.Count == 0 || NewInspection.SelectedGuestIds.Count == 0)
+            if (NewInspection.SelectedStoreIds.Count == 0)
             {
-                errorMessage = "At least one store and one guest must be selected to save a draft.";
+                errorMessage = "Selecione pelo menos uma loja para guardar um rascunho.";
                 return;
             }
 
+            // Criar DTO para cada loja e combinação de utilizador
             foreach (var storeId in NewInspection.SelectedStoreIds)
             {
-                foreach (var userId in NewInspection.SelectedGuestIds)
+                if (NewInspection.SelectedGuestIds.Count == 0)
                 {
                     var dto = new CreateInspectionDto
                         {
-                            LojaId = storeId,
-                            UserId = userId,
+                            LojaIds = NewInspection.SelectedStoreIds,
+                            UserId = null,
                             DataInicio = NewInspection.StartDate ?? DateTime.Now,
                             DataFim = NewInspection.DueDate ?? DateTime.Now.AddDays(7),
                             Descricao = NewInspection.Description,
@@ -1412,44 +1474,93 @@
                             IsActive = true,
                             FormularioId = NewInspection.TemplateId,
                             MarcaId = NewInspection.MarcaId,
-                            Language = NewInspection.Language ?? "English", // Default to English if not specified
+                            Language = NewInspection.Language ?? "English",
                             Status = "Active",
                             Mode = "Draft",
-                            SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
+                            SeccaoIds = NewInspection.Questions.Select(q => q.SeccaoId).Distinct().Where(id => id.HasValue).Select(id => id.Value).ToList(), // Incluir todas as secções usadas
                             PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
                                 ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
                                 {
                                     Texto = q.Text,
                                     TipoResposta = q.ResponseType,
                                     Opcoes = q.Options,
-                                    Resposta = null
+                                    Resposta = null,
+                                    SeccaoId = q.SeccaoId
                                 }).ToList()
                                 : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
                                 {
                                     Texto = q.Text,
                                     TipoResposta = q.ResponseType,
                                     Opcoes = q.Options,
-                                    Resposta = null
+                                    Resposta = null,
+                                    SeccaoId = q.SeccaoId // Incluir SeccaoId
                                 }).ToList()
                         };
 
-                    // Step 3: Call the service to create the draft
                     var result = await InspectionService.CreateInspectionAsync(dto);
-
                     if (!result.Success)
                     {
                         errorMessage = result.ErrorMessage;
                         return;
                     }
                 }
+                else
+                {
+                    foreach (var userId in NewInspection.SelectedGuestIds)
+                    {
+                        var dto = new CreateInspectionDto
+                            {
+                                LojaIds = NewInspection.SelectedStoreIds,
+                                UserId = userId,
+                                DataInicio = NewInspection.StartDate ?? DateTime.Now,
+                                DataFim = NewInspection.DueDate ?? DateTime.Now.AddDays(7),
+                                Descricao = NewInspection.Description,
+                                Frequencia = NewInspection.Frequency,
+                                InspecaoName = NewInspection.InspectionName,
+                                Estado = "Standby",
+                                IsActive = true,
+                                FormularioId = NewInspection.TemplateId,
+                                MarcaId = NewInspection.MarcaId,
+                                Language = NewInspection.Language ?? "English",
+                                Status = "Active",
+                                Mode = "Draft",
+                                SeccaoIds = NewInspection.Questions.Select(q => q.SeccaoId).Distinct().Where(id => id.HasValue).Select(id => id.Value).ToList(), // Incluir todas as secções usadas
+                                PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
+                                    ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
+                                    {
+                                        Texto = q.Text,
+                                        TipoResposta = q.ResponseType,
+                                        Opcoes = q.Options,
+                                        Resposta = null,
+                                        SeccaoId = q.SeccaoId
+                                    }).ToList()
+                                    : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                                    {
+                                        Texto = q.Text,
+                                        TipoResposta = q.ResponseType,
+                                        Opcoes = q.Options,
+                                        Resposta = null,
+                                        SeccaoId = q.SeccaoId // Incluir SeccaoId
+                                    }).ToList()
+                            };
+
+                        var result = await InspectionService.CreateInspectionAsync(dto);
+                        if (!result.Success)
+                        {
+                            errorMessage = result.ErrorMessage;
+                            return;
+                        }
+                    }
+                }
             }
 
-            // Step 4: Handle success
-            successMessage = "Draft saved successfully!";
+            // Sucesso
+            successMessage = "Rascunho guardado com sucesso!";
             ShowCreateInspection = false;
             NewInspection = new InspectionFormModel();
             CurrentStep = 1;
             TemplateQuestions = new List<CustomQuestion>();
+            FilteredCustomQuestions = new List<CustomQuestion>();
             await LoadInspections();
             StateHasChanged();
             await Task.Delay(2000);
@@ -1457,8 +1568,8 @@
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unexpected error: {ex.Message}";
-            Console.WriteLine($"Error saving draft: {ex}");
+            errorMessage = $"Erro inesperado: {ex.Message}";
+            Console.WriteLine($"Erro ao guardar rascunho: {ex}");
         }
     }
 
@@ -1508,77 +1619,84 @@
     }
 
     private async Task EditInspection(int inspectionId)
+{
+    try
     {
-        try
+        var inspection = await InspectionService.GetInspectionByIdAsync(inspectionId);
+        if (inspection != null)
         {
-            var inspection = await InspectionService.GetInspectionByIdAsync(inspectionId);
-            if (inspection != null)
+            Console.WriteLine($"Inspection Loaded: ID={inspection.Id}, Name={inspection.InspectionName}, TemplateId={inspection.TemplateId}, StartDate={inspection.StartDate}, Language={inspection.Language}, Frequency={inspection.Frequency}, MarcaId={inspection.MarcaId}, LojaId={inspection.LojaIds}, UserId={inspection.UserId}");
+
+            EditingInspection = new InspectionFormModel
             {
-                Console.WriteLine($"Inspection Loaded: ID={inspection.Id}, Name={inspection.InspectionName}, TemplateId={inspection.TemplateId}, StartDate={inspection.StartDate}, Language={inspection.Language}, Frequency={inspection.Frequency}, MarcaId={inspection.MarcaId}, LojaId={inspection.LojaId}, UserId={inspection.UserId}");
-
-                // Initialize EditingInspection
-                EditingInspection = new InspectionFormModel
-                    {
-                        TemplateId = inspection.TemplateId,
-                        Language = inspection.Language,
-                        InspectionName = inspection.InspectionName,
-                        Frequency = inspection.Frequency,
-                        StartDate = inspection.StartDate,
-                        DueDate = inspection.DueDate,
-                        Description = inspection.Description,
-                        MarcaId = inspection.MarcaId,
-                        SelectedStoreIds = inspection.LojaId.HasValue ? new List<int> { inspection.LojaId.Value } : new List<int>(),
-                        SelectedGuestIds = inspection.UserId.HasValue ? new List<int> { inspection.UserId.Value } : new List<int>(),
-                        Questions = inspection.Questions?.Select(q => new CustomQuestion
-                        {
-                            Text = q.Text,
-                            ResponseType = q.ResponseType,
-                            Options = q.Options ?? new List<string>()
-                        }).ToList() ?? new List<CustomQuestion>()
-                    };
-
-                // Load sections if available
-                selectedSection = inspection.SeccaoIds?.FirstOrDefault();
-
-                // Load template questions if applicable
-                TemplateQuestions = new List<CustomQuestion>();
-                if (EditingInspection.TemplateId.HasValue)
+                TemplateId = inspection.TemplateId,
+                Language = inspection.Language,
+                InspectionName = inspection.InspectionName,
+                Frequency = inspection.Frequency,
+                StartDate = inspection.StartDate,
+                DueDate = inspection.DueDate,
+                Description = inspection.Description,
+                MarcaId = inspection.MarcaId,
+                        SelectedStoreIds = inspection.LojaIds != null
+        ? new List<int>(inspection.LojaIds)
+        : new List<int>(),
+                SelectedGuestIds = inspection.UserId.HasValue ? new List<int> { inspection.UserId.Value } : new List<int>(),
+                Questions = inspection.Questions?.Select(q => new CustomQuestion
                 {
-                    try
+                    Text = q.Text,
+                    ResponseType = q.ResponseType,
+                    Options = q.Options ?? new List<string>(),
+                    SeccaoId = q.SeccaoId // Incluir SeccaoId
+                }).ToList() ?? new List<CustomQuestion>()
+            };
+
+            selectedSection = inspection.SeccaoIds?.FirstOrDefault();
+
+            TemplateQuestions = new List<CustomQuestion>();
+            if (EditingInspection.TemplateId.HasValue)
+            {
+                try
+                {
+                    TemplateQuestions = await TemplateService.GetTemplateQuestions(EditingInspection.TemplateId.Value);
+                    Console.WriteLine($"Loaded {TemplateQuestions.Count} template questions for TemplateId={EditingInspection.TemplateId}");
+                    if (inspection.Questions == null || !inspection.Questions.Any())
                     {
-                        TemplateQuestions = await TemplateService.GetTemplateQuestions(EditingInspection.TemplateId.Value);
-                        Console.WriteLine($"Loaded {TemplateQuestions.Count} template questions for TemplateId={EditingInspection.TemplateId}");
-                        if (inspection.Questions == null || !inspection.Questions.Any())
-                        {
-                            EditingInspection.Questions.Clear();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        errorMessage = $"Failed to load template questions: {ex.Message}";
-                        Console.WriteLine($"Error loading template questions: {ex}");
+                        EditingInspection.Questions.Clear();
                     }
                 }
-
-                ExpandedInspectionId = inspectionId;
-                ShowEditModal = true;
-                CurrentStep = 1;
-                StateHasChanged();
-                errorMessage = null;
-                successMessage = null;
+                catch (Exception ex)
+                {
+                    errorMessage = $"Falha ao carregar perguntas do modelo: {ex.Message}";
+                    Console.WriteLine($"Erro ao carregar perguntas do modelo: {ex}");
+                }
             }
             else
             {
-                errorMessage = "Inspection not found.";
-                Console.WriteLine($"Inspection with ID {inspectionId} not found.");
+                // Inicializar perguntas filtradas para a secção selecionada
+                FilteredCustomQuestions = EditingInspection.Questions
+                    .Where(q => q.SeccaoId == selectedSection)
+                    .ToList();
             }
+
+            ExpandedInspectionId = inspectionId;
+            ShowEditModal = true;
+            CurrentStep = 1;
+            StateHasChanged();
+            errorMessage = null;
+            successMessage = null;
         }
-        catch (Exception ex)
+        else
         {
-            errorMessage = $"Error loading inspection: {ex.Message}";
-            Console.WriteLine($"Error loading inspection: {ex}");
+            errorMessage = "Inspeção não encontrada.";
+            Console.WriteLine($"Inspeção com ID {inspectionId} não encontrada.");
         }
     }
+    catch (Exception ex)
+    {
+        errorMessage = $"Erro ao carregar inspeção: {ex.Message}";
+        Console.WriteLine($"Erro ao carregar inspeção: {ex}");
+    }
+}
 
     private async Task UpdateInspection()
     {
@@ -1643,7 +1761,7 @@
             var dto = new UpdateInspectionDto
                 {
                     Id = inspectionToUpdate.Id,
-                    LojaId = EditingInspection.SelectedStoreIds.FirstOrDefault(),
+                    LojaIds = EditingInspection.SelectedStoreIds,
                     UserId = EditingInspection.SelectedGuestIds.FirstOrDefault(),
                     DataInicio = EditingInspection.StartDate.Value,
                     DataFim = EditingInspection.DueDate.Value,
@@ -1734,20 +1852,30 @@
     private void AddQuestion()
     {
         var targetList = ShowEditModal && EditingInspection != null ? EditingInspection.Questions : NewInspection.Questions;
-        targetList.Add(new CustomQuestion
-            {
-                Text = "",
-                ResponseType = "",
-                Options = new List<string>()
-            });
+        if (selectedSection.HasValue)
+        {
+            var newQuestion = new CustomQuestion
+                {
+                    Text = "",
+                    ResponseType = "",
+                    Options = new List<string>(),
+                    SeccaoId = selectedSection.Value // Associar à secção selecionada
+                };
+            targetList.Add(newQuestion);
+            FilteredCustomQuestions.Add(newQuestion); // Atualizar a lista filtrada
+            StateHasChanged();
+        }
     }
 
     private void RemoveQuestion(int index)
     {
         var targetList = ShowEditModal && EditingInspection != null ? EditingInspection.Questions : NewInspection.Questions;
-        if (index >= 0 && index < targetList.Count)
+        if (index >= 0 && index < FilteredCustomQuestions.Count)
         {
-            targetList.RemoveAt(index);
+            var questionToRemove = FilteredCustomQuestions[index];
+            targetList.Remove(questionToRemove); // Remover da lista principal
+            FilteredCustomQuestions.RemoveAt(index); // Remover da lista filtrada
+            StateHasChanged();
         }
     }
 

@@ -83,8 +83,10 @@
     {
         <div class="modal-overlay delete-modal-overlay">
             <div class="modal-content">
-                <h3>Deactivate User</h3>
-                <p>Are you sure you want to deactivate the user @UserToDelete?.FirstName @UserToDelete?.LastName?</p>
+                <h3>Delete User</h3>
+                <p style="font-weight: bold; text-align: left; color: black; margin: 0 0 2px 0;">User Name</p>
+                <p style="text-align: left; color: black; margin: 0 0 5px 0;">@(UserToDelete?.FirstName + " " + UserToDelete?.LastName ?? "Unknown User")</p>
+                <p>Do you want delete this user?</p>
                 <div class="modal-buttons">
                     <button class="btn btn-confirm" @onclick="ConfirmDelete">CONFIRM</button>
                     <button class="btn btn-cancel" @onclick="CancelDelete">CANCEL</button>
@@ -165,7 +167,7 @@
                                             <div>
                                                 <label for="phoneNumber">Phone Number*</label>
                                                 <InputText id="phoneNumber" type="tel" @bind-Value="@NewUser.PhoneNumber" inputmode="numeric" pattern="[0-9]{9}" maxlength="9" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
-                                                <ValidationMessage For="@(() => NewUser.PhoneNumber)" />
+                                                
                                             </div>
                                         </td>
                                     </tr>
@@ -285,7 +287,6 @@
                                                 <InputSelect id="language" @bind-Value="@NewUser.Language">
                                                     <option value="">Select the language</option>
                                                     <option value="Português">Portuguese</option>
-                                                    <option value="Espanhol">Spanish</option>
                                                     <option value="Inglês">English</option>
                                                 </InputSelect>
                                                 <ValidationMessage For="@(() => NewUser.Language)" />
@@ -715,9 +716,9 @@
         errorMessage = null;
         successMessage = null;
 
-        if (string.IsNullOrWhiteSpace(NewUser.FirstName) || string.IsNullOrWhiteSpace(NewUser.LastName) || string.IsNullOrWhiteSpace(NewUser.Email))
+        if (string.IsNullOrWhiteSpace(NewUser.FirstName) || string.IsNullOrWhiteSpace(NewUser.LastName) || string.IsNullOrWhiteSpace(NewUser.Email) || string.IsNullOrWhiteSpace(NewUser.PhoneNumber))
         {
-            errorMessage = "The First Name, Last Name and Email fields are mandatory.";
+            errorMessage = "The First Name, Last Name, Email and Phone Number fields are mandatory.";
             return;
         }
 

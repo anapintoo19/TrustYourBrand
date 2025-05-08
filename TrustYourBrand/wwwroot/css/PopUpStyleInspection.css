@@ -404,7 +404,7 @@ button {
 /* Ajustar a tabela */
 .selection-table {
     width: 100%;
-    table-layout: fixed;
+    table-layout: auto;
     font-size: 12px;
     border-collapse: collapse;
     display: table;
@@ -551,6 +551,13 @@ button {
     width: 10%;
     text-align: center;
 }
+/* Última coluna de qualquer tabela selection-table */
+.selection-table td:last-child,
+.selection-table th:last-child {
+    width: 40%;
+    white-space: normal;
+}
+
 
 /* Ajustar as células da tabela para alinhar verticalmente */
 .selection-table td {
@@ -700,3 +707,38 @@ button {
         border: 1px solid #6aa4d5;
     }
 
+.section-panel {
+    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    user-select: none;
+}
+
+    .section-header h4 {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .section-header .material-symbols-outlined {
+        font-size: 24px;
+    }
+
+.table-container-selection {
+    padding: 10px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0 5px 0;
+    color: #6aa4d5;
+}

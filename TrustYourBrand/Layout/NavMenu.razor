@@ -41,6 +41,7 @@
                         <span class="material-symbols-outlined icon-large icon-thick icon-spacing">@item.Icon</span> @item.Name
                     </NavLink>
                 }
+
             </div>
         }
     </nav>
@@ -96,13 +97,25 @@
 
         Console.WriteLine($"🔐 Role extraída do token: '{userRole}'");
 
+        // Itens básicos
         MenuItems = new List<MenuItem>
         {
             new MenuItem("Inspection", "/inspection", "target", "btn-inspection"),
             new MenuItem("Action Plan", "/action-plan", "list", "btn-action-plan"),
-            new MenuItem("Tenant", "", "factory", "btn-tenant", true)
+        };
+
+        // Tenant
+        if (userRole.Equals("Inspetor", StringComparison.OrdinalIgnoreCase))
+        {
+            // Sem submenu, redireciona para /tenant
+            MenuItems.Add(new MenuItem("Tenant", "/tenant", "factory", "btn-tenant"));
+        }
+        else
+        {
+            // Com submenu
+            var tenantItem = new MenuItem("Tenant", "", "factory", "btn-tenant", true)
             {
-                SubItems = new List<MenuItem>
+                    SubItems = new List<MenuItem>
                 {
                     new MenuItem("Area", "/area", "map", "btn-sub"),
                     new MenuItem("Department", "/department", "group", "btn-sub"),
@@ -110,10 +123,20 @@
                     new MenuItem("Store", "/store", "store", "btn-sub"),
                     new MenuItem("Brand", "/marca", "label", "btn-sub")
                 }
-            },
-            new MenuItem("Support", "/support", "help", "btn-support"),
-        };
+            };
 
+            // Adiciona "Template" se for Assistente
+            if (userRole.Equals("Assistente", StringComparison.OrdinalIgnoreCase))
+            {
+                tenantItem.SubItems.Add(new MenuItem("Template", "/template", "description", "btn-sub"));
+            }
+
+            MenuItems.Add(tenantItem);
+        }
+
+        MenuItems.Add(new MenuItem("Support", "/support", "help", "btn-support"));
+
+        // Security para Assistente
         if (userRole.Equals("Assistente", StringComparison.OrdinalIgnoreCase))
         {
             Console.WriteLine("✅ Permissão concedida para Security!");
@@ -124,13 +147,6 @@
                     new MenuItem("Users", "/users", "person", "btn-sub")
                 }
                 });
-
-            // Adiciona o botão "Template" ao submenu de "Tenant"
-            var tenantMenu = MenuItems.Find(item => item.Name == "Tenant");
-            if (tenantMenu != null)
-            {
-                tenantMenu.SubItems.Add(new MenuItem("Template", "/template", "description", "btn-sub"));
-            }
         }
         else
         {
