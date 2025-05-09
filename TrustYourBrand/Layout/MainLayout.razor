@@ -37,7 +37,7 @@
                 @if (showDropdown)
                 {
                     <div class="dropdown-content">
-                        <button class="dropdown-item" @onclick="Logout">Logout</button>
+                        <button class="dropdown-item" @onclick="Logout">@LanguageContainer.Keys["LogoutButton"]</button>
                     </div>
                 }
             </div>
@@ -63,6 +63,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        CultureChangeService.OnCultureChanged += StateHasChanged; CultureChangeService.OnCultureChanged += StateHasChanged;
         NavigationManager.LocationChanged += OnLocationChanged;
         currentPage = NavigationManager.Uri;
 

@@ -1,12 +1,15 @@
 ﻿Export: Export
 Import: Import
+SelectColumns: Select Columns
+Loading: Loading...
+SearchPlaceholder: Search
 
 # LOGIN RAZOR #
 PhoneNumberLabel: Phone Number
 Submit: SUBMIT
 ForgotPassword: Forgot Your PIN?
 LoginLabel: Type
-# POP-UP CHANGE PIN#
+# POP-UP CHANGE PIN #
 ChangePassword: Change Your PIN
 Paragrafo: Please, set a new PIN to continue.
 NewpinLabel: New PIN
@@ -14,6 +17,133 @@ NewpinPlaceholder: Enter new 4-digit PIN
 ConfirmPinLabel: Confirm PIN
 ConfirmPinPlaceholder: Confirm new 4-digit PIN
 
+# MAINLAYOUT RAZOR #
+LogoutButton: Logout
 
-#Botões#
+# FORGOTPIN RAZOR #
+Frase: Enter your phone number to receive a verification code.
+SendCodeButton: SEND CODE
+ForgotPinLabel: Type Phone Number
+BackToLogin: Back to Login
+ResetPin: Reset PIN
+FraseResetPin: Enter the verification code we sent to your phone number and set a new PIN.
+VerificationLabel: Verification Code
+VerificationPlaceholder: Type Code
+newPinPlaceholder: Enter the new PIN (4 digits)
+ConfirmNewPinLabel: Confirm New PIN
+ConfirmNewPinPlaceholder: Confirm the new PIN
+ResetPinButton: RESET PIN
+
+# STORE RAZOR #
+StoreName: Store Name
+Zone: Zone
+StoreManager: Store Manager
+Inspector: Inspector
+Country: Country
+StoreType: Store Type
+Condition: Condition
+
+# USERS RAZOR #
+CreateNewUserButton: Create New User
+FirstName: First Name
+LastName: Last Name
+Email: Email
+Role: Role
+Function: Function
+Department: Department
+NoUsersFound: No users found.
+DeleteTitle: Delete User
+UserName: User Name
+DeleteMessage: Do you want delete this user?
+CreateTitle: Create User
+SelectFunction: Select the function
+Birthday: Birthday
+SelectDepartment: Select the department
+SelectRole: Select the role
+GenderLabel: Gender
+SelectGender: Select the gender
+Male: Male
+Female: Female
+SelectCountry: Select the country
+CityLabel: City
+SelectStoreTenant: Select the store tenant
+BrandLabel: Brand
+SelectBrand: Select the brand
+LanguageLabel: Language
+SelectLanguage: Select the language
+CreateUserButton: CREATE USER
+EditTitle: Edit User
+EditUserButton: EDIT USER
+
+# INSPECTION RAZOR #
+CreateNewInspectionButton: Create New Inspection
+CreateInspectionTitle: Create Inspection
+LanguageModal: Language
+SelectLanguageModal: Select the language
+TypeInspection: Type
+Name: Name
+Frequency: Frequency
+Mode: Mode
+Progress: Progress
+Status: Status
+NoInspectionsFound: No inspections found.
+Ongoing: Ongoing
+Standby: Stand-by
+Closed: Closed
+Canceled: Canceled
+InspectionProgress: Inspection Progress
+StartDate: Start Date
+DueDate: Due Date
+FinishDate: Finish Date
+NumberOfQuestions: Number of Questions
+Purpose: Purpose
+Total: Total
+Stores: Stores
+EditTitleInspection: Edit Inspection
+Information: Information
+StoreSelection: Store Selection
+Guest: Guest
+Question: Question
+Template: Template
+SelectTemplate: Select the template
+InspectionName: Inspection Name
+SelectFrequency: Select the frequency
+Weekly: Weekly
+Monthly: Monthly
+Annually: Annually
+Description: Description
+NoStoreFound: No stores found.
+LoadingQuestions: Loading questions...
+Section: Section
+Response: Response
+QuestionsMessage: No questions available for this template.
+SelectSection: Select the section of store
+NoQuestionsAdded: No questions added yet.
+TypeQuestion: Type your question here
+SelectResponse: Select the response
+YesNo: Yes/No
+Scale: 0-10 (Scale)
+GoodBadEnough: Good/Enough/Bad
+AddNewQuestion: Add New Question
+EditButtonInspection: EDIT INSPECTION
+DeleteTitleInspection: Delete Inspection
+FraseDeleteInspection: Do you want delete this inspection?
+FraseQuestionsSelectedTemplate: Questions from the selected template
+NoQuestions: No questions available for this template.
+NoQuestionsTemplate: No questions added for this section.
+AddQuestionMessage: Please select a section to add questions.
+CreateInspectionButton: CREATE INSPECTION
+SaveDraftButton: SAVE DRAFT
+
+
+
+
+# Botões #
 ConfirmButton: CONFIRM
+CancelButton: CANCEL
+PrevButton: Prev
+NextButton: Next
+Page: Page
+Of: of
+PreviousButton: PREVIOUS
+NexttButton: NEXT

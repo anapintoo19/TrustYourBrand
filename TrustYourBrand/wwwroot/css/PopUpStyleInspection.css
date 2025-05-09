@@ -45,7 +45,7 @@
         display: block;
         color: #333;
     }
-    
+
 
     .modal-content input,
     .modal-content select {
@@ -85,7 +85,7 @@
     .modal-buttons .btn-cancel {
         background-color: #868685 !important; /* Cor branca do botão CANCEL */
         color: black !important;
-/*        border: 1px solid #ccc;*/
+        /*        border: 1px solid #ccc;*/
     }
 
     /* Hover effects para botões */
@@ -134,8 +134,8 @@
     justify-content: center !important;
     color: white;
     font-weight: bold;
-    font-size: 14px;  
-    line-height: 1;   
+    font-size: 14px;
+    line-height: 1;
     text-align: center;
 }
 
@@ -185,8 +185,8 @@ button {
     flex-direction: column;
     align-items: center;
 }
-    
-        .info-step .form-group {
+
+    .info-step .form-group {
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -203,7 +203,7 @@ button {
 
 .modal-content select.template-select {
     width: 100% !important;
-/*    max-width: 400px;*/
+    /*    max-width: 400px;*/
 }
 
 .modal-content input.input-name {
@@ -280,16 +280,15 @@ button {
 }
 
 .navigation {
-    
     display: flex;
     justify-content: flex-end !important; /* Alinha os botões à direita */
     align-items: center; /* Alinha verticalmente os botões */
-    gap: 10px; 
+    gap: 10px;
     margin-top: 20px;
 }
 
 
-    
+
     /* Estilo padrão para todos os botões na navegação */
     .navigation button {
         padding: 10px 20px;
@@ -300,18 +299,18 @@ button {
         text-transform: uppercase; /* Mantém o texto em maiúsculas, como na imagem */
     }
 
-    /* Estilo padrão do botão PREVIOUS */
-    .navigation button:first-child {
-        background-color: white; /* Cor padrão */
-        color: black;
-        border: 1px solid black; /* Borda padrão */
-    }
+        /* Estilo padrão do botão PREVIOUS */
+        .navigation button:first-child {
+            background-color: white; /* Cor padrão */
+            color: black;
+            border: 1px solid black; /* Borda padrão */
+        }
 
     /* Estilo do botão PREVIOUS a partir do passo 2 */
     .navigation.step-2 button:first-child,
     .navigation.step-3 button:first-child,
     .navigation.step-4 button:first-child {
-        background-color: white; 
+        background-color: white;
         color: white;
     }
 
@@ -328,6 +327,7 @@ button {
         background-color: #6aa4d5; /* Cor padrão */
         color: black;
     }
+
         .navigation button:last-child:hover {
             background-color: #6aa4d5;
             border: 1px solid black;
@@ -337,6 +337,7 @@ button {
         background-color: #868685 !important;
         color: white;
     }
+
         .navigation .btn-save-draft:hover {
             background-color: #868685 !important;
             border: 1px solid black;
@@ -347,6 +348,7 @@ button {
         background-color: #6aa4d5 !important;
         color: white;
     }
+
         .navigation .btn-create-inspection:hover {
             background-color: #6aa4d5 !important;
             border: 1px solid black;
@@ -551,6 +553,7 @@ button {
     width: 10%;
     text-align: center;
 }
+
 /* Última coluna de qualquer tabela selection-table */
 .selection-table td:last-child,
 .selection-table th:last-child {
@@ -627,6 +630,7 @@ button {
         font-size: 14px;
         width: 150px; /* Adjust width as needed */
     }
+
 .step-content .dropdown-section {
     float: right;
     margin-bottom: 20px;
@@ -650,22 +654,22 @@ button {
     /* Pode remover esta classe do CSS, já que não está mais sendo usada */
 }
 
-    /* Estilo dos cabeçalhos */
-    .selection-table th {
-        background-color: #e0e0e0;
-        color: #333;
-        font-weight: bold;
-        font-size: 12px;
-    }
+/* Estilo dos cabeçalhos */
+.selection-table th {
+    background-color: #e0e0e0;
+    color: #333;
+    font-weight: bold;
+    font-size: 12px;
+}
 
-    /* Estilo das linhas */
-    .selection-table tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
+/* Estilo das linhas */
+.selection-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
 
-    .selection-table tbody tr:hover {
-        background-color: #f1f1f1;
-    }
+.selection-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
 
 /* Paginação */
 .pagination-table-selection {
@@ -742,3 +746,15 @@ button {
     margin: 10px 0 5px 0;
     color: #6aa4d5;
 }
+
+.toggle-icon {
+    cursor: pointer;
+    font-size: 1.5em;
+    display: inline-block;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+}
+
+    .toggle-icon.collapsed {
+        transform: rotate(-90deg);
+    }

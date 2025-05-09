@@ -1,5 +1,8 @@
 Export: Exportação
 Import: Importação
+SelectColumns: Selecionar Colunas
+Loading: A Carregar...
+SearchPlaceholder: Pesquisar
 
 # LOGIN RAZOR #
 PhoneNumberLabel: Número de Telefone
@@ -14,7 +17,130 @@ NewpinPlaceholder: Digite o novo PIN de 4 dígitos
 ConfirmPinLabel: Confirmar PIN
 ConfirmPinPlaceholder: Confirme o novo PIN de 4 dígitos
 
+# MAINLAYOUT RAZOR #
+LogoutButton: Sair
+
+# FORGOTPIN RAZOR #
+Frase: Digite o seu número de telefone para receber um código de verificação.
+SendCodeButton: ENVIAR CÓDIGO
+ForgotPinLabel: Digite Número de Telefone
+BackToLogin: Voltar ao Login
+ResetPin: Redefinir PIN
+FraseResetPin: Digite o código de verificação que enviamos para o seu número de telefone e defina um novo PIN.
+VerificationLabel: Código de Verificação 
+VerificationPlaceholder: Digite o Código
+newPinPlaceholder: Digite o novo PIN (4 dígitos)
+ConfirmNewPinLabel: Confirmar o novo PIN
+ConfirmNewPinPlaceholder: Confirmar o novo PIN
+ResetPinButton: REINICIAR PIN
+
+# STORE RAZOR #
+StoreName: Nome da Loja
+Zone: Zona
+StoreManager: Gerente de Loja
+Inspector: Inspetor
+Country: País
+StoreType: Tipo Loja
+Condition: Condição
+
+# USERS RAZOR #
+CreateNewUserButton: Criar Novo Utilizador
+FirstName: Primeiro Nome
+LastName: Último Nome
+Email: Email
+Role: Role
+Function: Função
+Department: Departamento
+NoUsersFound: Utilizadores não encontrados.
+DeleteTitle: Eliminar Utilizador
+UserName: Nome do Utilizador
+DeleteMessage: Deseja eliminar este utilizador?
+CreateTitle: Criar Utilizador
+SelectFunction: Selecione a função
+Birthday: Aniversário
+SelectDepartment: Selecione o departamento
+SelectRole: Selecione a role
+GenderLabel: Género
+SelectGender: Selecione o género
+Male: Masculino
+Female: Feminino
+SelectCountry: Selecione o país
+CityLabel: Cidade
+SelectStoreTenant: Selecione o tenant
+BrandLabel: Marca
+SelectBrand: Selecione a marca
+LanguageLabel: Nacionalidade
+SelectLanguage: Selecione a nacionalidade
+CreateUserButton: CRIAR UTILIZADOR
+EditTitle: Editar Utilizador
+EditUserButton: EDITAR UTILIZADOR
+
+# INSPECTION RAZOR #
+CreateNewInspectionButton: Criar Nova Inspeção
+CreateInspectionTitle: Criar Inspeção
+LanguageModal: Linguagem
+SelectLanguageModal: Selecione a linguagem
+TypeInspection: Tipo
+Name: Nome
+Frequency: Frequência
+Mode: Modo
+Progress: Progresso
+Status: Estado
+NoInspectionsFound: Inspeções não encontradas.
+Ongoing: Em Andamento
+Standby: Stand-by
+Closed: Fechado
+Canceled: Cancelado
+InspectionProgress: Progresso da Inspeção
+StartDate: Data de Início
+DueDate: Data Limite
+FinishDate: Data de Conclusão
+NumberOfQuestions: Número de Perguntas
+Purpose: Propósito
+Total: Total
+Stores: Lojas
+EditTitleInspection: Editar Inspeção
+Information: Informação
+StoreSelection: Seleção de Lojas
+Guest: Convidado
+Question: Questão
+Template: Modelo
+SelectTemplate: Selecione o modelo
+InspectionName: Nome da Inspeção
+SelectFrequency: Selecione a frequência
+Weekly: Semanal
+Monthly: Mensal
+Annually: Anual
+Description: Descrição
+NoStoreFound: Lojas não encontradas.
+LoadingQuestions: A Carregar Perguntas...
+Section: Secção
+Response: Resposta
+QuestionsMessage: Nenhuma pergunta disponível para este modelo.
+SelectSection: Selecione a secção da loja
+NoQuestionsAdded: Nenhuma pergunta adicionada ainda.
+TypeQuestion: Digite a sua pergunta aqui
+SelectResponse: Selecione a resposta
+YesNo: Sim/Não
+Scale: 0-10 (Escala)
+GoodBadEnough: Bom/Suficiente/Mau
+AddNewQuestion: Adicionar Nova Pergunta
+EditButtonInspection: EDITAR INSPEÇÃO
+DeleteTitleInspection: Eliminar Inspeção
+FraseDeleteInspection: Deseja eliminar esta inspeção?
+FraseQuestionsSelectedTemplate: Questões do modelo selecionado
+NoQuestions: Nenhuma pergunta disponível para este modelo.
+NoQuestionsTemplate: Nenhuma pergunta adicionada para esta secção.
+AddQuestionMessage: Por favor, selecione uma secção para adicionar perguntas.
+CreateInspectionButton: CRIAR INSPEÇÃO
+SaveDraftButton: GUARDAR RASCUNHO
+
 
 #Botões#
 ConfirmButton: CONFIRMAR
+CancelButton: CANCELAR
+PrevButton: Ant
+NextButton: Próx
+Page: Página
+Of: De
 

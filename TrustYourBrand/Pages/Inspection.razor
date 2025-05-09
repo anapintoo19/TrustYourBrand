@@ -16,13 +16,13 @@
 <div class="table-container">
     <div class="table-header">
         <div class="action-buttons">
-            <button class="btn btn-action" @onclick="OpenCreateInspection">Create New Inspection</button>
+            <button class="btn btn-action" @onclick="OpenCreateInspection">@LanguageContainer.Keys["CreateNewInspectionButton"]</button>
             <button class="btn btn-action">@LanguageContainer.Keys["Export"]</button>
             <button class="btn btn-action">@LanguageContainer.Keys["Import"]</button>
-            <button class="btn btn-action">Select columns</button>
+            <button class="btn btn-action">@LanguageContainer.Keys["SelectColumns"]</button>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Search" class="search-input" />
+            <input type="text" placeholder="@SearchPlaceholderUser" class="search-input" />
         </div>
     </div>
 
@@ -32,22 +32,22 @@
                 <th class="action-column"></th>
                 <th class="action-column"></th>
                 <th class="action-column"></th>
-                <th>Type</th>
-                <th>Name</th>
-                <th>Frequency</th>
-                <th>Mode</th>
-                <th>Progress</th>
-                <th>Status</th>
+                <th>@LanguageContainer.Keys["TypeInspection"]</th>
+                <th>@LanguageContainer.Keys["Name"]</th>
+                <th>@LanguageContainer.Keys["Frequency"]</th>
+                <th>@LanguageContainer.Keys["Mode"]</th>
+                <th>@LanguageContainer.Keys["Progress"]</th>
+                <th>@LanguageContainer.Keys["Status"]</th>
             </tr>
         </thead>
         <tbody>
             @if (Inspections == null)
             {
-                <tr><td colspan="8">Loading...</td></tr>
+                <tr><td colspan="8">@LanguageContainer.Keys["Loading"]</td></tr>
             }
             else if (!Inspections.Any())
             {
-                <tr><td colspan="8">No inspections found.</td></tr>
+                <tr><td colspan="8">@LanguageContainer.Keys["NoInspectionsFound"]</td></tr>
             }
             else
             {
@@ -97,10 +97,10 @@
                                 <div class="status-dropdown-wrapper">
                                     <span class="status-dot @GetStatusDotClass(inspection.Estado)"></span>
                                     <select class="status-dropdown" @bind:get="inspection.Estado" @bind:set="@(newStatus => UpdateInspectionStatus(inspection, newStatus))">
-                                        <option value="Ongoing">Ongoing</option>
-                                        <option value="Standby">Stand-by</option>
-                                        <option value="Closed">Closed</option>
-                                        <option value="Canceled">Canceled</option>
+                                        <option value="Ongoing">@LanguageContainer.Keys["Ongoing"]</option>
+                                        <option value="Standby">@LanguageContainer.Keys["Standby"]</option>
+                                        <option value="Closed">@LanguageContainer.Keys["Closed"]</option>
+                                        <option value="Canceled">@LanguageContainer.Keys["Canceled"]</option>
                                     </select>
                                 </div>
                             }
@@ -114,7 +114,7 @@
                                 <div class="inspection-details-container">
                                     <div class="details-row">
                                         <div class="details-column">
-                                            <span class="details-label">Inspection Progress:</span>
+                                            <span class="details-label">@LanguageContainer.Keys["InspectionProgress"]:</span>
                                             <div class="progress-container">
                                                 <div class="progress-bar">
                                                     <div class="progress" style="width: @((int)inspection.ProgressPercentage)%;"></div>
@@ -126,72 +126,72 @@
 
                                     <div class="details-row">
                                         <div class="details-column">
-                                            <span class="details-label">Start Date:</span>
+                                            <span class="details-label">@LanguageContainer.Keys["StartDate"]:</span>
                                             <span class="details-value">@(inspection.StartDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
                                         </div>
                                         <div class="details-column">
-                                            <span class="details-label">Due Date:</span>
+                                            <span class="details-label">@LanguageContainer.Keys["DueDate"]:</span>
                                             <span class="details-value">@(inspection.DueDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
                                         </div>
                                         <div class="details-column">
-                                            <span class="details-label">Finish Date:</span>
+                                            <span class="details-label">@LanguageContainer.Keys["FinishDate"]:</span>
                                             <span class="details-value">@(inspection.FinishDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
                                         </div>
                                     </div>
 
                                     <div class="details-row">
                                         <div class="details-column">
-                                            <span class="details-label">Language:</span>
+                                            <span class="details-label">@LanguageContainer.Keys["LanguageLabel"]:</span>
                                             <span class="details-value">@(inspection.Language ?? "N/A")</span>
                                         </div>
                                     </div>
 
                                     <div class="details-row">
                                         <div class="details-column">
-                                            <span class="details-label">Number of Questions:</span>
+                                            <span class="details-label">@LanguageContainer.Keys["NumberOfQuestions"]:</span>
                                             <span class="details-value">@(inspection.Questions?.Count ?? 0)</span>
                                         </div>
                                     </div>
 
                                     <div class="details-row">
                                         <div class="details-column">
-                                            <span class="details-label">Purpose:</span>
+                                            <span class="details-label">@LanguageContainer.Keys["Purpose"]:</span>
                                             <span class="details-value">@(inspection.Purpose ?? "N/A")</span>
                                         </div>
                                     </div>
 
                                     <div class="details-row">
                                         <div class="details-column">
-                                            <span class="details-label">Status:</span>
+                                            <span class="details-label">@LanguageContainer.Keys["Status"]:</span>
                                             <div class="status-breakdown">
                                                 <div class="status-item">
                                                     <span class="status-dot status-dot-ongoing"></span>
-                                                    <span>Ongoing</span>
+                                                    <span>@LanguageContainer.Keys["Ongoing"]</span>
                                                     <span class="status-count">@(inspection.StatusBreakdown?.Ongoing ?? 0)</span>
                                                 </div>
                                                 <div class="status-item">
                                                     <span class="status-dot status-dot-closed"></span>
-                                                    <span>Closed</span>
+                                                    <span>@LanguageContainer.Keys["Closed"]</span>
                                                     <span class="status-count">@(inspection.StatusBreakdown?.Closed ?? 0)</span>
                                                 </div>
                                                 <div class="status-item">
                                                     <span class="status-dot status-dot-standby"></span>
-                                                    <span>Standby</span>
+                                                    <span>@LanguageContainer.Keys["Standby"]</span>
                                                     <span class="status-count">@(inspection.StatusBreakdown?.Standby ?? 0)</span>
                                                 </div>
                                                 <div class="status-item">
                                                     <span class="status-dot status-dot-canceled"></span>
-                                                    <span>Canceled</span>
+                                                    <span>@LanguageContainer.Keys["Canceled"]</span>
                                                     <span class="status-count">@(inspection.StatusBreakdown?.Canceled ?? 0)</span>
                                                 </div>
                                                 <div class="status-item">
-                                                    <span class="details-label">Total:</span>
+                                                    <span class="details-label">@LanguageContainer.Keys["Total"]:</span>
                                                     <span class="status-count">@((inspection.StatusBreakdown?.Ongoing ?? 0) + (inspection.StatusBreakdown?.Closed ?? 0) + (inspection.StatusBreakdown?.Standby ?? 0) + (inspection.StatusBreakdown?.Canceled ?? 0))</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="details-column">
-                                            <span class="details-label">Stores:</span>
+                                            <span class="details-label">@LanguageContainer.Keys["Stores"]:</span>
                                             <div class="stores-breakdown">
                                                 <span class="stores-count">@(inspection.StoresCount ?? 0)</span>
                                                 <span class="material-symbols-outlined stores-icon">visibility</span>
@@ -208,11 +208,11 @@
     </table>
 
     <div class="pagination">
-        <span>Page 1 of 1</span>
+        <span> @LanguageContainer.Keys["Page"] @CurrentPage  @LanguageContainer.Keys["Of"] @TotalPages</span>
         <div class="pagination-buttons">
-            <button class="btn btn-pagination">Prev</button>
-            <button class="btn btn-pagination btn-active">1</button>
-            <button class="btn btn-pagination">Next</button>
+            <button class="btn btn-pagination" @onclick="PreviousPage">@LanguageContainer.Keys["PrevButton"]</button>
+            <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+            <button class="btn btn-pagination" @onclick="NextPage">@LanguageContainer.Keys["NextButton"]</button>
         </div>
     </div>
 
@@ -220,40 +220,40 @@
     {
         <div class="modal-overlay">
             <div class="modal-content">
-                <h3>Edit Inspection</h3>
+                <h3>@LanguageContainer.Keys["EditTitleInspection"]</h3>
                 <form>
                     <div class="stepper-container">
                         <div class="step @(CurrentStep >= 1 ? "active" : "")">
                             <div class="circle" @onclick="() => SetStep(1)">1</div>
-                            <span>Information</span>
+                            <span>@LanguageContainer.Keys["Information"]</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 2 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 2 ? "active" : "")">
                             <div class="circle" @onclick="() => SetStep(2)">2</div>
-                            <span>Store Selection</span>
+                            <span>@LanguageContainer.Keys["StoreSelection"]</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 3 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 3 ? "active" : "")">
                             <div class="circle" @onclick="() => SetStep(3)">3</div>
-                            <span>Guest</span>
+                            <span>@LanguageContainer.Keys["Guest"]</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 4 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 4 ? "active" : "")">
                             <div class="circle" @onclick="() => SetStep(4)">4</div>
-                            <span>Question</span>
+                            <span>@LanguageContainer.Keys["Question"]</span>
                         </div>
                     </div>
                     <div class="step-content">
                         @switch (CurrentStep)
                         {
                             case 1:
-                                <h3 style="text-align: left; color: #6aa4d5;">Information</h3>
+                                <h3 style="text-align: left; color: #6aa4d5;">@LanguageContainer.Keys["Information"]</h3>
                                 <table style="width: 100%; table-layout: fixed;">
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
-                                            <label for="template" style="text-align:left;">Template</label>
+                                            <label for="template" style="text-align:left;">@LanguageContainer.Keys["Template"]</label>
                                             <select id="template" style="width: 100%;" @bind="EditingInspection.TemplateId" @bind:after="OnTemplateChanged">
-                                                <option value="">Select the template</option>
+                                                <option value="">@LanguageContainer.Keys["SelectTemplate"]</option>
                                                 @foreach (var template in TemplateDisponiveis)
                                                 {
                                                     <option value="@template.FormularioId">@template.Nome</option>
@@ -261,9 +261,9 @@
                                             </select>
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
-                                            <label for="language" style="text-align:left;">Language</label>
+                                            <label for="language" style="text-align:left;">@LanguageContainer.Keys["LanguageModal"]</label>
                                             <select id="language" class="template-select" style="width: 100%;" @bind="EditingInspection.Language">
-                                                <option value="">Select the Language</option>
+                                                <option value="">@LanguageContainer.Keys["SelectLanguageModal"]</option>
                                                 <option value="Portuguese">Portuguese</option>
                                                 <option value="English">English</option>
                                             </select>
@@ -271,38 +271,38 @@
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
-                                            <label for="name" style="text-align:left; margin-top: 20px;">Inspection Name</label>
+                                            <label for="name" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["InspectionName"]</label>
                                             <input type="text" id="name" class="input-name" style="width: 100%;" @bind="EditingInspection.InspectionName" />
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
-                                            <label for="frequency" style="text-align:left; margin-top: 20px;">Frequency</label>
+                                            <label for="frequency" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["Frequency"]</label>
                                             <select id="frequency" class="template-select" style="width: 100%;" @bind="EditingInspection.Frequency">
-                                                <option value="">Select the Frequency</option>
-                                                <option value="Weekly">Weekly</option>
-                                                <option value="Monthly">Monthly</option>
-                                                <option value="Annually">Annually</option>
+                                                <option value="">@LanguageContainer.Keys["SelectFrequency"]</option>
+                                                <option value="Weekly">@LanguageContainer.Keys["Weekly"]</option>
+                                                <option value="Monthly">@LanguageContainer.Keys["Monthly"]</option>
+                                                <option value="Annually">@LanguageContainer.Keys["Annually"]</option>
                                             </select>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding: 0 10px;">
-                                            <label for="start" style="text-align:left; margin-top: 20px;">Start Date</label>
+                                            <label for="start" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["StartDate"]</label>
                                             <input type="date" id="start" style="width: 100%;" @bind="EditingInspection.StartDate" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
-                                            <label for="due" style="text-align:left; margin-top: 20px;">Due Date</label>
+                                            <label for="due" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["DueDate"]</label>
                                             <input type="date" id="due" style="width: 100%;" @bind="EditingInspection.DueDate" />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding: 0 10px;">
-                                            <label for="description" style="text-align:left; margin-top: 20px;">Description</label>
+                                            <label for="description" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["Description"]</label>
                                             <input type="text" id="description" style="width: 100%;" @bind="EditingInspection.Description" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
-                                            <label for="brand" style="text-align:left; margin-top: 20px;">Brand</label>
+                                            <label for="brand" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["BrandLabel"]</label>
                                             <select id="brand" style="width: 100%;" @bind="EditingInspection.MarcaId">
-                                                <option value="">Select the brand</option>
+                                                <option value="">@LanguageContainer.Keys["SelectBrand"]</option>
                                                 @foreach (var brand in BrandDisponiveis)
                                                 {
                                                     <option value="@brand.MarcaId">@brand.Nome</option>
@@ -313,7 +313,7 @@
                                 </table>
                                 break;
                             case 2:
-                                <h3 style="text-align: left; color: #6aa4d5;">Store Selection</h3>
+                                <h3 style="text-align: left; color: #6aa4d5;">@LanguageContainer.Keys["StoreSelection"]</h3>
                                 <div class="table-container-selection">
                                     <table class="selection-table">
                                         <thead>
@@ -323,24 +323,24 @@
                                                            class="store-checkbox select-all-checkbox"
                                                            @onchange="(e) => ToggleSelectAllStores((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
-                                                <th>Store Name</th>
-                                                <th>Country</th>
-                                                <th>City</th>
-                                                <th>Store Type</th>
-                                                <th>Zone</th>
-                                                <th>Store Manager</th>
-                                                <th>Condition</th>
-                                                <th>Inspector</th>
+                                                <th>@LanguageContainer.Keys["StoreName"]</th>
+                                                <th>@LanguageContainer.Keys["Country"]</th>
+                                                <th>@LanguageContainer.Keys["CityLabel"]</th>
+                                                <th>@LanguageContainer.Keys["StoreType"]</th>
+                                                <th>@LanguageContainer.Keys["Zone"]</th>
+                                                <th>@LanguageContainer.Keys["StoreManager"]</th>
+                                                <th>@LanguageContainer.Keys["Condition"]</th>
+                                                <th>@LanguageContainer.Keys["Inspector"]</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @if (StoreList == null)
                                             {
-                                                <tr><td colspan="9">Loading...</td></tr>
+                                                <tr><td colspan="9">@LanguageContainer.Keys["Loading"]</td></tr>
                                             }
                                             else if (!StoreList.Any())
                                             {
-                                                <tr><td colspan="9">No stores found.</td></tr>
+                                                <tr><td colspan="9">@LanguageContainer.Keys["NoStoreFound"]</td></tr>
                                             }
                                             else
                                             {
@@ -368,18 +368,18 @@
                                     </table>
 
                                     <div class="pagination-table-selection">
-                                        <span>Page 1 of 1</span>
-                                        <div class="pagination-buttons-selection">
-                                            <button class="btn btn-pagination-selection">Prev</button>
-                                            <button class="btn btn-pagination-selection btn-active">1</button>
-                                            <button class="btn btn-pagination-selection">Next</button>
+                                        <span>@LanguageContainer.Keys["Page"] @CurrentPage @LanguageContainer.Keys["Of"] @TotalPages</span>
+                                        <div class="pagination-buttons">
+                                            <button class="btn btn-pagination" @onclick="PreviousPage">@LanguageContainer.Keys["PrevButton"]</button>
+                                            <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+                                            <button class="btn btn-pagination" @onclick="NextPage">@LanguageContainer.Keys["NextButton"]</button>
                                         </div>
                                     </div>
                                 </div>
                                 break;
 
                             case 3:
-                                <h3 style="text-align: left; color: #6aa4d5;">Guest</h3>
+                                <h3 style="text-align: left; color: #6aa4d5;">@LanguageContainer.Keys["Guest"]</h3>
                                 <div class="table-container-selection">
                                     <table class="selection-table">
                                         <thead>
@@ -389,23 +389,23 @@
                                                            class="store-checkbox select-all-checkbox"
                                                            @onchange="(e) => ToggleSelectAllGuests((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
-                                                <th>First Name</th>
-                                                <th>Last Name</th>
-                                                <th>Email</th>
-                                                <th>Store Name</th>
-                                                <th>Department</th>
-                                                <th>Function</th>
-                                                <th>Role</th>
+                                                <th>@LanguageContainer.Keys["FirstName"]</th>
+                                                <th>@LanguageContainer.Keys["LastName"]</th>
+                                                <th>@LanguageContainer.Keys["Email"]</th>
+                                                <th>@LanguageContainer.Keys["StoreName"]</th>
+                                                <th>@LanguageContainer.Keys["Department"]</th>
+                                                <th>@LanguageContainer.Keys["Function"]</th>
+                                                <th>@LanguageContainer.Keys["Role"]</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @if (Userslist == null)
                                             {
-                                                <tr><td colspan="8">Loading...</td></tr>
+                                                <tr><td colspan="8">@LanguageContainer.Keys["Loading"]</td></tr>
                                             }
                                             else if (!Userslist.Any())
                                             {
-                                                <tr><td colspan="8">No users found.</td></tr>
+                                                <tr><td colspan="8">@LanguageContainer.Keys["NoUsersFound"]</td></tr>
                                             }
                                             else
                                             {
@@ -432,23 +432,23 @@
                                     </table>
 
                                     <div class="pagination-table-selection">
-                                        <span>Page 1 of 1</span>
-                                        <div class="pagination-buttons-selection">
-                                            <button class="btn btn-pagination-selection">Prev</button>
-                                            <button class="btn btn-pagination-selection btn-active">1</button>
-                                            <button class="btn btn-pagination-selection">Next</button>
+                                        <span>@LanguageContainer.Keys["Page"] @CurrentPage @LanguageContainer.Keys["Of"] @TotalPages</span>
+                                        <div class="pagination-buttons">
+                                            <button class="btn btn-pagination" @onclick="PreviousPage">@LanguageContainer.Keys["PrevButton"]</button>
+                                            <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+                                            <button class="btn btn-pagination" @onclick="NextPage">@LanguageContainer.Keys["NextButton"]</button>
                                         </div>
                                     </div>
                                 </div>
                                 break;
 
                             case 4:
-                                <h3 style="text-align: left; color: #6aa4d5;">Question</h3>
+                                <h3 style="text-align: left; color: #6aa4d5;">@LanguageContainer.Keys["Question"]</h3>
                                 @if (EditingInspection.TemplateId.HasValue)
                                 {
                                     @if (isLoadingQuestions)
                                     {
-                                        <p>Loading questions...</p>
+                                        <p>@LanguageContainer.Keys["LoadingQuestions"]</p>
                                     }
                                     else
                                     {
@@ -457,16 +457,16 @@
                                             <table class="selection-table">
                                                 <thead>
                                                     <tr>
-                                                        <th id="sectionColumnHeader">Section</th>
-                                                        <th>Question</th>
-                                                        <th>Response</th>
+                                                        <th id="sectionColumnHeader">@LanguageContainer.Keys["Section"]</th>
+                                                        <th>@LanguageContainer.Keys["Question"]</th>
+                                                        <th>@LanguageContainer.Keys["Response"]</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @if (TemplateQuestions == null || !TemplateQuestions.Any())
                                                     {
                                                         <tr>
-                                                            <td colspan="3">No questions available for this template.</td>
+                                                            <td colspan="3">@LanguageContainer.Keys["QuestionsMessage"]</td>
                                                         </tr>
                                                     }
                                                     else
@@ -490,7 +490,7 @@
                                     <!-- Código existente para perguntas personalizadas -->
                                     <div class="dropdown-section-container">
                                         <select id="sectionSelect" style="width: 100%;" @bind="selectedSection">
-                                            <option value="">Select the section of store</option>
+                                            <option value="">@LanguageContainer.Keys["SelectSection"]</option>
                                             @foreach (var sec in SectionDisponiveis)
                                             {
                                                 <option value="@sec.SeccaoId">@sec.Nome</option>
@@ -501,9 +501,9 @@
                                         <table class="selection-table">
                                             <thead>
                                                 <tr>
-                                                    <th id="sectionColumnHeader">Section</th>
-                                                    <th>Question</th>
-                                                    <th>Response</th>
+                                                    <th id="sectionColumnHeader">@LanguageContainer.Keys["Section"]</th>
+                                                    <th>@LanguageContainer.Keys["Question"]</th>
+                                                    <th>@LanguageContainer.Keys["Response"]</th>
                                                     <th class="action-column"></th>
                                                 </tr>
                                             </thead>
@@ -511,7 +511,7 @@
                                                 @if (!EditingInspection.Questions.Any())
                                                 {
                                                     <tr>
-                                                        <td colspan="4">No questions added yet.</td>
+                                                        <td colspan="4">@LanguageContainer.Keys["NoQuestionsAdded"]</td>
                                                     </tr>
                                                 }
                                                 else
@@ -523,14 +523,14 @@
                                                         <tr>
                                                             <td>@(selectedSection.HasValue ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == selectedSection)?.Nome ?? "N/A" : "N/A")</td>
                                                             <td>
-                                                                <input type="text" placeholder="Type your question here" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
+                                                                <input type="text" placeholder="@TypeQuestionPlaceholder" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
                                                             </td>
                                                             <td>
                                                                 <select class="response-select" @bind="question.ResponseType">
-                                                                    <option value="">Select the Response</option>
-                                                                    <option value="Yes/No">Yes/No</option>
-                                                                    <option value="0-10 (Scale)">0-10 (Scale)</option>
-                                                                    <option value="Good/Enough/Bad">Good/Enough/Bad</option>
+                                                                    <option value="">@LanguageContainer.Keys["SelectResponse"]</option>
+                                                                    <option value="Yes/No">@LanguageContainer.Keys["YesNo"]</option>
+                                                                    <option value="0-10 (Scale)">@LanguageContainer.Keys["Scale"]</option>
+                                                                    <option value="Good/Enough/Bad">@LanguageContainer.Keys["GoodBadEnough"]</option>
                                                                 </select>
                                                             </td>
                                                             <td class="action-column">
@@ -543,15 +543,15 @@
                                         </table>
 
                                         <div class="add-question-section">
-                                            <button type="button" class="btn btn-add-question" @onclick="AddQuestion">Add New Question</button>
+                                            <button type="button" class="btn btn-add-question" @onclick="AddQuestion">@LanguageContainer.Keys["AddNewQuestion"]</button>
                                         </div>
 
                                         <div class="pagination-table-selection">
-                                            <span>Page 1 of 1</span>
-                                            <div class="pagination-buttons-selection">
-                                                <button class="btn btn-pagination-selection">Prev</button>
-                                                <button class="btn btn-pagination-selection btn-active">1</button>
-                                                <button class="btn btn-pagination-selection">Next</button>
+                                            <span>@LanguageContainer.Keys["Page"] @CurrentPage @LanguageContainer.Keys["Of"] @TotalPages</span>
+                                            <div class="pagination-buttons">
+                                                <button class="btn btn-pagination" @onclick="PreviousPage">@LanguageContainer.Keys["PrevButton"]</button>
+                                                <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+                                                <button class="btn btn-pagination" @onclick="NextPage">@LanguageContainer.Keys["NextButton"]</button>
                                             </div>
                                         </div>
                                     </div>
@@ -563,13 +563,13 @@
                     <div class="navigation">
                         @if (CurrentStep == 4)
                         {
-                            <button type="button" @onclick="PreviousStep">PREVIOUS</button>
-                            <button type="button" class="btn-create-inspection" @onclick="UpdateInspection">EDIT INSPECTION</button>
+                            <button type="button" @onclick="PreviousEditStep">@LanguageContainer.Keys["PreviousButton"]</button>
+                            <button type="button" class="btn-create-inspection" @onclick="UpdateInspection">@LanguageContainer.Keys["EditButtonInspection"]</button>
                         }
                         else
                         {
-                            <button type="button" @onclick="PreviousStep" disabled="@(CurrentStep == 1)">PREVIOUS</button>
-                            <button type="button" @onclick="NextStep" disabled="@(CurrentStep == 4)">NEXT</button>
+                            <button type="button" @onclick="PreviousEditStep" disabled="@(CurrentStep == 1)">@LanguageContainer.Keys["PreviousButton"]</button>
+                            <button type="button" @onclick="NextEditStep" disabled="@(CurrentStep == 4)">@LanguageContainer.Keys["NexttButton"]</button>
                         }
                     </div>
                 </form>
@@ -581,11 +581,11 @@
     {
         <div class="modal-overlay delete-modal-overlay">
             <div class="modal-content">
-                <h3>Delete Inspection</h3>
-                <p>Are you sure you want to delete the inspection?</p>
+                <h3>@LanguageContainer.Keys["DeleteTitleInspection"]</h3>
+                <p>@LanguageContainer.Keys["FraseDeleteInspection"]</p>
                 <div class="modal-buttons">
-                    <button class="btn btn-confirm" @onclick="ConfirmDelete">CONFIRM</button>
-                    <button class="btn btn-cancel" @onclick="CancelDelete">CANCEL</button>
+                    <button class="btn btn-confirm" @onclick="ConfirmDelete">@LanguageContainer.Keys["ConfirmButton"]</button>
+                    <button class="btn btn-cancel" @onclick="CancelDelete">@LanguageContainer.Keys["CancelButton"]</button>
                 </div>
             </div>
         </div>
@@ -595,40 +595,40 @@
     {
         <div class="modal-overlay">
             <div class="modal-content">
-                <h3>Create Inspection</h3>
+                <h3>@LanguageContainer.Keys["CreateInspectionTitle"]</h3>
                 <form>
                     <div class="stepper-container">
                         <div class="step @(CurrentStep >= 1 ? "active" : "")">
                             <div class="circle" @onclick="() => SetStep(1)">1</div>
-                            <span>Information</span>
+                            <span>@LanguageContainer.Keys["Information"]</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 2 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 2 ? "active" : "")">
                             <div class="circle" @onclick="() => SetStep(2)">2</div>
-                            <span>Store Selection</span>
+                            <span>@LanguageContainer.Keys["StoreSelection"]</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 3 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 3 ? "active" : "")">
                             <div class="circle" @onclick="() => SetStep(3)">3</div>
-                            <span>Guest</span>
+                            <span>@LanguageContainer.Keys["Guest"]</span>
                         </div>
                         <span class="material-symbols-outlined arrow-icon @(CurrentStep >= 4 ? "active" : "")">arrow_forward</span>
                         <div class="step @(CurrentStep >= 4 ? "active" : "")">
                             <div class="circle" @onclick="() => SetStep(4)">4</div>
-                            <span>Question</span>
+                            <span>@LanguageContainer.Keys["Question"]</span>
                         </div>
                     </div>
                     <div class="step-content">
                         @switch (CurrentStep)
                         {
                             case 1:
-                                <h3 style="text-align: left; color: #6aa4d5;">Information</h3>
+                                <h3 style="text-align: left; color: #6aa4d5;">@LanguageContainer.Keys["Information"]</h3>
                                 <table style="width: 100%; table-layout: fixed;">
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
-                                            <label for="template" style="text-align:left;">Template</label>
+                                            <label for="template" style="text-align:left;">@LanguageContainer.Keys["Template"]</label>
                                             <select id="template" style="width: 100%; color: #ccc" @bind="NewInspection.TemplateId" @bind:after="OnTemplateChanged">
-                                                <option value="" style="color: black;">Select the template</option>
+                                                <option value="" style="color: black;">@LanguageContainer.Keys["SelectTemplate"]</option>
                                                 @foreach (var template in TemplateDisponiveis)
                                                 {
                                                     <option value="@template.FormularioId" style="color: black;">@template.Nome</option>
@@ -636,9 +636,9 @@
                                             </select>
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
-                                            <label for="language" style="text-align:left;">Language</label>
+                                            <label for="language" style="text-align:left;">@LanguageContainer.Keys["LanguageModal"]</label>
                                             <select id="language" class="template-select" style="width: 100%; color: #ccc" @bind="NewInspection.Language">
-                                                <option value="" style="color: black;">Select the Language</option>
+                                                <option value="" style="color: black;">@LanguageContainer.Keys["SelectLanguageModal"]</option>
                                                 <option value="Portuguese" style="color: black;">Portuguese</option>
                                                 <option value="English" style="color: black;">English</option>
                                             </select>
@@ -646,38 +646,38 @@
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding-right: 10px;">
-                                            <label for="name" style="text-align:left; margin-top: 20px;">Inspection Name</label>
+                                            <label for="name" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["InspectionName"]</label>
                                             <input type="text" id="name" class="input-name" style="width: 100%;" @bind="NewInspection.InspectionName" />
                                         </td>
                                         <td style="width: 50%; padding-left: 10px;">
-                                            <label for="frequency" style="text-align:left; margin-top: 20px;">Frequency</label>
+                                            <label for="frequency" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["Frequency"]</label>
                                             <select id="frequency" class="template-select" style="width: 100%; color: #ccc;" @bind="NewInspection.Frequency">
-                                                <option value="" style="color: black;">Select the Frequency</option>
-                                                <option value="Weekly" style="color: black;">Weekly</option>
-                                                <option value="Monthly" style="color: black;">Monthly</option>
-                                                <option value="Annually" style="color: black;">Annually</option>
+                                                <option value="" style="color: black;">@LanguageContainer.Keys["SelectFrequency"]</option>
+                                                <option value="Weekly" style="color: black;">@LanguageContainer.Keys["Weekly"]</option>
+                                                <option value="Monthly" style="color: black;">@LanguageContainer.Keys["Monthly"]</option>
+                                                <option value="Annually" style="color: black;">@LanguageContainer.Keys["Annually"]</option>
                                             </select>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding: 0 10px;">
-                                            <label for="start" style="text-align:left; margin-top: 20px;">Start Date</label>
+                                            <label for="start" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["StartDate"]</label>
                                             <input type="date" id="start" style="width: 100%;" @bind="NewInspection.StartDate" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
-                                            <label for="due" style="text-align:left; margin-top: 20px;">Due Date</label>
+                                            <label for="due" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["DueDate"]</label>
                                             <input type="date" id="due" style="width: 100%;" @bind="NewInspection.DueDate" />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="width: 50%; padding: 0 10px;">
-                                            <label for="description" style="text-align:left; margin-top: 20px;">Description</label>
+                                            <label for="description" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["Description"]</label>
                                             <input type="text" id="description" style="width: 100%;" @bind="NewInspection.Description" />
                                         </td>
                                         <td style="width: 50%; padding: 0 10px;">
-                                            <label for="brand" style="text-align:left; margin-top: 20px;">Brand</label>
+                                            <label for="brand" style="text-align:left; margin-top: 20px;">@LanguageContainer.Keys["BrandLabel"]</label>
                                             <select id="brand" style="width: 100%; color: #ccc;" @bind="NewInspection.MarcaId">
-                                                <option value="" style="color: black;">Select the brand</option>
+                                                <option value="" style="color: black;">@LanguageContainer.Keys["SelectBrand"]</option>
                                                 @foreach (var brand in BrandDisponiveis)
                                                 {
                                                     <option value="@brand.MarcaId" style="color: black;">@brand.Nome</option>
@@ -688,7 +688,7 @@
                                 </table>
                                 break;
                             case 2:
-                                <h3 style="text-align: left; color: #6aa4d5;">Store Selection</h3>
+                                <h3 style="text-align: left; color: #6aa4d5;">@LanguageContainer.Keys["StoreSelection"]</h3>
                                 <div class="table-container-selection">
                                     <table class="selection-table">
                                         <thead>
@@ -698,24 +698,24 @@
                                                            class="store-checkbox select-all-checkbox"
                                                            @onchange="(e) => ToggleSelectAllStores((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
-                                                <th>Store Name</th>
-                                                <th>Country</th>
-                                                <th>City</th>
-                                                <th>Store Type</th>
-                                                <th>Zone</th>
-                                                <th>Store Manager</th>
-                                                <th>Condition</th>
-                                                <th>Inspector</th>
+                                                <th>@LanguageContainer.Keys["StoreName"]</th>
+                                                <th>@LanguageContainer.Keys["Country"]</th>
+                                                <th>@LanguageContainer.Keys["CityLabel"]</th>
+                                                <th>@LanguageContainer.Keys["StoreType"]</th>
+                                                <th>@LanguageContainer.Keys["Zone"]</th>
+                                                <th>@LanguageContainer.Keys["StoreManager"]</th>
+                                                <th>@LanguageContainer.Keys["Condition"]</th>
+                                                <th>@LanguageContainer.Keys["Inspector"]</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @if (StoreList == null)
                                             {
-                                                <tr><td colspan="9">Loading...</td></tr>
+                                                <tr><td colspan="9">@LanguageContainer.Keys["Loading"]</td></tr>
                                             }
                                             else if (!StoreList.Any())
                                             {
-                                                <tr><td colspan="9">No stores found.</td></tr>
+                                                <tr><td colspan="9">@LanguageContainer.Keys["NoStoreFound"]</td></tr>
                                             }
                                             else
                                             {
@@ -743,17 +743,17 @@
                                     </table>
 
                                     <div class="pagination-table-selection">
-                                        <span>Page 1 of 1</span>
-                                        <div class="pagination-buttons-selection">
-                                            <button class="btn btn-pagination-selection">Prev</button>
-                                            <button class="btn btn-pagination-selection btn-active">1</button>
-                                            <button class="btn btn-pagination-selection">Next</button>
+                                        <span>@LanguageContainer.Keys["Page"] @CurrentPage @LanguageContainer.Keys["Of"] @TotalPages</span>
+                                        <div class="pagination-buttons">
+                                            <button class="btn btn-pagination" @onclick="PreviousPage">@LanguageContainer.Keys["PrevButton"]</button>
+                                            <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+                                            <button class="btn btn-pagination" @onclick="NextPage">@LanguageContainer.Keys["NextButton"]</button>
                                         </div>
                                     </div>
                                 </div>
                                 break;
                             case 3:
-                                <h3 style="text-align: left; color: #6aa4d5;">Guest</h3>
+                                <h3 style="text-align: left; color: #6aa4d5;">@LanguageContainer.Keys["Guest"]</h3>
                                 <div class="table-container-selection">
                                     <table class="selection-table">
                                         <thead>
@@ -763,23 +763,23 @@
                                                            class="store-checkbox select-all-checkbox"
                                                            @onchange="(e) => ToggleSelectAllGuests((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
-                                                <th>First Name</th>
-                                                <th>Last Name</th>
-                                                <th>Email</th>
-                                                <th>Store Name</th>
-                                                <th>Department</th>
-                                                <th>Function</th>
-                                                <th>Role</th>
+                                                <th>@LanguageContainer.Keys["FirstName"]</th>
+                                                <th>@LanguageContainer.Keys["LastName"]</th>
+                                                <th>@LanguageContainer.Keys["Email"]</th>
+                                                <th>@LanguageContainer.Keys["StoreName"]</th>
+                                                <th>@LanguageContainer.Keys["Department"]</th>
+                                                <th>@LanguageContainer.Keys["Function"]</th>
+                                                <th>@LanguageContainer.Keys["Role"]</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @if (Userslist == null)
                                             {
-                                                <tr><td colspan="8">Loading...</td></tr>
+                                                <tr><td colspan="8">@LanguageContainer.Keys["Loading"]</td></tr>
                                             }
                                             else if (!Userslist.Any())
                                             {
-                                                <tr><td colspan="8">No users found.</td></tr>
+                                                <tr><td colspan="8">@LanguageContainer.Keys["NoUsersFound"]</td></tr>
                                             }
                                             else
                                             {
@@ -806,11 +806,11 @@
                                     </table>
 
                                     <div class="pagination-table-selection">
-                                        <span>Page 1 of 1</span>
-                                        <div class="pagination-buttons-selection">
-                                            <button class="btn btn-pagination-selection">Prev</button>
-                                            <button class="btn btn-pagination-selection btn-active">1</button>
-                                            <button class="btn btn-pagination-selection">Next</button>
+                                        <span>@LanguageContainer.Keys["Page"] @CurrentPage @LanguageContainer.Keys["Of"] @TotalPages</span>
+                                        <div class="pagination-buttons">
+                                            <button class="btn btn-pagination" @onclick="PreviousPage">@LanguageContainer.Keys["PrevButton"]</button>
+                                            <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+                                            <button class="btn btn-pagination" @onclick="NextPage">@LanguageContainer.Keys["NextButton"]</button>
                                         </div>
                                     </div>
                                 </div>
@@ -821,11 +821,11 @@
                                 {
                                     @if (isLoadingQuestions)
                                     {
-                                        <p>Loading questions...</p>
+                                        <p>@LanguageContainer.Keys["LoadingQuestions"]</p>
                                     }
                                     else
                                     {
-                                        <p>Questions from the selected template: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
+                                        <p>@LanguageContainer.Keys["FraseQuestionsSelectedTemplate"]: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
                                         <div class="table-container-selection">
                                             <table class="selection-table">
                                                @*  <h4 class="section-title"> *@
@@ -835,8 +835,8 @@
                                                @*  </h4> *@
                                                 <thead>
                                                     <tr>
-                                                        <th>Question</th>
-                                                        <th style="text-align: right;">Response</th>
+                                                        <th>@LanguageContainer.Keys["Question"]</th>
+                                                        <th style="text-align: right;">@LanguageContainer.Keys["Response"]</th>
                                                     </tr>
                                                 </thead>
 
@@ -844,7 +844,7 @@
                                                     @if (TemplateQuestions == null || !TemplateQuestions.Any())
                                                     {
                                                         <tr>
-                                                            <td colspan="3">No questions available for this template.</td>
+                                                            <td colspan="3">@LanguageContainer.Keys["NoQuestions"]</td>
                                                         </tr>
                                                     }
                                                     else
@@ -868,7 +868,7 @@
                                     <div class="dropdown-section-container">
                                         @* <label for="sectionSelect" style="text-align:left;">Section</label> *@
                                         <select id="sectionSelect" style="width: 100%;" @bind="selectedSection" @bind:after="OnSectionChanged">
-                                            <option value="">Select the store section</option>
+                                            <option value="">@LanguageContainer.Keys["SelectSection"]</option>
                                             @foreach (var sec in SectionDisponiveis)
                                             {
                                                 <option value="@sec.SeccaoId">@sec.Nome</option>
@@ -883,9 +883,14 @@
                                                 
                                                 <thead>
                                                     <tr>
-                                                        <th>Question</th>
-                                                        <th>Response</th>
+                                                        <th>@LanguageContainer.Keys["Question"]</th>
+                                                        <th>@LanguageContainer.Keys["Response"]</th>
                                                         <th class="action-column"></th>
+                                                        @* <th class="action-column"> *@
+                                                        @*     <span class="material-symbols-outlined action-icon detail-icon"> *@
+                                                        @*         keyboard_arrow_right *@
+                                                        @*     </span> *@
+                                                        @* </th> *@
                                                     </tr>
                                                 </thead>
 
@@ -893,7 +898,7 @@
                                                     @if (!FilteredCustomQuestions.Any())
                                                     {
                                                         <tr>
-                                                            <td colspan="4">No questions added for this section.</td>
+                                                            <td colspan="4">@LanguageContainer.Keys["NoQuestionsTemplate"]</td>
                                                         </tr>
                                                     }
                                                     else
@@ -904,19 +909,20 @@
                                                             var question = FilteredCustomQuestions[i];
                                                             <tr>
                                                                 <td>
-                                                                    <input type="text" placeholder="Enter your question here" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
+                                                                    <input type="text" placeholder="@TypeQuestionPlaceholder" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
                                                                 </td>
                                                                 <td>
                                                                     <select class="response-select" @bind="question.ResponseType">
-                                                                        <option value="">Select the Response</option>
-                                                                        <option value="Yes/No">Yes/No</option>
-                                                                        <option value="0-10 (Scale)">0-10 (Scale)</option>
-                                                                        <option value="Good/Enough/Bad">Good/Enough/Bad</option>
+                                                                        <option value="">@LanguageContainer.Keys["SelectResponse"]</option>
+                                                                        <option value="Yes/No">@LanguageContainer.Keys["YesNo"]</option>
+                                                                        <option value="0-10 (Scale)">@LanguageContainer.Keys["Scale"]</option>
+                                                                        <option value="Good/Enough/Bad">@LanguageContainer.Keys["GoodBadEnough"]</option>
                                                                     </select>
                                                                 </td>
                                                                 <td class="action-column">
                                                                     <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => RemoveQuestion(questionIndex)">delete</span>
                                                                 </td>
+                                                                
                                                             </tr>
                                                         }
                                                     }
@@ -924,22 +930,22 @@
                                             </table>
 
                                             <div class="add-question-section">
-                                                <button type="button" class="btn btn-add-question" @onclick="AddQuestion">Add New Question</button>
+                                                <button type="button" class="btn btn-add-question" @onclick="AddQuestion">@LanguageContainer.Keys["AddNewQuestion"]</button>
                                             </div>
 
                                             <div class="pagination-table-selection">
-                                                <span>Page 1 of 1</span>
-                                                <div class="pagination-buttons-selection">
-                                                    <button class="btn btn-pagination-selection">Previous</button>
-                                                    <button class="btn btn-pagination-selection btn-active">1</button>
-                                                    <button class="btn btn-pagination-selection">Next</button>
+                                                <span>@LanguageContainer.Keys["Page"] @CurrentPage @LanguageContainer.Keys["Of"] @TotalPages</span>
+                                                <div class="pagination-buttons">
+                                                    <button class="btn btn-pagination" @onclick="PreviousPage">@LanguageContainer.Keys["PrevButton"]</button>
+                                                    <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+                                                    <button class="btn btn-pagination" @onclick="NextPage">@LanguageContainer.Keys["NextButton"]</button>
                                                 </div>
                                             </div>
                                         </div>
                                     }
                                     else
                                     {
-                                        <p>Please select a section to add questions.</p>
+                                        <p>@LanguageContainer.Keys["AddQuestionMessage"]</p>
                                     }
                                 }
                                 break;
@@ -948,14 +954,15 @@
                     <div class="navigation">
                         @if (CurrentStep == 4)
                         {
-                            <button type="button" @onclick="PreviousStep">PREVIOUS</button>
-                            <button type="button" class="btn-save-draft" @onclick="SaveDraft">SAVE DRAFT</button>
-                            <button type="button" class="btn-create-inspection" @onclick="CreateInspection">CREATE INSPECTION</button>
+                            <button type="button" @onclick="PreviousStep">@LanguageContainer.Keys["PreviousButton"]</button>
+                            <button type="button" class="btn-save-draft" @onclick="SaveDraft">@LanguageContainer.Keys["SaveDraftButton"]</button>
+                            <button type="button" class="btn-create-inspection" @onclick="CreateInspection">@LanguageContainer.Keys["CreateInspectionButton"]</button>
                         }
                         else
                         {
-                            <button type="button" @onclick="PreviousStep" disabled="@(CurrentStep == 1)">PREVIOUS</button>
-                            <button type="button" @onclick="NextStep" disabled="@(CurrentStep == 4)">NEXT</button>
+                             <button type="button" @onclick="PreviousStep" disabled="@(CurrentStep == 1)">@LanguageContainer.Keys["PreviousButton"]</button> 
+                             <button type="button" @onclick="NextStep" disabled="@(CurrentStep == 4)">@LanguageContainer.Keys["NexttButton"]</button> 
+                            
                         }
                     </div>
                 </form>
@@ -993,10 +1000,14 @@
 
     private List<CustomQuestion> FilteredCustomQuestions { get; set; } = new List<CustomQuestion>();
 
+    private string SearchPlaceholderUser => $"{LanguageContainer.Keys["SearchPlaceholder"]}";
+    private string TypeQuestionPlaceholder => $"{LanguageContainer.Keys["TypeQuestion"]}";
+
     private string? errorMessage;
     private string? successMessage;
 
-    
+    private void PreviousPage() => CurrentPage = Math.Max(1, CurrentPage - 1);
+    private void NextPage() => CurrentPage = Math.Min(TotalPages, CurrentPage + 1);
 
     private int? SelectedTemplateId
     {
@@ -1231,6 +1242,22 @@
     private void SetStep(int step)
     {
         CurrentStep = step;
+    }
+
+    private void NextEditStep()
+    {
+        if (CurrentStep < 4)
+        {
+            CurrentStep++;
+        }
+    }
+
+    private void PreviousEditStep()
+    {
+        if (CurrentStep > 1)
+        {
+            CurrentStep--;
+        }
     }
 
     private void NextStep()

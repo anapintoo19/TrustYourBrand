@@ -5,6 +5,8 @@
 @inject IHttpClientFactory HttpClientFactory
 @inject TrustYourBrand.Services.ILocalStorageService LocalStorageService
 @inject TrustYourBrand.Services.IStoreService StoreService
+@inject TrustYourBrand.Services.CultureChangeService CultureChangeService
+@inject ILanguageContainerService LanguageContainer
 @inject NavigationManager NavigationManager
 
 <div class="table-container">
@@ -25,14 +27,14 @@
             <tr>
                 <th class="action-column"></th>
                 <th class="action-column"></th>
-                <th>Id</th>
-                <th>Store Name</th>
-                <th>Zone</th>
-                <th>Store Manager</th>
-                <th>Inspector</th>
-                <th>Country</th>
-                <th>Store Type</th>
-                <th>Condition</th>
+                <th>ID</th>
+                <th>@LanguageContainer.Keys["StoreName"]</th>
+                <th>@LanguageContainer.Keys["Zone"]</th>
+                <th>@LanguageContainer.Keys["StoreManager"]</th>
+                <th>@LanguageContainer.Keys["Inspector"]</th>
+                <th>@LanguageContainer.Keys["Country"]</th>
+                <th>@LanguageContainer.Keys["StoreType"]</th>
+                <th>@LanguageContainer.Keys["Condition"]</th>
             </tr>
         </thead>
         <tbody>
@@ -399,6 +401,7 @@
         //     NavigationManager.NavigateTo("/login");
         //     return;
         // }
+        CultureChangeService.OnCultureChanged += StateHasChanged; CultureChangeService.OnCultureChanged += StateHasChanged;
 
         await LoadStoresFromService();
     }

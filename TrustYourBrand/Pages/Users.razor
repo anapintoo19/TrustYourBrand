@@ -5,18 +5,20 @@
 @inject IHttpClientFactory HttpClientFactory
 @inject TrustYourBrand.Services.IUserService UserService
 @inject TrustYourBrand.Services.ILocalStorageService LocalStorageService
+@inject TrustYourBrand.Services.CultureChangeService CultureChangeService
+@inject ILanguageContainerService LanguageContainer
 @inject NavigationManager NavigationManager
 
 <div class="table-container">
     <div class="table-header">
         <div class="action-buttons">
-            <button class="btn btn-action" @onclick="OpenCreateUser">Create New User</button>
-            <button class="btn btn-action">Export</button>
-            <button class="btn btn-action">Import</button>
-            <button class="btn btn-action">Select columns</button>
+            <button class="btn btn-action" @onclick="OpenCreateUser">@LanguageContainer.Keys["CreateNewUserButton"]</button>
+            <button class="btn btn-action">@LanguageContainer.Keys["Export"]</button>
+            <button class="btn btn-action">@LanguageContainer.Keys["Import"]</button>
+            <button class="btn btn-action">@LanguageContainer.Keys["SelectColumns"]</button>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Search" class="search-input" @bind="SearchTerm" @bind:event="oninput" />
+            <input type="text" placeholder="@SearchPlaceholderUser" class="search-input" @bind="SearchTerm" @bind:event="oninput" />
         </div>
     </div>
 
@@ -26,22 +28,22 @@
                 <th class="action-column"></th>
                 <th class="action-column"></th>
                 <th class="action-column"></th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Function</th>
-                <th>Departament</th>
+                <th>@LanguageContainer.Keys["FirstName"]</th>
+                <th>@LanguageContainer.Keys["LastName"]</th>
+                <th>@LanguageContainer.Keys["Email"]</th>
+                <th>@LanguageContainer.Keys["Role"]</th>
+                <th>@LanguageContainer.Keys["Function"]</th>
+                <th>@LanguageContainer.Keys["Department"]</th>
             </tr>
         </thead>
         <tbody>
             @if (Userslist == null)
             {
-                <tr><td colspan="8">Loading...</td></tr>
+                <tr><td colspan="8">@LanguageContainer.Keys["Loading"]</td></tr>
             }
             else if (!Userslist.Any())
             {
-                <tr><td colspan="8">No users found.</td></tr>
+                <tr><td colspan="8">@LanguageContainer.Keys["NoUsersFound"]</td></tr>
             }
             else
             {
@@ -71,11 +73,11 @@
     </table>
 
     <div class="pagination">
-        <span>Page @CurrentPage of @TotalPages</span>
+        <span>@LanguageContainer.Keys["Page"] @CurrentPage @LanguageContainer.Keys["Of"] @TotalPages</span>
         <div class="pagination-buttons">
-            <button class="btn btn-pagination" @onclick="PreviousPage">Prev</button>
+            <button class="btn btn-pagination" @onclick="PreviousPage">@LanguageContainer.Keys["PrevButton"]</button>
             <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
-            <button class="btn btn-pagination" @onclick="NextPage">Next</button>
+            <button class="btn btn-pagination" @onclick="NextPage">@LanguageContainer.Keys["NextButton"]</button>
         </div>
     </div>
 
@@ -83,13 +85,13 @@
     {
         <div class="modal-overlay delete-modal-overlay">
             <div class="modal-content">
-                <h3>Delete User</h3>
-                <p style="font-weight: bold; text-align: left; color: black; margin: 0 0 2px 0;">User Name</p>
+                <h3>@LanguageContainer.Keys["DeleteTitle"]</h3>
+                <p style="font-weight: bold; text-align: left; color: black; margin: 0 0 2px 0;">@LanguageContainer.Keys["UserName"]</p>
                 <p style="text-align: left; color: black; margin: 0 0 5px 0;">@(UserToDelete?.FirstName + " " + UserToDelete?.LastName ?? "Unknown User")</p>
-                <p>Do you want delete this user?</p>
+                <p>@LanguageContainer.Keys["DeleteMessage"]</p>
                 <div class="modal-buttons">
-                    <button class="btn btn-confirm" @onclick="ConfirmDelete">CONFIRM</button>
-                    <button class="btn btn-cancel" @onclick="CancelDelete">CANCEL</button>
+                    <button class="btn btn-confirm" @onclick="ConfirmDelete">@LanguageContainer.Keys["ConfirmButton"]</button>
+                    <button class="btn btn-cancel" @onclick="CancelDelete">@LanguageContainer.Keys["CancelButton"]</button>
                 </div>
 
             </div>
@@ -108,26 +110,26 @@
     {
         <div class="modal-overlay">
             <div class="modal-content">
-                <h3>Create User</h3>
+                <h3>@LanguageContainer.Keys["CreateTitle"]</h3>
                 @if (ShowCreateUser)
                 {
                     <div class="modal-overlay">
                         <div class="modal-content">
-                            <h3>Create User</h3>
+                            <h3>@LanguageContainer.Keys["CreateTitle"]</h3>
                             <EditForm Model="@NewUser" OnValidSubmit="@CreateUser">
                                 <DataAnnotationsValidator />
                                 <table class="edit-user-table">
                                     <tr>
                                         <td>
                                             <div>
-                                                <label for="firstName">First Name*</label>
+                                                <label for="firstName">@LanguageContainer.Keys["FirstName"]*</label>
                                                 <InputText id="firstName" @bind-Value="@NewUser.FirstName" />
                                                 <ValidationMessage For="@(() => NewUser.FirstName)" />
                                             </div>
                                         </td>
                                         <td>
                                             <div>
-                                                <label for="lastName">Last Name*</label>
+                                                <label for="lastName">@LanguageContainer.Keys["LastName"]*</label>
                                                 <InputText id="lastName" @bind-Value="@NewUser.LastName" />
                                                 <ValidationMessage For="@(() => NewUser.LastName)" />
                                             </div>
@@ -136,7 +138,7 @@
                                     <tr>
                                         <td>
                                             <div>
-                                                <label for="email">E-mail*</label>
+                                                <label for="email">@LanguageContainer.Keys["Email"]*</label>
                                                 <InputText id="email" type="email" @bind-Value="@NewUser.Email" />
                                                 <ValidationMessage For="@(() => NewUser.Email)" />
                                             </div>
@@ -152,9 +154,9 @@
                                     <tr>
                                         <td>
                                             <div>
-                                                <label for="function">Function</label>
+                                                <label for="function">@LanguageContainer.Keys["Function"]</label>
                                                 <InputSelect id="function" @bind-Value="@NewUser.FunctionId">
-                                                    <option value="">Select the function</option>
+                                                    <option value="">@LanguageContainer.Keys["SelectFunction"]</option>
                                                     @foreach (var func in FuncoesDisponiveis)
                                                     {
                                                         <option value="@func.FunctionId">@func.Name</option>
@@ -165,7 +167,7 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <label for="phoneNumber">Phone Number*</label>
+                                                <label for="phoneNumber">@LanguageContainer.Keys["PhoneNumberLabel"]*</label>
                                                 <InputText id="phoneNumber" type="tel" @bind-Value="@NewUser.PhoneNumber" inputmode="numeric" pattern="[0-9]{9}" maxlength="9" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
                                                 
                                             </div>
@@ -174,16 +176,16 @@
                                     <tr>
                                         <td>
                                             <div>
-                                                <label for="birthday">Birthday</label>
+                                                <label for="birthday">@LanguageContainer.Keys["Birthday"]</label>
                                                 <InputDate id="birthday" @bind-Value="@NewUser.Birthday" />
                                                 <ValidationMessage For="@(() => NewUser.Birthday)" />
                                             </div>
                                         </td>
                                         <td>
                                             <div>
-                                                <label for="department">Department</label>
+                                                <label for="department">@LanguageContainer.Keys["Department"]</label>
                                                 <InputSelect id="department" @bind-Value="@NewUser.DepartmentId">
-                                                    <option value="">Select the department</option>
+                                                    <option value="">@LanguageContainer.Keys["SelectDepartment"]</option>
                                                     @foreach (var dept in DepartamentosDisponiveis)
                                                     {
                                                         <option value="@dept.DepartmentId">@dept.Nome</option>
@@ -198,7 +200,7 @@
                                             <div>
                                                 <label for="role">Role</label>
                                                 <InputSelect id="role" @bind-Value="@NewUser.Role">
-                                                    <option value="">Select the role</option>
+                                                    <option value="">@LanguageContainer.Keys["SelectRole"]</option>
                                                     @foreach (var role in RolesDisponiveis.Where(r => r.Name != "Tenant"))
                                                     {
                                                         <option value="@role.Name">@role.Name</option>
@@ -209,11 +211,11 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <label for="gender">Gender</label>
+                                                <label for="gender">@LanguageContainer.Keys["GenderLabel"]</label>
                                                 <InputSelect id="gender" @bind-Value="@NewUser.Gender">
-                                                    <option value="">Select the gender</option>
-                                                    <option value="Masculino">Male</option>
-                                                    <option value="Feminino">Female</option>
+                                                    <option value="">@LanguageContainer.Keys["SelectGender"]</option>
+                                                    <option value="Masculino">@LanguageContainer.Keys["Male"]</option>
+                                                    <option value="Feminino">@LanguageContainer.Keys["Female"]</option>
                                                 </InputSelect>
                                                 <ValidationMessage For="@(() => NewUser.Gender)" />
                                             </div>
@@ -222,9 +224,9 @@
                                     <tr>
                                         <td>
                                             <div>
-                                                <label for="country">Country</label>
+                                                <label for="country">@LanguageContainer.Keys["Country"]</label>
                                                 <InputSelect id="country" @bind-Value="@NewUser.Country">
-                                                    <option value="">Select the country</option>
+                                                    <option value="">@LanguageContainer.Keys["SelectCountry"]</option>
                                                     <option value="Portugal">Portugal</option>
                                                     <option value="Espanha">Spain</option>
                                                 </InputSelect>
@@ -233,7 +235,7 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <label for="city">City</label>
+                                                <label for="city">@LanguageContainer.Keys["CityLabel"]</label>
                                                 <InputText id="city" @bind-Value="@NewUser.City" />
                                                 <ValidationMessage For="@(() => NewUser.City)" />
                                             </div>
@@ -257,7 +259,7 @@
                                             <div>
                                                 <label for="store">Store Tenant</label>
                                                 <InputSelect id="store" @bind-Value="@NewUser.LojaId">
-                                                    <option value="">Select the store tenant</option>
+                                                    <option value="">@LanguageContainer.Keys["SelectStoreTenant"]</option>
                                                     @foreach (var store in StoreDisponiveis)
                                                     {
                                                         <option value="@store.LojaId">@store.Nome</option>
@@ -270,9 +272,9 @@
                                     <tr>
                                         <td>
                                             <div>
-                                                <label for="brand">Brand</label>
+                                                <label for="brand">@LanguageContainer.Keys["BrandLabel"]</label>
                                                 <InputSelect id="brand" @bind-Value="@NewUser.MarcaId">
-                                                    <option value="">Select the brand</option>
+                                                    <option value="">@LanguageContainer.Keys["SelectBrand"]</option>
                                                     @foreach (var brand in BrandDisponiveis)
                                                     {
                                                         <option value="@brand.MarcaId">@brand.Nome</option>
@@ -283,9 +285,9 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <label for="language">Language</label>
+                                                <label for="language">@LanguageContainer.Keys["LanguageLabel"]</label>
                                                 <InputSelect id="language" @bind-Value="@NewUser.Language">
-                                                    <option value="">Select the language</option>
+                                                    <option value="">@LanguageContainer.Keys["SelectLanguage"]</option>
                                                     <option value="Português">Portuguese</option>
                                                     <option value="Inglês">English</option>
                                                 </InputSelect>
@@ -295,8 +297,8 @@
                                     </tr>
                                 </table>
                                 <div class="modal-buttons">
-                                    <button type="submit" class="btn btn-confirm">CREATE USER</button>
-                                    <button type="button" class="btn btn-cancel" @onclick="CancelCreate">CANCEL</button>
+                                    <button type="submit" class="btn btn-confirm">@LanguageContainer.Keys["CreateUserButton"]</button>
+                                    <button type="button" class="btn btn-cancel" @onclick="CancelCreate">@LanguageContainer.Keys["CancelButton"]</button>
                                 </div>
                                 @if (!string.IsNullOrEmpty(errorMessage))
                                 {
@@ -318,31 +320,31 @@
     {
         <div class="modal-overlay">
             <div class="modal-content">
-                <h3>Edit User</h3>
+                <h3>@LanguageContainer.Keys["EditTitle"]</h3>
                 <form>
                     <table class="edit-user-table">
                         <tr>
                             <td>
-                                <div><label>First Name</label><input @bind="EditingUser.FirstName" /></div>
+                                <div><label>@LanguageContainer.Keys["FirstName"]</label><input @bind="EditingUser.FirstName" /></div>
                             </td>
                             <td>
-                                <div><label>Last Name</label><input @bind="EditingUser.LastName" /></div>
+                                <div><label>@LanguageContainer.Keys["LastName"]</label><input @bind="EditingUser.LastName" /></div>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <div><label>Email</label><input type="email" @bind="EditingUser.Email" /></div>
+                                <div><label>@LanguageContainer.Keys["Email"]</label><input type="email" @bind="EditingUser.Email" /></div>
                             </td>
                             <td>
-                                <div><label>Phone Number</label><input type="tel" @bind="EditingUser.PhoneNumber" /></div>
+                                <div><label>@LanguageContainer.Keys["PhoneNumberLabel"]</label><input type="tel" @bind="EditingUser.PhoneNumber" /></div>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <div>
-                                    <label for="function">Function</label>
+                                    <label for="function">@LanguageContainer.Keys["Function"]</label>
                                     <select id="function" @bind="EditingUser.FunctionId">
-                                        <option value="">Select a function</option>
+                                        <option value="">@LanguageContainer.Keys["SelectFunction"]</option>
                                         @foreach (var func in FuncoesDisponiveis)
                                         {
                                             <option value="@func.FunctionId">@func.Name</option>
@@ -351,15 +353,15 @@
                                 </div>
                             </td>
                             <td>
-                                <div><label>Birthday</label><input type="date" @bind="EditingUser.Birthday" disabled /></div>
+                                <div><label>@LanguageContainer.Keys["Birthday"]</label><input type="date" @bind="EditingUser.Birthday" disabled /></div>
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <div>
-                                    <label for="department">Department</label>
+                                    <label for="department">@LanguageContainer.Keys["Department"]</label>
                                     <select id="department" @bind="EditingUser.DepartmentId">
-                                        <option value="">Select the department</option>
+                                        <option value="">@LanguageContainer.Keys["SelectDepartment"]</option>
                                         @foreach (var dept in DepartamentosDisponiveis)
                                         {
                                             <option value="@dept.DepartmentId">@dept.Nome</option>
@@ -369,11 +371,11 @@
                             </td>
                             <td>
                                 <div>
-                                    <label>Gender</label>
+                                    <label>@LanguageContainer.Keys["GenderLabel"]</label>
                                     <select @bind="EditingUser.Gender" disabled>
-                                        <option value="">Select the gender</option>
-                                        <option value="Masculino">Male</option>
-                                        <option value="Feminino">Female</option>
+                                        <option value="">@LanguageContainer.Keys["SelectGender"]</option>
+                                        <option value="Masculino">@LanguageContainer.Keys["Male"]</option>
+                                        <option value="Feminino">@LanguageContainer.Keys["Female"]</option>
                                     </select>
                                 </div>
                             </td>
@@ -383,7 +385,7 @@
                                 <div>
                                     <label>Role</label>
                                     <select @bind="EditingUser.Role">
-                                        <option value="">Select the role</option>
+                                        <option value="">@LanguageContainer.Keys["SelectRole"]</option>
                                         @foreach (var role in RolesDisponiveis.Where(r => r.Name != "Tenant"))
                                         {
                                             <option value="@role.Name">@role.Name</option>
@@ -400,9 +402,9 @@
                         <tr>
                             <td>
                                 <div>
-                                    <label for="country">Country</label>
+                                    <label for="country">@LanguageContainer.Keys["Country"]</label>
                                     <select id="country" @bind="EditingUser.Country">
-                                        <option value="">Select the country</option>
+                                        <option value="">@LanguageContainer.Keys["SelectCountry"]</option>
                                         <option value="Portugal">Portugal</option>
                                         <option value="Espanha">Spain</option>
                                     </select>
@@ -410,7 +412,7 @@
                             </td>
 
                             <td>
-                                <div><label>City</label><input type="text" @bind="EditingUser.City" placeholder="Insert City" /></div>
+                                <div><label>@LanguageContainer.Keys["CityLabel"]</label><input type="text" @bind="EditingUser.City" placeholder="Insert City" /></div>
                             </td>
                         </tr>
                         <tr>
@@ -425,7 +427,7 @@
                                 <div>
                                     <label for="store">Store Tenant</label>
                                     <select id="store" @bind="EditingUser.LojaId">
-                                        <option value="">Select the store tenant</option>
+                                        <option value="">@LanguageContainer.Keys["SelectStoreTenant"]</option>
                                         @foreach (var store in StoreDisponiveis)
                                         {
                                             <option value="@store.LojaId">@store.Nome</option>
@@ -437,9 +439,9 @@
                         <tr>
                             <td>
                                 <div>
-                                    <label for="brand">Brand</label>
+                                    <label for="brand">@LanguageContainer.Keys["BrandLabel"]</label>
                                     <select id="brand" @bind="EditingUser.MarcaId">
-                                        <option value="">Select the brand</option>
+                                        <option value="">@LanguageContainer.Keys["SelectBrand"]</option>
                                         @foreach (var brand in BrandDisponiveis)
                                         {
                                             <option value="@brand.MarcaId">@brand.Nome</option>
@@ -451,9 +453,9 @@
                             
                             <td>
                                 <div>
-                                    <label for="language">Language</label>
+                                    <label for="language">@LanguageContainer.Keys["LanguageLabel"]</label>
                                     <select id="language" @bind="EditingUser.Language" disabled>
-                                        <option value="">Select the language</option>
+                                        <option value="">@LanguageContainer.Keys["SelectLanguage"]</option>
                                         <option value="Português">Portuguese</option>
                                         <option value="Espanhol">Spanish</option>
                                         <option value="Inglês">English</option>
@@ -465,8 +467,8 @@
                         </tr>
                     </table>
                     <div class="modal-buttons">
-                        <button type="button" class="btn btn-confirm" @onclick="UpdateUser">EDIT USER</button>
-                        <button type="button" class="btn btn-cancel" @onclick="@(() => ShowEditUser = false)">CANCEL</button>
+                        <button type="button" class="btn btn-confirm" @onclick="UpdateUser">@LanguageContainer.Keys["EditUserButton"]</button>
+                        <button type="button" class="btn btn-cancel" @onclick="@(() => ShowEditUser = false)">@LanguageContainer.Keys["CancelButton"]</button>
                     </div>
                     @if (!string.IsNullOrEmpty(editErrorMessage))
                     {
@@ -496,6 +498,7 @@
     private List<StoreDto> StoreDisponiveis { get; set; } = new();
     private List<TenantDto> TenantsDisponiveis { get; set; } = new();
 
+    private string SearchPlaceholderUser => $"{LanguageContainer.Keys["SearchPlaceholder"]}";
 
     private bool ShowDeleteModal { get; set; } = false;
     private bool ShowCreateUser { get; set; } = false;
@@ -526,6 +529,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        CultureChangeService.OnCultureChanged += StateHasChanged; CultureChangeService.OnCultureChanged += StateHasChanged;
         var token = await LocalStorageService.GetItemAsync<string>("authToken");
         if (string.IsNullOrEmpty(token) || JwtHelper.IsTokenExpired(token))
         {

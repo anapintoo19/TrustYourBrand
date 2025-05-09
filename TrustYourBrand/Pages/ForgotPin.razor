@@ -3,6 +3,8 @@
 @inject TrustYourBrand.Services.IForgotPinService ForgotPinService
 @inject NavigationManager NavigationManager
 @inject TrustYourBrand.Services.ILocalStorageService LocalStorageService
+@inject TrustYourBrand.Services.CultureChangeService CultureChangeService
+@inject ILanguageContainerService LanguageContainer
 
 <div class="forgot-pin-container">
     <div class="forgot-pin-form-container">
@@ -10,22 +12,22 @@
 
         @if (!codeSent)
         {
-            <h3>Forgot Your PIN?</h3>
-            <p>Enter your phone number to receive a verification code.</p>
+            <h3>@LanguageContainer.Keys["ForgotPassword"]</h3>
+            <p>@LanguageContainer.Keys["Frase"]</p>
 
             <EditForm Model="forgotPinModel" OnValidSubmit="HandleRequestCode">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
                 <div class="forgot-pin-label">
-                    <label>Phone Number:</label>
+                    <label>@LanguageContainer.Keys["PhoneNumberLabel"]:</label>
                     <InputText @bind-Value="forgotPinModel.PhoneNumber"
-                               placeholder="Type Phone Number (910 000 000)"
+                               placeholder="@PhoneNumberForgotPlaceholder"
                                class="@(string.IsNullOrEmpty(forgotPinModel.PhoneNumber) && formSubmitted ? "input-error" : "")" />
                     <ValidationMessage For="@(() => forgotPinModel.PhoneNumber)" />
                 </div>
 
-                <button type="submit" @onclick="() => formSubmitted = true">Send Code</button>
+                <button type="submit" @onclick="() => formSubmitted = true">@LanguageContainer.Keys["SendCodeButton"]</button>
             </EditForm>
 
             @if (!string.IsNullOrEmpty(errorMessage))
@@ -34,45 +36,45 @@
             }
 
             <p>
-                <a href="/login" class="back-to-login">Back to Login</a>
+                <a href="/login" class="back-to-login">@LanguageContainer.Keys["BackToLogin"]</a>
             </p>
         }
         else
         {
-            <h3>Reset PIN</h3>
-            <p>Enter the verification code we sent to your phone number and set a new PIN.</p>
+            <h3>@LanguageContainer.Keys["ResetPin"]</h3>
+            <p>@LanguageContainer.Keys["FraseResetPin"]</p>
 
             <EditForm Model="resetPinModel" OnValidSubmit="HandleResetPin">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
                 <div class="forgot-pin-label">
-                    <label>Verification Code:</label>
+                    <label>@LanguageContainer.Keys["VerificationLabel"]:</label>
                     <InputText @bind-Value="resetPinModel.VerificationCode"
-                               placeholder="Type Code"
+                               placeholder="@VerificationForgotPlaceholder"
                                class="@(string.IsNullOrEmpty(resetPinModel.VerificationCode) && formSubmitted ? "input-error" : "")" />
                     <ValidationMessage For="@(() => resetPinModel.VerificationCode)" />
                 </div>
 
                 <div class="forgot-pin-label">
-                    <label>New PIN:</label>
+                    <label>@LanguageContainer.Keys["NewpinLabel"]:</label>
                     <InputText @bind-Value="resetPinModel.NewPin"
                                type="password"
-                               placeholder="Enter the new PIN (4 digits)"
+                               placeholder="@NewPinForgotPlaceholder"
                                class="@(string.IsNullOrEmpty(resetPinModel.NewPin) && formSubmitted ? "input-error" : "")" />
                     <ValidationMessage For="@(() => resetPinModel.NewPin)" />
                 </div>
 
                 <div class="forgot-pin-label">
-                    <label>Confirm New PIN:</label>
+                    <label>@LanguageContainer.Keys["ConfirmNewPinLabel"]:</label>
                     <InputText @bind-Value="resetPinModel.ConfirmNewPin"
                                type="password"
-                               placeholder="Confirm the new PIN"
+                               placeholder="@ConfirmPinForgotPlaceholder"
                                class="@(string.IsNullOrEmpty(resetPinModel.ConfirmNewPin) && formSubmitted ? "input-error" : "")" />
                     <ValidationMessage For="@(() => resetPinModel.ConfirmNewPin)" />
                 </div>
 
-                <button type="submit" @onclick="() => formSubmitted = true">Reset PIN</button>
+                <button type="submit" @onclick="() => formSubmitted = true">@LanguageContainer.Keys["ResetPinButton"]</button>
             </EditForm>
 
             @if (!string.IsNullOrEmpty(errorMessage))
@@ -95,6 +97,19 @@
     private string? successMessage;
     private bool formSubmitted = false;
     private bool codeSent = false;
+
+    private string PhoneNumberForgotPlaceholder => $"{LanguageContainer.Keys["ForgotPinLabel"]} (910 000 000)";
+    private string VerificationForgotPlaceholder => $"{LanguageContainer.Keys["VerificationPlaceholder"]}";
+    private string NewPinForgotPlaceholder => $"{LanguageContainer.Keys["newPinPlaceholder"]}";
+    private string ConfirmPinForgotPlaceholder => $"{LanguageContainer.Keys["ConfirmNewPinPlaceholder"]}";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        CultureChangeService.OnCultureChanged += StateHasChanged; CultureChangeService.OnCultureChanged += StateHasChanged;
+
+      
+    }
 
     private async Task HandleRequestCode()
     {
