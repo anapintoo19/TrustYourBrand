@@ -320,8 +320,8 @@
                                             <tr>
                                                 <th>
                                                     <input type="checkbox"
-                                                           class="store-checkbox select-all-checkbox"
-                                                           @onchange="(e) => ToggleSelectAllStores((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                    class="store-checkbox select-all-checkbox"
+                                                    @onchange="(e) => ToggleSelectAllStores((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
                                                 <th>@LanguageContainer.Keys["StoreName"]</th>
                                                 <th>@LanguageContainer.Keys["Country"]</th>
@@ -349,9 +349,9 @@
                                                     <tr>
                                                         <td>
                                                             <input type="checkbox"
-                                                                   class="store-checkbox store-row-checkbox"
-                                                                   checked="@EditingInspection.SelectedStoreIds.Contains(store.LojaId)"
-                                                                   @onchange="(e) => UpdateStoreSelection(store.LojaId, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                            class="store-checkbox store-row-checkbox"
+                                                            checked="@EditingInspection.SelectedStoreIds.Contains(store.LojaId)"
+                                                            @onchange="(e) => UpdateStoreSelection(store.LojaId, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                         </td>
                                                         <td>@store.Nome</td>
                                                         <td>@store.Country</td>
@@ -386,8 +386,8 @@
                                             <tr>
                                                 <th>
                                                     <input type="checkbox"
-                                                           class="store-checkbox select-all-checkbox"
-                                                           @onchange="(e) => ToggleSelectAllGuests((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                    class="store-checkbox select-all-checkbox"
+                                                    @onchange="(e) => ToggleSelectAllGuests((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
                                                 <th>@LanguageContainer.Keys["FirstName"]</th>
                                                 <th>@LanguageContainer.Keys["LastName"]</th>
@@ -414,9 +414,9 @@
                                                     <tr>
                                                         <td>
                                                             <input type="checkbox"
-                                                                   class="store-checkbox store-row-checkbox"
-                                                                   checked="@EditingInspection.SelectedGuestIds.Contains(user.Id)"
-                                                                   @onchange="(e) => UpdateGuestSelection(user.Id, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                            class="store-checkbox store-row-checkbox"
+                                                            checked="@EditingInspection.SelectedGuestIds.Contains(user.Id)"
+                                                            @onchange="(e) => UpdateGuestSelection(user.Id, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                         </td>
                                                         <td>@user.FirstName</td>
                                                         <td>@user.LastName</td>
@@ -697,8 +697,8 @@
                                             <tr>
                                                 <th>
                                                     <input type="checkbox"
-                                                           class="store-checkbox select-all-checkbox"
-                                                           @onchange="(e) => ToggleSelectAllStores((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                    class="store-checkbox select-all-checkbox"
+                                                    @onchange="(e) => ToggleSelectAllStores((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
                                                 <th>@LanguageContainer.Keys["StoreName"]</th>
                                                 <th>@LanguageContainer.Keys["Country"]</th>
@@ -726,9 +726,9 @@
                                                     <tr>
                                                         <td>
                                                             <input type="checkbox"
-                                                                   class="store-checkbox store-row-checkbox"
-                                                                   checked="@NewInspection.SelectedStoreIds.Contains(store.LojaId)"
-                                                                   @onchange="(e) => UpdateStoreSelection(store.LojaId, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                            class="store-checkbox store-row-checkbox"
+                                                            checked="@NewInspection.SelectedStoreIds.Contains(store.LojaId)"
+                                                            @onchange="(e) => UpdateStoreSelection(store.LojaId, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                         </td>
                                                         <td>@store.Nome</td>
                                                         <td>@store.Country</td>
@@ -762,8 +762,8 @@
                                             <tr>
                                                 <th>
                                                     <input type="checkbox"
-                                                           class="store-checkbox select-all-checkbox"
-                                                           @onchange="(e) => ToggleSelectAllGuests((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                    class="store-checkbox select-all-checkbox"
+                                                    @onchange="(e) => ToggleSelectAllGuests((bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                 </th>
                                                 <th>@LanguageContainer.Keys["FirstName"]</th>
                                                 <th>@LanguageContainer.Keys["LastName"]</th>
@@ -790,9 +790,9 @@
                                                     <tr>
                                                         <td>
                                                             <input type="checkbox"
-                                                                   class="store-checkbox store-row-checkbox"
-                                                                   checked="@NewInspection.SelectedGuestIds.Contains(user.Id)"
-                                                                   @onchange="(e) => UpdateGuestSelection(user.Id, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
+                                                            class="store-checkbox store-row-checkbox"
+                                                            checked="@NewInspection.SelectedGuestIds.Contains(user.Id)"
+                                                            @onchange="(e) => UpdateGuestSelection(user.Id, (bool)((Microsoft.AspNetCore.Components.ChangeEventArgs)e).Value)" />
                                                         </td>
                                                         <td>@user.FirstName</td>
                                                         <td>@user.LastName</td>
@@ -883,7 +883,7 @@
                                     {
                                         <div class="table-container-selection">
                                             <table class="selection-table">
-
+                                                <p>Section: @(SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == selectedSection)?.Nome ?? "N/A")</p>
                                                 <thead>
                                                     <tr>
                                                         <th>@LanguageContainer.Keys["Question"]</th>
@@ -913,16 +913,17 @@
                                                             <tr>
                                                                 <td>
                                                                     <input type="text"
-                                                                           placeholder="@TypeQuestionPlaceholder"
-                                                                           style="width: 100%;"
-                                                                           @bind="question.Text"
-                                                                           @bind:event="oninput"
-                                                                           @onkeypress="@(e => HandleKeyPress(e, question))"/>
+                                                                    placeholder="@TypeQuestionPlaceholder"
+                                                                    style="width: 100%;"
+                                                                    @bind="question.Text"
+                                                                    @bind:event="oninput"
+                                                                    @onkeypress="@(e => HandleKeyPress(e, question))"/>
                                                                 </td>
                                                                 <td>
                                                                     <select class="response-select"
-                                                                            @bind="question.ResponseType"
-                                                                            disabled="@(!question.IsDropdownEnabled)">
+                                                                    @bind="question.ResponseType"
+                                                                    @bind:after="AddQuestion"
+                                                                    disabled="@(!question.IsDropdownEnabled)">
                                                                         <option value="">@LanguageContainer.Keys["SelectResponse"]</option>
                                                                         <option value="Yes/No">@LanguageContainer.Keys["YesNo"]</option>
                                                                         <option value="0-10 (Scale)">@LanguageContainer.Keys["Scale"]</option>
@@ -936,12 +937,11 @@
                                                             </tr>
                                                         }
                                                     }
+
+
                                                 </tbody>
                                             </table>
 
-                                            <div class="add-question-section">
-                                                <button type="button" class="btn btn-add-question" @onclick="AddQuestion">@LanguageContainer.Keys["AddNewQuestion"]</button>
-                                            </div>
 
                                             <div class="pagination-table-selection">
                                                 <span>@LanguageContainer.Keys["Page"] @CurrentPage @LanguageContainer.Keys["Of"] @TotalPages</span>
@@ -1182,6 +1182,7 @@
 
     private void OnSectionChanged()
     {
+        AddQuestion();
         // Filtrar perguntas personalizadas pela secção selecionada
         FilteredCustomQuestions = NewInspection.Questions
             .Where(q => q.SeccaoId == selectedSection)
