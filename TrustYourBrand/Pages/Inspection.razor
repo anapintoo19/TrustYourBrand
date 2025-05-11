@@ -582,6 +582,8 @@
         <div class="modal-overlay delete-modal-overlay">
             <div class="modal-content">
                 <h3>@LanguageContainer.Keys["DeleteTitleInspection"]</h3>
+                <p style="font-weight: bold; text-align: left; color: black; margin: 0 0 2px 0;">@LanguageContainer.Keys["InspectionName"]</p>
+                <p style="text-align: left; color: black; margin: 0 0 5px 0;">@InspectionToDelete?.InspectionName</p>
                 <p>@LanguageContainer.Keys["FraseDeleteInspection"]</p>
                 <div class="modal-buttons">
                     <button class="btn btn-confirm" @onclick="ConfirmDelete">@LanguageContainer.Keys["ConfirmButton"]</button>
@@ -596,7 +598,7 @@
         <div class="modal-overlay">
             <div class="modal-content">
                 <h3>@LanguageContainer.Keys["CreateInspectionTitle"]</h3>
-                <form>
+                <form @onsubmit:preventDefault>
                     <div class="stepper-container">
                         <div class="step @(CurrentStep >= 1 ? "active" : "")">
                             <div class="circle" @onclick="() => SetStep(1)">1</div>
@@ -825,14 +827,15 @@
                                     }
                                     else
                                     {
-                                        <p>@LanguageContainer.Keys["FraseQuestionsSelectedTemplate"]: @(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
+                                        <p style="font-weight: bold; text-align: left; color: black; margin: 0 0 2px 0;">@LanguageContainer.Keys["Template"]:</p>
+                                        <p style="text-align: left; color: black; margin: 0 0 5px 0;">@(TemplateDisponiveis.FirstOrDefault(t => t.FormularioId == NewInspection.TemplateId)?.Nome ?? "N/A")</p>
                                         <div class="table-container-selection">
                                             <table class="selection-table">
-                                               @*  <h4 class="section-title"> *@
-                                               @*      Section: @(TemplateQuestions.FirstOrDefault()?.SeccaoId != null *@
-                                               @* ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == TemplateQuestions.FirstOrDefault()?.SeccaoId)?.Nome ?? "N/A" *@
-                                               @* : "N/A") *@
-                                               @*  </h4> *@
+                                                @*  <h4 class="section-title"> *@
+                                                @*      Section: @(TemplateQuestions.FirstOrDefault()?.SeccaoId != null *@
+                                                @* ? SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == TemplateQuestions.FirstOrDefault()?.SeccaoId)?.Nome ?? "N/A" *@
+                                                @* : "N/A") *@
+                                                @*  </h4> *@
                                                 <thead>
                                                     <tr>
                                                         <th>@LanguageContainer.Keys["Question"]</th>
@@ -852,7 +855,7 @@
                                                         @foreach (var question in TemplateQuestions)
                                                         {
                                                             <tr>
-                                                                
+
                                                                 <td style="text-align: left;">@question.Text</td>
                                                                 <td style="text-align: right;">@question.ResponseType</td>
                                                             </tr>
@@ -880,7 +883,7 @@
                                     {
                                         <div class="table-container-selection">
                                             <table class="selection-table">
-                                                
+
                                                 <thead>
                                                     <tr>
                                                         <th>@LanguageContainer.Keys["Question"]</th>
@@ -909,10 +912,17 @@
                                                             var question = FilteredCustomQuestions[i];
                                                             <tr>
                                                                 <td>
-                                                                    <input type="text" placeholder="@TypeQuestionPlaceholder" style="width: 100%;" @bind="question.Text" @bind:event="oninput" />
+                                                                    <input type="text"
+                                                                           placeholder="@TypeQuestionPlaceholder"
+                                                                           style="width: 100%;"
+                                                                           @bind="question.Text"
+                                                                           @bind:event="oninput"
+                                                                           @onkeypress="@(e => HandleKeyPress(e, question))"/>
                                                                 </td>
                                                                 <td>
-                                                                    <select class="response-select" @bind="question.ResponseType">
+                                                                    <select class="response-select"
+                                                                            @bind="question.ResponseType"
+                                                                            disabled="@(!question.IsDropdownEnabled)">
                                                                         <option value="">@LanguageContainer.Keys["SelectResponse"]</option>
                                                                         <option value="Yes/No">@LanguageContainer.Keys["YesNo"]</option>
                                                                         <option value="0-10 (Scale)">@LanguageContainer.Keys["Scale"]</option>
@@ -922,7 +932,7 @@
                                                                 <td class="action-column">
                                                                     <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => RemoveQuestion(questionIndex)">delete</span>
                                                                 </td>
-                                                                
+
                                                             </tr>
                                                         }
                                                     }
@@ -960,9 +970,9 @@
                         }
                         else
                         {
-                             <button type="button" @onclick="PreviousStep" disabled="@(CurrentStep == 1)">@LanguageContainer.Keys["PreviousButton"]</button> 
-                             <button type="button" @onclick="NextStep" disabled="@(CurrentStep == 4)">@LanguageContainer.Keys["NexttButton"]</button> 
-                            
+                            <button type="button" @onclick="PreviousStep" disabled="@(CurrentStep == 1)">@LanguageContainer.Keys["PreviousButton"]</button>
+                            <button type="button" @onclick="NextStep" disabled="@(CurrentStep == 4)">@LanguageContainer.Keys["NexttButton"]</button>
+
                         }
                     </div>
                 </form>
@@ -993,6 +1003,7 @@
     private bool ShowEditModal { get; set; } = false;
     private int? ExpandedInspectionId { get; set; } = null;
 
+    private bool isDropdownEnabled;
     private bool isLoadingQuestions { get; set; } = false;
     private int CurrentPage { get; set; } = 1;
     private int TotalPages { get; set; } = 1;
@@ -1071,7 +1082,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-        CultureChangeService.OnCultureChanged += StateHasChanged;CultureChangeService.OnCultureChanged += StateHasChanged;
+        CultureChangeService.OnCultureChanged += StateHasChanged; CultureChangeService.OnCultureChanged += StateHasChanged;
 
         await LoadUsersFromService();
         await LoadStoresFromService();
@@ -1176,6 +1187,17 @@
             .Where(q => q.SeccaoId == selectedSection)
             .ToList();
         StateHasChanged();
+    }
+
+    private void HandleKeyPress(KeyboardEventArgs e, CustomQuestion question)
+    {
+        if (e.Key == "Enter")
+        {
+            if (!string.IsNullOrWhiteSpace(question.Text))
+            {
+                question.IsDropdownEnabled = true;
+            }
+        }
     }
 
 
@@ -1287,7 +1309,7 @@
                 errorMessage = "Please select at least one store in the Store Selection step.";
                 return;
             }
-            
+
             CurrentStep++;
             if (CurrentStep == 4 && NewInspection.TemplateId.HasValue)
             {
@@ -1376,22 +1398,22 @@
                             Mode = "Launched",
                             SeccaoIds = NewInspection.Questions.Select(q => q.SeccaoId).Distinct().Where(id => id.HasValue).Select(id => id.Value).ToList(), // Incluir todas as secções usadas
                             PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
-                                ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
-                                {
-                                    Texto = q.Text,
-                                    TipoResposta = q.ResponseType,
-                                    Opcoes = q.Options,
-                                    Resposta = null,
-                                    SeccaoId = q.SeccaoId
-                                }).ToList()
-                                : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
-                                {
-                                    Texto = q.Text,
-                                    TipoResposta = q.ResponseType,
-                                    Opcoes = q.Options,
-                                    Resposta = null,
-                                    SeccaoId = q.SeccaoId // Incluir SeccaoId
-                                }).ToList()
+                                    ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
+                                    {
+                                        Texto = q.Text,
+                                        TipoResposta = q.ResponseType,
+                                        Opcoes = q.Options,
+                                        Resposta = null,
+                                        SeccaoId = q.SeccaoId
+                                    }).ToList()
+                                    : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                                    {
+                                        Texto = q.Text,
+                                        TipoResposta = q.ResponseType,
+                                        Opcoes = q.Options,
+                                        Resposta = null,
+                                        SeccaoId = q.SeccaoId // Incluir SeccaoId
+                                    }).ToList()
                         };
 
                     var result = await InspectionService.CreateInspectionAsync(dto);
@@ -1423,22 +1445,22 @@
                                 Mode = "Launched",
                                 SeccaoIds = NewInspection.Questions.Select(q => q.SeccaoId).Distinct().Where(id => id.HasValue).Select(id => id.Value).ToList(), // Incluir todas as secções usadas
                                 PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
-                                    ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
-                                    {
-                                        Texto = q.Text,
-                                        TipoResposta = q.ResponseType,
-                                        Opcoes = q.Options,
-                                        Resposta = null,
-                                        SeccaoId = q.SeccaoId
-                                    }).ToList()
-                                    : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
-                                    {
-                                        Texto = q.Text,
-                                        TipoResposta = q.ResponseType,
-                                        Opcoes = q.Options,
-                                        Resposta = null,
-                                        SeccaoId = q.SeccaoId // Incluir SeccaoId
-                                    }).ToList()
+                                        ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
+                                        {
+                                            Texto = q.Text,
+                                            TipoResposta = q.ResponseType,
+                                            Opcoes = q.Options,
+                                            Resposta = null,
+                                            SeccaoId = q.SeccaoId
+                                        }).ToList()
+                                        : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                                        {
+                                            Texto = q.Text,
+                                            TipoResposta = q.ResponseType,
+                                            Opcoes = q.Options,
+                                            Resposta = null,
+                                            SeccaoId = q.SeccaoId // Incluir SeccaoId
+                                        }).ToList()
                             };
 
                         var result = await InspectionService.CreateInspectionAsync(dto);
@@ -1506,22 +1528,22 @@
                             Mode = "Draft",
                             SeccaoIds = NewInspection.Questions.Select(q => q.SeccaoId).Distinct().Where(id => id.HasValue).Select(id => id.Value).ToList(), // Incluir todas as secções usadas
                             PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
-                                ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
-                                {
-                                    Texto = q.Text,
-                                    TipoResposta = q.ResponseType,
-                                    Opcoes = q.Options,
-                                    Resposta = null,
-                                    SeccaoId = q.SeccaoId
-                                }).ToList()
-                                : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
-                                {
-                                    Texto = q.Text,
-                                    TipoResposta = q.ResponseType,
-                                    Opcoes = q.Options,
-                                    Resposta = null,
-                                    SeccaoId = q.SeccaoId // Incluir SeccaoId
-                                }).ToList()
+                                    ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
+                                    {
+                                        Texto = q.Text,
+                                        TipoResposta = q.ResponseType,
+                                        Opcoes = q.Options,
+                                        Resposta = null,
+                                        SeccaoId = q.SeccaoId
+                                    }).ToList()
+                                    : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                                    {
+                                        Texto = q.Text,
+                                        TipoResposta = q.ResponseType,
+                                        Opcoes = q.Options,
+                                        Resposta = null,
+                                        SeccaoId = q.SeccaoId // Incluir SeccaoId
+                                    }).ToList()
                         };
 
                     var result = await InspectionService.CreateInspectionAsync(dto);
@@ -1553,22 +1575,22 @@
                                 Mode = "Draft",
                                 SeccaoIds = NewInspection.Questions.Select(q => q.SeccaoId).Distinct().Where(id => id.HasValue).Select(id => id.Value).ToList(), // Incluir todas as secções usadas
                                 PerguntasPersonalizadas = NewInspection.TemplateId.HasValue
-                                    ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
-                                    {
-                                        Texto = q.Text,
-                                        TipoResposta = q.ResponseType,
-                                        Opcoes = q.Options,
-                                        Resposta = null,
-                                        SeccaoId = q.SeccaoId
-                                    }).ToList()
-                                    : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
-                                    {
-                                        Texto = q.Text,
-                                        TipoResposta = q.ResponseType,
-                                        Opcoes = q.Options,
-                                        Resposta = null,
-                                        SeccaoId = q.SeccaoId // Incluir SeccaoId
-                                    }).ToList()
+                                        ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
+                                        {
+                                            Texto = q.Text,
+                                            TipoResposta = q.ResponseType,
+                                            Opcoes = q.Options,
+                                            Resposta = null,
+                                            SeccaoId = q.SeccaoId
+                                        }).ToList()
+                                        : NewInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                                        {
+                                            Texto = q.Text,
+                                            TipoResposta = q.ResponseType,
+                                            Opcoes = q.Options,
+                                            Resposta = null,
+                                            SeccaoId = q.SeccaoId // Incluir SeccaoId
+                                        }).ToList()
                             };
 
                         var result = await InspectionService.CreateInspectionAsync(dto);
@@ -1646,84 +1668,84 @@
     }
 
     private async Task EditInspection(int inspectionId)
-{
-    try
     {
-        var inspection = await InspectionService.GetInspectionByIdAsync(inspectionId);
-        if (inspection != null)
+        try
         {
-            Console.WriteLine($"Inspection Loaded: ID={inspection.Id}, Name={inspection.InspectionName}, TemplateId={inspection.TemplateId}, StartDate={inspection.StartDate}, Language={inspection.Language}, Frequency={inspection.Frequency}, MarcaId={inspection.MarcaId}, LojaId={inspection.LojaIds}, UserId={inspection.UserId}");
-
-            EditingInspection = new InspectionFormModel
+            var inspection = await InspectionService.GetInspectionByIdAsync(inspectionId);
+            if (inspection != null)
             {
-                TemplateId = inspection.TemplateId,
-                Language = inspection.Language,
-                InspectionName = inspection.InspectionName,
-                Frequency = inspection.Frequency,
-                StartDate = inspection.StartDate,
-                DueDate = inspection.DueDate,
-                Description = inspection.Description,
-                MarcaId = inspection.MarcaId,
-                        SelectedStoreIds = inspection.LojaIds != null
-        ? new List<int>(inspection.LojaIds)
-        : new List<int>(),
-                SelectedGuestIds = inspection.UserId.HasValue ? new List<int> { inspection.UserId.Value } : new List<int>(),
-                Questions = inspection.Questions?.Select(q => new CustomQuestion
-                {
-                    Text = q.Text,
-                    ResponseType = q.ResponseType,
-                    Options = q.Options ?? new List<string>(),
-                    SeccaoId = q.SeccaoId // Incluir SeccaoId
-                }).ToList() ?? new List<CustomQuestion>()
-            };
+                Console.WriteLine($"Inspection Loaded: ID={inspection.Id}, Name={inspection.InspectionName}, TemplateId={inspection.TemplateId}, StartDate={inspection.StartDate}, Language={inspection.Language}, Frequency={inspection.Frequency}, MarcaId={inspection.MarcaId}, LojaId={inspection.LojaIds}, UserId={inspection.UserId}");
 
-            selectedSection = inspection.SeccaoIds?.FirstOrDefault();
-
-            TemplateQuestions = new List<CustomQuestion>();
-            if (EditingInspection.TemplateId.HasValue)
-            {
-                try
-                {
-                    TemplateQuestions = await TemplateService.GetTemplateQuestions(EditingInspection.TemplateId.Value);
-                    Console.WriteLine($"Loaded {TemplateQuestions.Count} template questions for TemplateId={EditingInspection.TemplateId}");
-                    if (inspection.Questions == null || !inspection.Questions.Any())
+                EditingInspection = new InspectionFormModel
                     {
-                        EditingInspection.Questions.Clear();
+                        TemplateId = inspection.TemplateId,
+                        Language = inspection.Language,
+                        InspectionName = inspection.InspectionName,
+                        Frequency = inspection.Frequency,
+                        StartDate = inspection.StartDate,
+                        DueDate = inspection.DueDate,
+                        Description = inspection.Description,
+                        MarcaId = inspection.MarcaId,
+                        SelectedStoreIds = inspection.LojaIds != null
+                ? new List<int>(inspection.LojaIds)
+                : new List<int>(),
+                        SelectedGuestIds = inspection.UserId.HasValue ? new List<int> { inspection.UserId.Value } : new List<int>(),
+                        Questions = inspection.Questions?.Select(q => new CustomQuestion
+                        {
+                            Text = q.Text,
+                            ResponseType = q.ResponseType,
+                            Options = q.Options ?? new List<string>(),
+                            SeccaoId = q.SeccaoId // Incluir SeccaoId
+                        }).ToList() ?? new List<CustomQuestion>()
+                    };
+
+                selectedSection = inspection.SeccaoIds?.FirstOrDefault();
+
+                TemplateQuestions = new List<CustomQuestion>();
+                if (EditingInspection.TemplateId.HasValue)
+                {
+                    try
+                    {
+                        TemplateQuestions = await TemplateService.GetTemplateQuestions(EditingInspection.TemplateId.Value);
+                        Console.WriteLine($"Loaded {TemplateQuestions.Count} template questions for TemplateId={EditingInspection.TemplateId}");
+                        if (inspection.Questions == null || !inspection.Questions.Any())
+                        {
+                            EditingInspection.Questions.Clear();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        errorMessage = $"Falha ao carregar perguntas do modelo: {ex.Message}";
+                        Console.WriteLine($"Erro ao carregar perguntas do modelo: {ex}");
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    errorMessage = $"Falha ao carregar perguntas do modelo: {ex.Message}";
-                    Console.WriteLine($"Erro ao carregar perguntas do modelo: {ex}");
+                    // Inicializar perguntas filtradas para a secção selecionada
+                    FilteredCustomQuestions = EditingInspection.Questions
+                        .Where(q => q.SeccaoId == selectedSection)
+                        .ToList();
                 }
+
+                ExpandedInspectionId = inspectionId;
+                ShowEditModal = true;
+                CurrentStep = 1;
+                StateHasChanged();
+                errorMessage = null;
+                successMessage = null;
             }
             else
             {
-                // Inicializar perguntas filtradas para a secção selecionada
-                FilteredCustomQuestions = EditingInspection.Questions
-                    .Where(q => q.SeccaoId == selectedSection)
-                    .ToList();
+                errorMessage = "Inspeção não encontrada.";
+                Console.WriteLine($"Inspeção com ID {inspectionId} não encontrada.");
             }
-
-            ExpandedInspectionId = inspectionId;
-            ShowEditModal = true;
-            CurrentStep = 1;
-            StateHasChanged();
-            errorMessage = null;
-            successMessage = null;
         }
-        else
+        catch (Exception ex)
         {
-            errorMessage = "Inspeção não encontrada.";
-            Console.WriteLine($"Inspeção com ID {inspectionId} não encontrada.");
+            errorMessage = $"Erro ao carregar inspeção: {ex.Message}";
+            Console.WriteLine($"Erro ao carregar inspeção: {ex}");
         }
     }
-    catch (Exception ex)
-    {
-        errorMessage = $"Erro ao carregar inspeção: {ex.Message}";
-        Console.WriteLine($"Erro ao carregar inspeção: {ex}");
-    }
-}
 
     private async Task UpdateInspection()
     {
@@ -1804,20 +1826,20 @@
                     Mode = "Draft",
                     SeccaoIds = selectedSection.HasValue ? new List<int> { selectedSection.Value } : null,
                     PerguntasPersonalizadas = EditingInspection.TemplateId.HasValue
-                        ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
-                        {
-                            Texto = q.Text,
-                            TipoResposta = q.ResponseType,
-                            Opcoes = q.Options,
-                            Resposta = null
-                        }).ToList()
-                        : EditingInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
-                        {
-                            Texto = q.Text,
-                            TipoResposta = q.ResponseType,
-                            Opcoes = q.Options,
-                            Resposta = null
-                        }).ToList()
+                            ? TemplateQuestions.Select(q => new CreatePerguntaPersonalizadaDto
+                            {
+                                Texto = q.Text,
+                                TipoResposta = q.ResponseType,
+                                Opcoes = q.Options,
+                                Resposta = null
+                            }).ToList()
+                            : EditingInspection.Questions.Select(q => new CreatePerguntaPersonalizadaDto
+                            {
+                                Texto = q.Text,
+                                TipoResposta = q.ResponseType,
+                                Opcoes = q.Options,
+                                Resposta = null
+                            }).ToList()
                 };
 
             // Step 4: Call the service to update the inspection

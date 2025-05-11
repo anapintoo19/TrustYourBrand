@@ -45,6 +45,7 @@
         public string Resposta { get; set; }
         public string ResponseType { get; set; }
         public List<string>? Options { get; set; }
+        public bool IsDropdownEnabled { get; set; }
     }
 
     public class StatusBreakdown
