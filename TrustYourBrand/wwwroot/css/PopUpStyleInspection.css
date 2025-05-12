@@ -738,6 +738,7 @@ button {
 
 .table-container-selection {
     padding: 10px;
+    width: 100%;
 }
 
 .section-title {
@@ -758,3 +759,43 @@ button {
     .toggle-icon.collapsed {
         transform: rotate(-90deg);
     }
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1px; /* Reduzido de 2px para 1px */
+    box-sizing: border-box;
+    min-height: 16px; /* Reduzido de 20px para 16px */
+    max-height: 20px; /* Reduzido de 30px para 20px */
+}
+
+    .header-container span {
+        font-size: 12px; /* Reduzido de 14px para 12px */
+        font-weight: bold;
+        line-height: 14px; /* Reduzido de 16px para 14px */
+    }
+
+.toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+    .toggle-button .material-symbols-outlined {
+        font-size: 16px; /* Reduzido de 16px para 14px */
+        color: #555;
+        transition: transform 0.3s ease;
+        line-height: 14px; /* Reduzido de 16px para 14px */
+    }
+
+/* Garantir que a célula da tabela não interfira no layout */
+.thstep4 th {
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: left;
+}

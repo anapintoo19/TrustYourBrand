@@ -110,91 +110,111 @@
                     @if (ExpandedInspectionId == inspection.Id)
                     {
                         <tr class="expanded-row">
-                            <td colspan="8">
+                            <td colspan="8" style="width: 100%;">
                                 <div class="inspection-details-container">
                                     <div class="details-row">
-                                        <div class="details-column">
-                                            <span class="details-label">@LanguageContainer.Keys["InspectionProgress"]:</span>
-                                            <div class="progress-container">
-                                                <div class="progress-bar">
-                                                    <div class="progress" style="width: @((int)inspection.ProgressPercentage)%;"></div>
+                                        <div class="progress-wrapper">
+                                            <label class="details-label">@LanguageContainer.Keys["InspectionProgress"]:</label>
+                                            <div class="progress-container inspection-progress-container">
+                                                <div class="inspection-progress-bar">
+                                                    <div class="progress" style="width: @(inspection.ProgressPercentage + "%")"></div>
                                                 </div>
-                                                <span class="progress-text">@((int)inspection.ProgressPercentage)%</span>
+                                            </div>
+                                            <span class="progress-text">@((int)inspection.ProgressPercentage)%</span>
+
+                                            <div class="dates-row">
+                                                <div class="date-item">
+                                                    <label class="details-label">@LanguageContainer.Keys["StartDate"]:</label>
+                                                    <span class="details-value">@(inspection.StartDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                                                </div>
+                                                <div class="date-item">
+                                                    <label class="details-label">@LanguageContainer.Keys["DueDate"]:</label>
+                                                    <span class="details-value">@(inspection.DueDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                                                </div>
+                                                <div class="date-item">
+                                                    <label class="details-label">@LanguageContainer.Keys["FinishDate"]:</label>
+                                                    <span class="details-value">@(inspection.FinishDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="info-row">
+                                                    <div class="info-item">
+                                                        <label class="details-label">@LanguageContainer.Keys["LanguageLabel"]:</label>
+                                                        <span class="details-value">@(inspection.Language ?? "N/A")</span>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <label class="details-label">@LanguageContainer.Keys["NumberOfQuestions"]:</label>
+                                                        <span class="details-value">@(inspection.Questions?.Count ?? 0)</span>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <label class="details-label">@LanguageContainer.Keys["Purpose"]:</label>
+                                                        <span class="details-value">@(inspection.Purpose ?? "N/A")</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                       
 
-                                    <div class="details-row">
-                                        <div class="details-column">
-                                            <span class="details-label">@LanguageContainer.Keys["StartDate"]:</span>
-                                            <span class="details-value">@(inspection.StartDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
-                                        </div>
-                                        <div class="details-column">
-                                            <span class="details-label">@LanguageContainer.Keys["DueDate"]:</span>
-                                            <span class="details-value">@(inspection.DueDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
-                                        </div>
-                                        <div class="details-column">
-                                            <span class="details-label">@LanguageContainer.Keys["FinishDate"]:</span>
-                                            <span class="details-value">@(inspection.FinishDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="details-row">
-                                        <div class="details-column">
-                                            <span class="details-label">@LanguageContainer.Keys["LanguageLabel"]:</span>
-                                            <span class="details-value">@(inspection.Language ?? "N/A")</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="details-row">
-                                        <div class="details-column">
-                                            <span class="details-label">@LanguageContainer.Keys["NumberOfQuestions"]:</span>
-                                            <span class="details-value">@(inspection.Questions?.Count ?? 0)</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="details-row">
-                                        <div class="details-column">
-                                            <span class="details-label">@LanguageContainer.Keys["Purpose"]:</span>
-                                            <span class="details-value">@(inspection.Purpose ?? "N/A")</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="details-row">
-                                        <div class="details-column">
+                                        <!-- Right table for status -->
+                                        <div class="details-column status-table-column">
                                             <span class="details-label">@LanguageContainer.Keys["Status"]:</span>
                                             <div class="status-breakdown">
-                                                <div class="status-item">
-                                                    <span class="status-dot status-dot-ongoing"></span>
-                                                    <span>@LanguageContainer.Keys["Ongoing"]</span>
-                                                    <span class="status-count">@(inspection.StatusBreakdown?.Ongoing ?? 0)</span>
-                                                </div>
-                                                <div class="status-item">
-                                                    <span class="status-dot status-dot-closed"></span>
-                                                    <span>@LanguageContainer.Keys["Closed"]</span>
-                                                    <span class="status-count">@(inspection.StatusBreakdown?.Closed ?? 0)</span>
-                                                </div>
-                                                <div class="status-item">
-                                                    <span class="status-dot status-dot-standby"></span>
-                                                    <span>@LanguageContainer.Keys["Standby"]</span>
-                                                    <span class="status-count">@(inspection.StatusBreakdown?.Standby ?? 0)</span>
-                                                </div>
-                                                <div class="status-item">
-                                                    <span class="status-dot status-dot-canceled"></span>
-                                                    <span>@LanguageContainer.Keys["Canceled"]</span>
-                                                    <span class="status-count">@(inspection.StatusBreakdown?.Canceled ?? 0)</span>
-                                                </div>
-                                                <div class="status-item">
-                                                    <span class="details-label">@LanguageContainer.Keys["Total"]:</span>
-                                                    <span class="status-count">@((inspection.StatusBreakdown?.Ongoing ?? 0) + (inspection.StatusBreakdown?.Closed ?? 0) + (inspection.StatusBreakdown?.Standby ?? 0) + (inspection.StatusBreakdown?.Canceled ?? 0))</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="details-column">
-                                            <span class="details-label">@LanguageContainer.Keys["Stores"]:</span>
-                                            <div class="stores-breakdown">
-                                                <span class="stores-count">@(inspection.StoresCount ?? 0)</span>
-                                                <span class="material-symbols-outlined stores-icon">visibility</span>
+                                                <table class="status-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>@LanguageContainer.Keys["Status"]</th>
+                                                            <th>@LanguageContainer.Keys["Stores"]</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><span class="status-dot status-dot-ongoing"></span> @LanguageContainer.Keys["Ongoing"]</td>
+                                                            <td class="stores-cell">
+                                                                <span class="status-count">@(inspection.StatusBreakdown?.Ongoing ?? 0)</span>
+                                                                @if (inspection.StatusBreakdown?.Ongoing > 0)
+                                                                {
+                                                                    <span class="material-symbols-outlined stores-icon">visibility</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="status-dot status-dot-closed"></span> @LanguageContainer.Keys["Closed"]</td>
+                                                            <td class="stores-cell">
+                                                                <span class="status-count">@(inspection.StatusBreakdown?.Closed ?? 0)</span>
+                                                                @if (inspection.StatusBreakdown?.Closed > 0)
+                                                                {
+                                                                    <span class="material-symbols-outlined stores-icon">visibility</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="status-dot status-dot-standby"></span> @LanguageContainer.Keys["Standby"]</td>
+                                                            <td class="stores-cell">
+                                                                <span class="status-count">@(inspection.StatusBreakdown?.Standby ?? 0)</span>
+                                                                @if (inspection.StatusBreakdown?.Standby > 0)
+                                                                {
+                                                                    <span class="material-symbols-outlined stores-icon">visibility</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="status-dot status-dot-canceled"></span> @LanguageContainer.Keys["Canceled"]</td>
+                                                            <td class="stores-cell">
+                                                                <span class="status-count">@(inspection.StatusBreakdown?.Canceled ?? 0)</span>
+                                                                @if (inspection.StatusBreakdown?.Canceled > 0)
+                                                                {
+                                                                    <span class="material-symbols-outlined stores-icon">visibility</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span class="details-label">@LanguageContainer.Keys["Total"]:</span></td>
+                                                            <td class="stores-cell">
+                                                                <span class="status-count">@((inspection.StatusBreakdown?.Ongoing ?? 0) + (inspection.StatusBreakdown?.Closed ?? 0) + (inspection.StatusBreakdown?.Standby ?? 0) + (inspection.StatusBreakdown?.Canceled ?? 0))</span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
@@ -871,7 +891,7 @@
                                     <div class="dropdown-section-container">
                                         @* <label for="sectionSelect" style="text-align:left;">Section</label> *@
                                         <select id="sectionSelect" style="width: 100%;" @bind="selectedSection" @bind:after="OnSectionChanged">
-                                            <option value="">@LanguageContainer.Keys["SelectSection"]</option>
+                                            <option value="" disabled selected>@LanguageContainer.Keys["SelectSection"]</option>
                                             @foreach (var sec in SectionDisponiveis)
                                             {
                                                 <option value="@sec.SeccaoId">@sec.Nome</option>
@@ -883,74 +903,91 @@
                                     {
                                         <div class="table-container-selection">
                                             <table class="selection-table">
-                                                <p>Section: @(SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == selectedSection)?.Nome ?? "N/A")</p>
+
                                                 <thead>
                                                     <tr>
-                                                        <th>@LanguageContainer.Keys["Question"]</th>
-                                                        <th>@LanguageContainer.Keys["Response"]</th>
-                                                        <th class="action-column"></th>
-                                                        @* <th class="action-column"> *@
-                                                        @*     <span class="material-symbols-outlined action-icon detail-icon"> *@
-                                                        @*         keyboard_arrow_right *@
-                                                        @*     </span> *@
-                                                        @* </th> *@
+                                                        <th colspan="3" class="thstep4">
+                                                            <div class="header-container">
+                                                                <span style="font-weight: bold;">Section: @(SectionDisponiveis.FirstOrDefault(s => s.SeccaoId == selectedSection)?.Nome ?? "N/A")</span>
+                                                                <button type="button" @onclick="ToggleTableVisibility" @onkeydown="@(e => PreventEnterActivation(e))" class="toggle-button">
+                                                                    <span class="material-symbols-outlined">
+                                                                        @(tableVisible ? "expand_less" : "expand_more")
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </th>
                                                     </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                    @if (!FilteredCustomQuestions.Any())
+                                                    @if (tableVisible)
                                                     {
                                                         <tr>
-                                                            <td colspan="4">@LanguageContainer.Keys["NoQuestionsTemplate"]</td>
+                                                            <th></th>
+                                                            <th></th>
+                                                            <th class="action-column"></th>
                                                         </tr>
                                                     }
-                                                    else
-                                                    {
-                                                        @for (int i = 0; i < FilteredCustomQuestions.Count; i++)
-                                                        {
-                                                            var questionIndex = i;
-                                                            var question = FilteredCustomQuestions[i];
-                                                            <tr>
-                                                                <td>
-                                                                    <input type="text"
-                                                                    placeholder="@TypeQuestionPlaceholder"
-                                                                    style="width: 100%;"
-                                                                    @bind="question.Text"
-                                                                    @bind:event="oninput"
-                                                                    @onkeypress="@(e => HandleKeyPress(e, question))"/>
-                                                                </td>
-                                                                <td>
-                                                                    <select class="response-select"
-                                                                    @bind="question.ResponseType"
-                                                                    @bind:after="AddQuestion"
-                                                                    disabled="@(!question.IsDropdownEnabled)">
-                                                                        <option value="">@LanguageContainer.Keys["SelectResponse"]</option>
-                                                                        <option value="Yes/No">@LanguageContainer.Keys["YesNo"]</option>
-                                                                        <option value="0-10 (Scale)">@LanguageContainer.Keys["Scale"]</option>
-                                                                        <option value="Good/Enough/Bad">@LanguageContainer.Keys["GoodBadEnough"]</option>
-                                                                    </select>
-                                                                </td>
-                                                                <td class="action-column">
-                                                                    <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => RemoveQuestion(questionIndex)">delete</span>
-                                                                </td>
+                                                </thead>
 
+                                                @if (tableVisible)
+                                                {
+                                                    <tbody>
+                                                        @if (!FilteredCustomQuestions.Any())
+                                                        {
+                                                            <tr>
+                                                                <td colspan="4">@LanguageContainer.Keys["NoQuestionsTemplate"]</td>
                                                             </tr>
                                                         }
-                                                    }
+                                                        else
+                                                        {
+                                                            @for (int i = 0; i < FilteredCustomQuestions.Count; i++)
+                                                            {
+                                                                var questionIndex = i;
+                                                                var question = FilteredCustomQuestions[i];
+                                                                <tr>
+                                                                    <td>
+                                                                        <input type="text"
+                                                                               placeholder="@TypeQuestionPlaceholder"
+                                                                               style="width: 100%;"
+                                                                               @bind="question.Text"
+                                                                               @bind:event="oninput"
+                                                                               @onkeypress="@(e => HandleKeyPress(e, question))" />
+                                                                    </td>
+                                                                    <td>
+                                                                        <select class="response-select"
+                                                                                @bind="question.ResponseType"
+                                                                                @bind:after="AddQuestion"
+                                                                                disabled="@(!question.IsDropdownEnabled)">
+                                                                            <option value="">@LanguageContainer.Keys["SelectResponse"]</option>
+                                                                            <option value="Yes/No">@LanguageContainer.Keys["YesNo"]</option>
+                                                                            <option value="0-10 (Scale)">@LanguageContainer.Keys["Scale"]</option>
+                                                                            <option value="Good/Enough/Bad">@LanguageContainer.Keys["GoodBadEnough"]</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td class="action-column">
+                                                                        <span class="material-symbols-outlined action-icon delete-icon" @onclick="() => RemoveQuestion(questionIndex)">delete</span>
+                                                                    </td>
+
+                                                                </tr>
+                                                            }
+                                                        }
 
 
-                                                </tbody>
+                                                    </tbody>
+                                                }
                                             </table>
 
 
-                                            <div class="pagination-table-selection">
-                                                <span>@LanguageContainer.Keys["Page"] @CurrentPage @LanguageContainer.Keys["Of"] @TotalPages</span>
-                                                <div class="pagination-buttons">
-                                                    <button class="btn btn-pagination" @onclick="PreviousPage">@LanguageContainer.Keys["PrevButton"]</button>
-                                                    <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
-                                                    <button class="btn btn-pagination" @onclick="NextPage">@LanguageContainer.Keys["NextButton"]</button>
+                                            @if (tableVisible)
+                                            {
+                                                <div class="pagination-table-selection">
+                                                    <span>@LanguageContainer.Keys["Page"] @CurrentPage @LanguageContainer.Keys["Of"] @TotalPages</span>
+                                                    <div class="pagination-buttons">
+                                                        <button class="btn btn-pagination" @onclick="PreviousPage">@LanguageContainer.Keys["PrevButton"]</button>
+                                                        <button class="btn btn-pagination btn-active" @onclick="NextPage">@CurrentPage</button>
+                                                        <button class="btn btn-pagination" @onclick="NextPage">@LanguageContainer.Keys["NextButton"]</button>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            }
+
                                         </div>
                                     }
                                     else
@@ -1004,6 +1041,7 @@
     private int? ExpandedInspectionId { get; set; } = null;
 
     private bool isDropdownEnabled;
+    private bool tableVisible = true;
     private bool isLoadingQuestions { get; set; } = false;
     private int CurrentPage { get; set; } = 1;
     private int TotalPages { get; set; } = 1;
@@ -1182,12 +1220,42 @@
 
     private void OnSectionChanged()
     {
-        AddQuestion();
-        // Filtrar perguntas personalizadas pela secção selecionada
-        FilteredCustomQuestions = NewInspection.Questions
-            .Where(q => q.SeccaoId == selectedSection)
-            .ToList();
+        if (selectedSection.HasValue)
+        {
+            // Filtrar perguntas existentes para a seção selecionada
+            FilteredCustomQuestions = NewInspection.Questions
+                .Where(q => q.SeccaoId == selectedSection)
+                .ToList();
+
+            // Se não houver perguntas para a seção selecionada, adicionar uma nova pergunta automaticamente
+            if (!FilteredCustomQuestions.Any())
+            {
+                var newQuestion = new CustomQuestion
+                    {
+                        Text = "",
+                        ResponseType = "",
+                        Options = new List<string>(),
+                        SeccaoId = selectedSection.Value,
+                        IsDropdownEnabled = false
+                    };
+                NewInspection.Questions.Add(newQuestion);
+                FilteredCustomQuestions.Add(newQuestion);
+            }
+        }
+        else
+        {
+            FilteredCustomQuestions = new List<CustomQuestion>();
+        }
         StateHasChanged();
+    }
+
+    private void PreventEnterActivation(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            // Impede que o "Enter" ative o botão de expansão
+            return;
+        }
     }
 
     private void HandleKeyPress(KeyboardEventArgs e, CustomQuestion question)
@@ -1200,6 +1268,12 @@
             }
         }
     }
+
+    private void ToggleTableVisibility()
+    {
+        tableVisible = !tableVisible;
+    }
+
 
 
     private void ToggleSelectAllStores(bool isChecked)
@@ -1901,7 +1975,6 @@
 
     private void AddQuestion()
     {
-        var targetList = ShowEditModal && EditingInspection != null ? EditingInspection.Questions : NewInspection.Questions;
         if (selectedSection.HasValue)
         {
             var newQuestion = new CustomQuestion
@@ -1909,9 +1982,10 @@
                     Text = "",
                     ResponseType = "",
                     Options = new List<string>(),
-                    SeccaoId = selectedSection.Value // Associar à secção selecionada
+                    SeccaoId = selectedSection.Value,
+                    IsDropdownEnabled = false
                 };
-            targetList.Add(newQuestion);
+            NewInspection.Questions.Add(newQuestion);
             FilteredCustomQuestions.Add(newQuestion); // Atualizar a lista filtrada
             StateHasChanged();
         }
